@@ -1,1 +1,4 @@
-# Whale# Whale
+﻿# Whale 🐳
+
+Docker terminal managment tool
+
