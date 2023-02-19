@@ -7,7 +7,7 @@ namespace Whale.Tests
     public class ShellCommandRunnderTests
     {
         [Test]
-        public void RunCommandShouldReturnHelloOnWindows()
+        public void RunCommandShouldReturnHello()
         {
             // Arrange
             var command = "echo hello";
@@ -16,42 +16,27 @@ namespace Whale.Tests
             Console.SetOut(writer);
 
             // Act
-            ShellCommandRunner.RunCommand(command);
+            string output = ShellCommandRunner.RunCommand(command);
 
             // Assert
-            writer.ToString().TrimEnd().Should().Be(expectedOutput);
+            output.TrimEnd().Should().Be(expectedOutput);
         }
 
         [Test]
-        public void RunCommandShouldReturnHelloOnMacOS()
+        public void RunCommandShouldReturnError()
         {
             // Arrange
-            var command = "echo hello";
-            var expectedOutput = "hello";
+            var command = "invalid-command";
+            var expectedOutput = "Error!";
             using var writer = new StringWriter();
             Console.SetOut(writer);
 
             // Act
-            ShellCommandRunner.RunCommand(command);
+            var output = ShellCommandRunner.RunCommand(command);
 
             // Assert
-            writer.ToString().TrimEnd().Should().Be(expectedOutput);
-        }
-
-        [Test]
-        public void RunCommandShouldReturnHelloOnLinux()
-        {
-            // Arrange
-            var command = "echo hello";
-            var expectedOutput = "hello";
-            using var writer = new StringWriter();
-            Console.SetOut(writer);
-
-            // Act
-            ShellCommandRunner.RunCommand(command);
-
-            // Assert
-            writer.ToString().TrimEnd().Should().Be(expectedOutput);
+            writer.ToString().TrimEnd().Should().BeEmpty();
+            output.Should().Be(expectedOutput);
         }
     }
 }
