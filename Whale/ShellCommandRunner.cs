@@ -29,7 +29,6 @@ namespace Whale
 
             process.WaitForExit();
             return output;
-            //Console.WriteLine(output);
         }
 
         public static async Task<string> RunShellCommandAsync(string command)

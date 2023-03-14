@@ -31,7 +31,7 @@ namespace Whale
                 X = Pos.Right(tabView),
                 Y = 0,
                 Width = Dim.Percent(50),
-                Height = Dim.Percent(50),
+                Height = Dim.Percent(34),
             };
 
             var imagesFrame = new FrameView("Images")
@@ -39,35 +39,58 @@ namespace Whale
                 X = Pos.Right(tabView),
                 Y = Pos.Bottom(containersFrame),
                 Width = Dim.Percent(50),
-                Height = Dim.Percent(50),
+                Height = Dim.Percent(33),
             };
 
-            var text = new Label()
+            var volumesFrame = new FrameView("Volumes")
             {
-                Text = "XDDD",
+                X = Pos.Right(tabView),
+                Y = Pos.Bottom(imagesFrame),
+                Width = Dim.Percent(50),
+                Height = Dim.Percent(33),
             };
 
-            var text2 = new Label("")
+            var textContainers = new Label()
             {
-                Text = "Xddd"
+                Text = "Loading...",
             };
 
-            imagesFrame.Add(text);
+            var textImages = new Label()
+            {
+                Text = "Loading..."
+            };
+
+            var textVolumes = new Label()
+            {
+                Text = "Loading..."
+            };
+
+            imagesFrame.Add(textImages);
             Add(imagesFrame);
-            containersFrame.Add(text2);
+            containersFrame.Add(textContainers);
             Add(containersFrame);
+            volumesFrame.Add(textVolumes);
+            Add(volumesFrame);
 
-            Task.Run(() =>
-            {
-                text.Text = ShellCommandRunner.RunCommand("docker ps -a");
-                Application.Refresh();
-            });
+            //Task.Run(() =>
+            //{
+            //    textContainers.Text = ShellCommandRunner.RunCommand("docker ps -a");
+            //    textImages.Text = ShellCommandRunner.RunCommand("docker image ls");
+            //    textVolumes.Text = ShellCommandRunner.RunCommand("docker volume ls");
+            //    Application.Refresh();
+            //});
 
-            Task.Run(() =>
-            {
-                text2.Text = ShellCommandRunner.RunCommand("docker images");
-                Application.Refresh();
-            });
+            var psTask = Task.Run(() => ShellCommandRunner.RunCommand("docker ps -a"));
+            var imagesTask = Task.Run(() => ShellCommandRunner.RunCommand("docker image ls"));
+            var volumesTask = Task.Run(() => ShellCommandRunner.RunCommand("docker volume ls"));
+
+            Task.WhenAll(psTask, imagesTask, volumesTask);
+
+            textContainers.Text = psTask.Result;
+            textImages.Text = imagesTask.Result;
+            textVolumes.Text = volumesTask.Result;
+
+            Application.Refresh();
 
             tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
             tabView.AddTab(new TabView.Tab("Images", ImagesView()), false);
@@ -105,7 +128,7 @@ namespace Whale
 
             var text = new Label()
             {
-                Text = "XDDD",
+                Text = "",
             };
             imagesFrame.Add(text);
             imagesView.Add(imagesFrame);
@@ -195,14 +218,14 @@ namespace Whale
             Func<MainLoop, bool> genSample = (l) =>
             {
                 bars.RemoveAt(0);
-                bars.Add(new BarSeries.Bar(null, stiple, GetCpuUsageWindows()));
+                bars.Add(new BarSeries.Bar(null, stiple, CommandValidator.GetCpuUsageOfContainer("420")));
                 graphView.SetNeedsDisplay();
 
                 // while the equaliser is showing
                 return graphView.Series.Contains(series);
             };
 
-            Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(250), genSample);
+            Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(1250), genSample);
 
             series.Bars = bars;
 
@@ -217,13 +240,6 @@ namespace Whale
             graphView.AxisY.Visible = false;
 
             graphView.SetNeedsDisplay();
-        }
-
-        public float GetCpuUsageWindows()
-        {
-            Process process = Process.GetCurrentProcess();
-            float cpuUsage = (process.TotalProcessorTime.Ticks / (float)Stopwatch.Frequency / Environment.ProcessorCount) * 100;
-            return cpuUsage;
         }
 
         class DiscoBarSeries : BarSeries
