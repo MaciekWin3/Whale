@@ -2,99 +2,102 @@
 
 ## 1) Software Characteristics
 Short Name: Whale
+
 Full Name: Whale is a lightweight terminal user interface application that helps programmers and devops manage Docker containers locally or remotely.
+
 Description: The Whale application aims to simplify Docker container management through an intuitive terminal-based interface. Users will be able to display, start, stop, create, and delete containers, as well as view their logs and information about ports and environment variables. 
 
 ## 2) Copyright
 a. Authors: Maciej Winnik
+
 b. License terms for the software developed by the group: The Whale application will be available under the open source license according to the **MIT License** terms.
 
 The **MIT License** is a permissive software license that allows the distribution of the licensed software under the condition that the license is included in the distribution and in any modifications made to the software. The license also disclaims any warranty or liability for the software. In short, the MIT License is a flexible and liberal license that allows users to use, modify, and distribute the software for any purpose.
 
 ## 3) Requirements specification
-ID: FUNC-REQ-01
+ID: FUNC-REQ-01\
 Name: Display container information
-Description: The application should allow users to display information about containers, such as their status, image, and ID.
-Priority: 1 (needed)
-Category: Functional
+Description: The application should allow users to display information about containers, such as their status, image, and ID.\
+Priority: 1 (needed)\
+Category: Functional\
 
-ID: FUNC-REQ-02
-Name: Start/Stop containers
-Description: The application should allow users to start and stop containers.
-Priority: 1 (needed)
-Category: Functional
+ID: FUNC-REQ-02\
+Name: Start/Stop containers\
+Description: The application should allow users to start and stop containers.\
+Priority: 1 (needed)\
+Category: Functional\
 
-ID: FUNC-REQ-03
-Name: Create/Delete containers
-Description: The application should allow users to create and delete containers.
-Priority: 1 (needed)
-Category: Functional
+ID: FUNC-REQ-03\
+Name: Create/Delete containers\
+Description: The application should allow users to create and delete containers.\
+Priority: 1 (needed)\
+Category: Functional\
 
-ID: FUNC-REQ-04
-Name: Display container logs
-Description: The application should allow users to view logs from containers.
-Priority: 2 (good to have)
-Category: Functional
+ID: FUNC-REQ-04\
+Name: Display container logs\
+Description: The application should allow users to view logs from containers.\
+Priority: 2 (good to have)\
+Category: Functional\
 
-ID: FUNC-REQ-05
-Name: Display container port information
-Description: The application should allow users to view information about the ports used by containers.
-Priority: 2 (good to have)
-Category: Functional
+ID: FUNC-REQ-05\
+Name: Display container port information\
+Description: The application should allow users to view information about the ports used by containers.\
+Priority: 2 (good to have)\
+Category: Functional\
 
-ID: FUNC-REQ-06
-Name: Docker Swarm Management
-Description: The application should provide features for managing Docker swarms, including creating and removing swarms, adding and removing nodes, and deploying and scaling services.
-Priority: 1
-Category: Functional
+ID: FUNC-REQ-06\
+Name: Docker Swarm Management\
+Description: The application should provide features for managing Docker swarms, including creating and removing swarms, adding and removing nodes, and deploying and scaling services.\
+Priority: 1\
+Category: Functional\
 
-ID: FUNC-REQ-07
-Name: Container volume management
-Description: The Whale application should allow users to manage container volumes, including creating, attaching, detaching, and deleting volumes.
-Priority: 1 (needed)
-Category: Functional
+ID: FUNC-REQ-07\
+Name: Container volume management\
+Description: The Whale application should allow users to manage container volumes, including creating, attaching, detaching, and deleting volumes.\
+Priority: 1 (needed)\
+Category: Functional\
 
-ID: FUNC-REQ-08
-Name: Docker Compose support
-Description: The Whale application should support Docker Compose files, allowing users to easily create and manage multi-container Docker applications.
-Priority: 2 (good to have)
-Category: Functional
+ID: FUNC-REQ-08\
+Name: Docker Compose support\
+Description: The Whale application should support Docker Compose files, allowing users to easily create and manage multi-container Docker applications.\
+Priority: 2 (good to have)\
+Category: Functional\
 
-ID: NON-FUNC-REQ-01
-Name: Cross-platform compatibility
+ID: NON-FUNC-REQ-01\
+Name: Cross-platform compatibility\
 Description: The application should be compatible with multiple platforms, including Windows, macOS, and Linux.
-Priority: 1 (needed)
-Category: Non-functional
+Priority: 1 (needed)\
+Category: Non-functional\
 
-ID: NON-FUNC-REQ-02
-Name: Usability
+ID: NON-FUNC-REQ-02\
+Name: Usability\
 Description: The application should have an intuitive interface and be easy to use for both experienced and inexperienced users.
-Priority: 1 (needed)
-Category: Non-functional
+Priority: 1 (needed)\
+Category: Non-functional\
 
-ID: NON-FUNC-REQ-03
-Name: Performance
+ID: NON-FUNC-REQ-03\
+Name: Performance\
 Description: The application should have fast response times and should not use excessive system resources.
-Priority: 1 (needed)
-Category: Non-functional
+Priority: 1 (needed)\
+Category: Non-functional\
 
-ID: NON-FUNC-REQ-04
-Name: Extensibility
+ID: NON-FUNC-REQ-04\
+Name: Extensibility\
 Description: The application should be designed in a modular and extensible way to allow for future updates and new features.
-Priority: 3 (optional)
-Category: Non-functional
+Priority: 3 (optional)\
+Category: Non-functional\
 
-ID: NON-FUNC-REQ-05
-Name: Keyboard shortcuts
-Description: The Whale application should support keyboard shortcuts to help users perform common tasks more quickly and efficiently.
-Priority: 2 (good to have)
-Category: Non-functional
+ID: NON-FUNC-REQ-05\
+Name: Keyboard shortcuts\
+Description: The Whale application should support keyboard shortcuts to help users perform common tasks more quickly and efficiently.\
+Priority: 2 (good to have)\
+Category: Non-functional\
 
-ID: NON-FUNC-REQ-06
-Name: Theme customization
+ID: NON-FUNC-REQ-06\
+Name: Theme customization\
 Description: The Whale application should allow users to customize the application's color scheme and appearance.
-Priority: 3 (optional)
-Category: Non-functional
+Priority: 3 (optional)\
+Category: Non-functional\
 
 ## 4) Architecture of the system/software:
 ###  Development architecture - technology stack:
@@ -110,11 +113,6 @@ Category: Non-functional
 * GitHub
 
 The Whale application is based on the Terminal.Gui library and written in C# version 11. Additionally, we use the .NET platform. In order to ensure proper application functionality, a Terminal (such as PowerShell or Linux terminal) and Docker Engine are required. The application is designed to assist in managing Docker swarm.
-1. ID
-2. Name
-3. Description
-4. Priority(1 - needed, 2 - good to have, 3-optional)
-5. Category (functional, not functional)
 
 ## 5) Test cases
 | Requirement ID  | Functionality                      | Test Objective                                   | Precondition                                                          | Action                                                     | Expected Result                                                                                                      |
