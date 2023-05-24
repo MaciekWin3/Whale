@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using Whale.Utils;
 
 namespace Whale.Tests
 {
