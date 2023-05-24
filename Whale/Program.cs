@@ -1,6 +1,6 @@
 ﻿//ShellCommandRunner.RunCommand("docker ps -a");
 using Terminal.Gui;
-using Whale;
+using Whale.Windows;
 
 Application.Init();
 var top = Application.Top;
