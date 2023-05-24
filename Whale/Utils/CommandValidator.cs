@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Whale
+﻿namespace Whale.Utils
 {
     public static class CommandValidator
     {

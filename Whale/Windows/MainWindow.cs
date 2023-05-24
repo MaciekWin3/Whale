@@ -1,9 +1,6 @@
-﻿using System.Diagnostics;
-using System.Text;
-using Terminal.Gui;
-using Terminal.Gui.Graphs;
+﻿using Whale.Utils;
 
-namespace Whale
+namespace Whale.Windows
 {
     public class MainWindow : Window
     {
@@ -259,7 +256,7 @@ namespace Whale
                 red = Application.Driver.MakeAttribute(Color.Red, Color.Black);
                 brightred = Application.Driver.MakeAttribute(Color.BrightRed, Color.Black);
             }
-            protected override void DrawBarLine(GraphView graph, Terminal.Gui.Point start, Terminal.Gui.Point end, Bar beingDrawn)
+            protected override void DrawBarLine(GraphView graph, Point start, Point end, Bar beingDrawn)
             {
                 var driver = Application.Driver;
 

@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace Whale
+namespace Whale.Utils
 {
     public static class ShellCommandRunner
     {
