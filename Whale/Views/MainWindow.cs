@@ -1,6 +1,11 @@
-﻿using Whale.Utils;
+﻿using System.Diagnostics;
+using System.Text;
+using Terminal.Gui;
+using Terminal.Gui.Graphs;
+using Whale.Components;
+using Whale.Utils;
 
-namespace Whale.Windows
+namespace Whale.Views
 {
     public class MainWindow : Window
     {
@@ -69,23 +74,14 @@ namespace Whale.Windows
             volumesFrame.Add(textVolumes);
             Add(volumesFrame);
 
-            //Task.Run(() =>
-            //{
-            //    textContainers.Text = ShellCommandRunner.RunCommand("docker ps -a");
-            //    textImages.Text = ShellCommandRunner.RunCommand("docker image ls");
-            //    textVolumes.Text = ShellCommandRunner.RunCommand("docker volume ls");
-            //    Application.Refresh();
-            //});
-
-            var psTask = Task.Run(() => ShellCommandRunner.RunCommand("docker ps -a"));
-            var imagesTask = Task.Run(() => ShellCommandRunner.RunCommand("docker image ls"));
-            var volumesTask = Task.Run(() => ShellCommandRunner.RunCommand("docker volume ls"));
-
-            Task.WhenAll(psTask, imagesTask, volumesTask);
-
-            textContainers.Text = psTask.Result;
-            textImages.Text = imagesTask.Result;
-            textVolumes.Text = volumesTask.Result;
+            Task.Run(() =>
+            {
+                textContainers.Text = ShellCommandRunner.RunCommand("docker ps -a");
+                textImages.Text = ShellCommandRunner.RunCommand("docker image ls");
+                Task.Delay(2000);
+                Application.Refresh();
+                textVolumes.Text = ShellCommandRunner.RunCommand("docker volume ls");
+            });
 
             Application.Refresh();
 
@@ -239,57 +235,6 @@ namespace Whale.Windows
             graphView.SetNeedsDisplay();
         }
 
-        class DiscoBarSeries : BarSeries
-        {
-            private Terminal.Gui.Attribute green;
-            private Terminal.Gui.Attribute brightgreen;
-            private Terminal.Gui.Attribute brightyellow;
-            private Terminal.Gui.Attribute red;
-            private Terminal.Gui.Attribute brightred;
 
-            public DiscoBarSeries()
-            {
-
-                green = Application.Driver.MakeAttribute(Color.BrightGreen, Color.Black);
-                brightgreen = Application.Driver.MakeAttribute(Color.Green, Color.Black);
-                brightyellow = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black);
-                red = Application.Driver.MakeAttribute(Color.Red, Color.Black);
-                brightred = Application.Driver.MakeAttribute(Color.BrightRed, Color.Black);
-            }
-            protected override void DrawBarLine(GraphView graph, Point start, Point end, Bar beingDrawn)
-            {
-                var driver = Application.Driver;
-
-                int x = start.X;
-                for (int y = end.Y; y <= start.Y; y++)
-                {
-
-                    var height = graph.ScreenToGraphSpace(x, y).Y;
-
-                    if (height >= 85)
-                    {
-                        driver.SetAttribute(red);
-                    }
-                    else if (height >= 66)
-                    {
-                        driver.SetAttribute(brightred);
-                    }
-                    else if (height >= 45)
-                    {
-                        driver.SetAttribute(brightyellow);
-                    }
-                    else if (height >= 25)
-                    {
-                        driver.SetAttribute(brightgreen);
-                    }
-                    else
-                    {
-                        driver.SetAttribute(green);
-                    }
-
-                    graph.AddRune(x, y, beingDrawn.Fill.Rune);
-                }
-            }
-        }
     }
 }

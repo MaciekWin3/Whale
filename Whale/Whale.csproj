@@ -12,11 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
-    <PackageReference Include="Terminal.Gui" Version="1.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\" />
+    <PackageReference Include="Terminal.Gui" Version="1.12.1" />
   </ItemGroup>
 
 </Project>
