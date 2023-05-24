@@ -1,4 +1,4 @@
-﻿namespace Whale.Utils
+﻿namespace Whale
 {
     public static class CommandValidator
     {

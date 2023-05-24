@@ -3,13 +3,13 @@ using System.Text;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using Whale.Components;
-using Whale.Utils;
 
 namespace Whale.Views
 {
     public class MainWindow : Window
     {
         GraphView graphView;
+        //chage to protected lated
         public MainWindow() : base("Whale Dashboard")
         {
             X = 0;
@@ -19,7 +19,15 @@ namespace Whale.Views
             InitWindow();
         }
 
-        public void InitWindow()
+        public static async Task<Window> CreateAsync()
+        {
+            var window = new MainWindow();
+            await window.InitWindow();
+            Application.Refresh();
+            return window;
+        }
+
+        public async Task InitWindow()
         {
             var tabView = new TabView()
             {
@@ -74,19 +82,23 @@ namespace Whale.Views
             volumesFrame.Add(textVolumes);
             Add(volumesFrame);
 
-            Task.Run(() =>
+
+            Application.MainLoop.Invoke(async () =>
             {
-                textContainers.Text = ShellCommandRunner.RunCommand("docker ps -a");
-                textImages.Text = ShellCommandRunner.RunCommand("docker image ls");
-                Task.Delay(2000);
+                var x = await ShellCommandRunner.RunCommandAsync("docker", "image", "ls");
+                textImages.Text = x.Value.std;
                 Application.Refresh();
-                textVolumes.Text = ShellCommandRunner.RunCommand("docker volume ls");
+                var y = await ShellCommandRunner.RunCommandAsync("docker", "container", "ls");
+                textContainers.Text = y.Value.std;
+                Application.Refresh();
+                var z = await ShellCommandRunner.RunCommandAsync("docker", "volume", "ls");
+                textVolumes.Text = z.Value.std;
+                Application.Refresh();
             });
 
-            Application.Refresh();
 
             tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
-            tabView.AddTab(new TabView.Tab("Images", ImagesView()), false);
+            tabView.AddTab(new TabView.Tab("Images", await ImagesView()), false);
             tabView.AddTab(new TabView.Tab("Interative Tab", GetInteractiveTab()), false);
             Add(tabView);
         }
@@ -110,7 +122,7 @@ namespace Whale.Views
             return imagesView;
         }
 
-        private View ImagesView()
+        private async Task<View> ImagesView()
         {
             var imagesView = new View()
             {
@@ -127,22 +139,10 @@ namespace Whale.Views
             imagesView.Add(imagesFrame);
             imagesView.Add(text);
 
-            Application.MainLoop.Invoke(() =>
+            Application.MainLoop.Invoke(async () =>
             {
-                ProcessStartInfo psi = new ProcessStartInfo("ping", "wp.pl");
-                psi.RedirectStandardOutput = true;
-                psi.UseShellExecute = false;
-                Process proc = new Process();
-                proc.StartInfo = psi;
-                StringBuilder sb = new StringBuilder();
-                proc.OutputDataReceived += new DataReceivedEventHandler((sender, e) => OnOutputDataReceived(sender, e, sb));
-
-                // Start the process and begin reading its output
-                proc.Start();
-                proc.BeginOutputReadLine();
-                proc.WaitForExit();
-                text.Text += sb.ToString();
-                //text.Text = ShellCommandRunner.RunCommand("docker volume ls");
+                var x = await ShellCommandRunner.RunCommandAsync("ping", "-n", "20", "wp.pl");
+                text.Text += x.Value.std;
                 Application.Refresh();
             });
 
@@ -234,7 +234,5 @@ namespace Whale.Views
 
             graphView.SetNeedsDisplay();
         }
-
-
     }
 }

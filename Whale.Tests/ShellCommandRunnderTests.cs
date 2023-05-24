@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using Whale.Utils;
 
 namespace Whale.Tests
 {
@@ -8,16 +7,16 @@ namespace Whale.Tests
     public class ShellCommandRunnderTests
     {
         [Test]
-        public void RunCommandShouldReturnHello()
+        public async Task RunCommandShouldReturnHello()
         {
             // Arrange
-            var command = "echo hello";
+            var command = "echo";
             var expectedOutput = "hello";
             using var writer = new StringWriter();
             Console.SetOut(writer);
 
             // Act
-            string output = ShellCommandRunner.RunCommand(command);
+            string output = await ShellCommandRunner.RunCommandAsync(command.);
 
             // Assert
             output.TrimEnd().Should().Be(expectedOutput);
