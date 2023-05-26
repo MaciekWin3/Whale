@@ -7,36 +7,18 @@ namespace Whale.Tests
     public class ShellCommandRunnderTests
     {
         [Test]
-        public async Task RunCommandShouldReturnHello()
+        public async Task ShouldReturnCommandOutput()
         {
             // Arrange
-            var command = "echo";
-            var expectedOutput = "hello";
-            using var writer = new StringWriter();
-            Console.SetOut(writer);
+            var command = "dotnet";
+            var arguments = new[] { "--info" };
 
             // Act
-            string output = await ShellCommandRunner.RunCommandAsync(command.);
+            var result = await ShellCommandRunner.RunCommandAsync(command, arguments);
 
             // Assert
-            output.TrimEnd().Should().Be(expectedOutput);
-        }
-
-        [Test]
-        public void RunCommandShouldReturnError()
-        {
-            // Arrange
-            var command = "invalid-command";
-            var expectedOutput = "Error!";
-            using var writer = new StringWriter();
-            Console.SetOut(writer);
-
-            // Act
-            var output = ShellCommandRunner.RunCommand(command);
-
-            // Assert
-            writer.ToString().TrimEnd().Should().BeEmpty();
-            output.Should().Be(expectedOutput);
+            result.IsSuccess.Should().BeTrue();
+            result.Value.std.ToString().Substring(0, 4).Should().Be(".NET");
         }
     }
 }

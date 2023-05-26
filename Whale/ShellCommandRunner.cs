@@ -10,12 +10,21 @@ namespace Whale
         {
             var stdOut = new StringBuilder();
             var stdErr = new StringBuilder();
-            var joinedArguments = string.Join(" ", arguments);
+            var joinedArguments = string.Join(" ", arguments).Trim();
 
-            await Cli.Wrap(command).WithArguments(joinedArguments)
-                .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOut))
-                .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErr))
-                .ExecuteAsync();
+            try
+            {
+                await Cli.Wrap(command)
+                    .WithArguments(joinedArguments)
+                    .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOut))
+                    .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErr))
+                    .ExecuteAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
             return stdErr.Length > 0
                 ? Result.Fail<(string, string)>(stdErr.ToString())

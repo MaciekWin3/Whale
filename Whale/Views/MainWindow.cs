@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using CliWrap;
+using CliWrap.EventStream;
+using System.Diagnostics;
 using System.Text;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
@@ -8,26 +10,26 @@ namespace Whale.Views
 {
     public class MainWindow : Window
     {
-        GraphView graphView;
-        //chage to protected lated
-        public MainWindow() : base("Whale Dashboard")
+        GraphView graphView = null!;
+        protected MainWindow() : base("Whale Dashboard")
         {
             X = 0;
             Y = 1;
             Width = Dim.Fill();
             Height = Dim.Fill();
-            InitWindow();
         }
 
-        public static async Task<Window> CreateAsync()
+        //public static async Task<Window> CreateAsync()
+        public static Window CreateAsync()
         {
             var window = new MainWindow();
-            await window.InitWindow();
+            //await window.InitWindow();
+            window.InitWindow();
             Application.Refresh();
             return window;
         }
 
-        public async Task InitWindow()
+        public void InitWindow()
         {
             var tabView = new TabView()
             {
@@ -87,18 +89,42 @@ namespace Whale.Views
             {
                 var x = await ShellCommandRunner.RunCommandAsync("docker", "image", "ls");
                 textImages.Text = x.Value.std;
-                Application.Refresh();
-                var y = await ShellCommandRunner.RunCommandAsync("docker", "container", "ls");
-                textContainers.Text = y.Value.std;
-                Application.Refresh();
+                //var y = await ShellCommandRunner.RunCommandAsync("docker", "container", "ls");
                 var z = await ShellCommandRunner.RunCommandAsync("docker", "volume", "ls");
                 textVolumes.Text = z.Value.std;
-                Application.Refresh();
+                //Application.Refresh();
+            });
+
+            Application.MainLoop.Invoke(async () =>
+            {
+                var cmd = Cli.Wrap("ping").WithArguments("wp.pl");
+                await foreach (var cmdEvent in cmd.ListenAsync())
+                {
+                    switch (cmdEvent)
+                    {
+                        case StartedCommandEvent started:
+                            //_output.WriteLine($"Process started; ID: {started.ProcessId}");
+                            textVolumes.Clear();
+                            break;
+                        case StandardOutputCommandEvent stdOut:
+                            //_output.WriteLine($"Out> {stdOut.Text}");
+                            textVolumes.Text += $"{stdOut.Text}\n";
+                            break;
+                        case StandardErrorCommandEvent stdErr:
+                            //_output.WriteLine($"Err> {stdErr.Text}");
+                            break;
+                        case ExitedCommandEvent exited:
+                            //_output.WriteLine($"Process exited; Code: {exited.ExitCode}");
+                            break;
+                    }
+                }
+                //Application.Refresh();
             });
 
 
+
             tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
-            tabView.AddTab(new TabView.Tab("Images", await ImagesView()), false);
+            tabView.AddTab(new TabView.Tab("Images", ImagesView()), false);
             tabView.AddTab(new TabView.Tab("Interative Tab", GetInteractiveTab()), false);
             Add(tabView);
         }
@@ -122,7 +148,8 @@ namespace Whale.Views
             return imagesView;
         }
 
-        private async Task<View> ImagesView()
+        //private async Task<View> ImagesView()
+        private View ImagesView()
         {
             var imagesView = new View()
             {
@@ -218,7 +245,7 @@ namespace Whale.Views
                 return graphView.Series.Contains(series);
             };
 
-            Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(1250), genSample);
+            Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(500), genSample);
 
             series.Bars = bars;
 
