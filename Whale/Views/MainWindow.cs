@@ -122,7 +122,7 @@ namespace Whale.Views
             });
 
 
-
+            // Tabs
             tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
             tabView.AddTab(new TabView.Tab("Images", ImagesView()), false);
             tabView.AddTab(new TabView.Tab("Interative Tab", GetInteractiveTab()), false);

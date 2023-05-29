@@ -22,8 +22,7 @@ namespace Whale
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                return Result.Fail<(string, string)>(e.Message);
             }
 
             return stdErr.Length > 0
