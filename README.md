@@ -33,17 +33,19 @@ The **MIT License** is a permissive software license that allows the distributio
 | NON-FUNC-REQ-06 | Theme customization | he Whale application should allow users to customize the application's color scheme and appearance. | 3 (optional)  | Non-functional
 
 ## 4) Architecture of the system/software:
-###  Development architecture - technology stack:
-* C# language
-* .NET platform
-* Terminal.Gui library
-* Docker Engine
+###  Rechnology stack:
+| Name | Version |
+| C# programming language | 11 |
+| .NET | 7.0.2 |
+| Terminal.Gui | 1.12.1 |
+| CliWrap | 3.6.3 |
+| FluentAssertions | 6.11.0 |
+| nUnit | 3.13.3 |
+| Docker Enginge | 20.10.24	|
+
 ### Runtime architecture - technology stack:
-* Docker
-* Docker Swarn
-* Termianal (Powershell/Linux)
-* Git
-* GitHub
+* Docker* Modern Terminal 
+* OS system compatible with Docker (i.e. Windows, Linux, macOS)
 
 The Whale application is based on the Terminal.Gui library and written in C# version 11. Additionally, we use the .NET platform. In order to ensure proper application functionality, a Terminal (such as PowerShell or Linux terminal) and Docker Engine are required. The application is designed to assist in managing Docker swarm.
 
