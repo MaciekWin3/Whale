@@ -24,6 +24,8 @@ The **MIT License** is a permissive software license that allows the distributio
 | FUNC-REQ-05 | Display container port information | The application should allow users to view information about the ports used by containers. | 2 (good to have) | Functional |
 | FUNC-REQ-06 | Docker Swarm Management | The application should provide features for managing Docker swarms, including creating and removing swarms, adding and removing nodes, and deploying and scaling services. | 1 | Functional |
 | FUNC-REQ-07 | Container volume management | The Whale application should allow users to manage container volumes, including creating, attaching, detaching, and deleting volumes. | 1 (needed) | Functional |
+| FUNC-REQ-08 | Dockerfile and docker-compose editor | The application should provide text editor for Dockerfile and docker-compose.yml | 2 (good to have) | Functional |
+| FUNC-REQ-08 | Docker images managment | The application should allow user to manage their docker images | 1 (needed) | Functional |
 | FUNC-REQ-08 | Docker Compose support | The Whale application should support Docker Compose files, allowing users to easily create and manage multi-container Docker applications. | 2 (good to have) | Functional |
 | NON-FUNC-REQ-01 | Cross-platform compatibility | The application should be compatible with multiple platforms, including Windows, macOS, and Linux. | 1 (needed) | Non-functional |
 | NON-FUNC-REQ-02 | Usability | The application should have an intuitive interface and be easy to use for both experienced and inexperienced users. | 1 (needed) | Non-functional |
@@ -33,8 +35,9 @@ The **MIT License** is a permissive software license that allows the distributio
 | NON-FUNC-REQ-06 | Theme customization | he Whale application should allow users to customize the application's color scheme and appearance. | 3 (optional)  | Non-functional
 
 ## 4) Architecture of the system/software:
-###  Rechnology stack:
+###  Technology stack:
 | Name | Version |
+| ---- | --------|
 | C# programming language | 11 |
 | .NET | 7.0.2 |
 | Terminal.Gui | 1.12.1 |
@@ -44,7 +47,8 @@ The **MIT License** is a permissive software license that allows the distributio
 | Docker Enginge | 20.10.24	|
 
 ### Runtime architecture - technology stack:
-* Docker* Modern Terminal 
+* Docker Engine
+* Modern Terminal 
 * OS system compatible with Docker (i.e. Windows, Linux, macOS)
 
 The Whale application is based on the Terminal.Gui library and written in C# version 11. Additionally, we use the .NET platform. In order to ensure proper application functionality, a Terminal (such as PowerShell or Linux terminal) and Docker Engine are required. The application is designed to assist in managing Docker swarm.
