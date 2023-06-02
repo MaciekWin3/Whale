@@ -1,7 +1,6 @@
 ﻿using CliWrap;
 using CliWrap.EventStream;
-using System.Diagnostics;
-using System.Text;
+using System.Globalization;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using Whale.Components;
@@ -11,12 +10,25 @@ namespace Whale.Views
     public class MainWindow : Window
     {
         GraphView graphView = null!;
+        private ContextMenu contextMenu = new ContextMenu();
+        private readonly List<CultureInfo> cultureInfos = Application.SupportedCultures;
+        private MenuItem miForceMinimumPosToZero;
+        private bool forceMinimumPosToZero = true;
+        private TextField tfTopLeft, tfTopRight, tfMiddle, tfBottomLeft, tfBottomRight;
+        private MenuItem miUseSubMenusSingleFrame;
+        private bool useSubMenusSingleFrame;
         protected MainWindow() : base("Whale Dashboard")
         {
             X = 0;
             Y = 1;
             Width = Dim.Fill();
             Height = Dim.Fill();
+            Border = new Border
+            {
+                BorderStyle = BorderStyle.Rounded,
+                Effect3D = false,
+                Title = "Whale Dashboard"
+            };
         }
 
         //public static async Task<Window> CreateAsync()
@@ -31,19 +43,62 @@ namespace Whale.Views
 
         public void InitWindow()
         {
+            Point mousePos = default;
+
+            KeyPress += (e) =>
+            {
+                if (e.KeyEvent.Key == (Key.m))
+                {
+                    ShowContextMenu(mousePos.X, mousePos.Y);
+                    e.Handled = true;
+                }
+            };
+
+            MouseClick += (e) =>
+            {
+                if (e.MouseEvent.Flags == contextMenu.MouseFlags)
+                {
+                    ShowContextMenu(e.MouseEvent.X, e.MouseEvent.Y);
+                    e.Handled = true;
+                }
+            };
+            Application.RootMouseEvent += Application_RootMouseEvent;
+
+            void Application_RootMouseEvent(MouseEvent me)
+            {
+                mousePos = new Point(me.X, me.Y);
+            }
+
+            WantMousePositionReports = true;
+
+            Application.Top.Closed += (_) =>
+            {
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+                Application.RootMouseEvent -= Application_RootMouseEvent;
+            };
+
+
             var tabView = new TabView()
             {
                 X = 0,
                 Y = 0,
                 Width = Dim.Percent(50),
                 Height = Dim.Fill(),
+
             };
+
             var containersFrame = new FrameView("Containers")
             {
                 X = Pos.Right(tabView),
                 Y = 0,
                 Width = Dim.Percent(50),
                 Height = Dim.Percent(34),
+                Border = new Border
+                {
+                    BorderStyle = BorderStyle.Rounded,
+                    Effect3D = false,
+                    Title = "Containers"
+                }
             };
 
             var imagesFrame = new FrameView("Images")
@@ -59,7 +114,7 @@ namespace Whale.Views
                 X = Pos.Right(tabView),
                 Y = Pos.Bottom(imagesFrame),
                 Width = Dim.Percent(50),
-                Height = Dim.Percent(33),
+                Height = Dim.Percent(34),
             };
 
             var textContainers = new Label()
@@ -124,8 +179,9 @@ namespace Whale.Views
 
             // Tabs
             tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
-            tabView.AddTab(new TabView.Tab("Images", ImagesView()), false);
-            tabView.AddTab(new TabView.Tab("Interative Tab", GetInteractiveTab()), false);
+            tabView.AddTab(new TabView.Tab("Containers", new ContainerView()), false);
+            tabView.AddTab(new TabView.Tab("Images", new ImageView()), false);
+            tabView.AddTab(new TabView.Tab("Volumes", new ContainerView()), false);
             Add(tabView);
         }
 
@@ -143,80 +199,9 @@ namespace Whale.Views
                 Width = 60,
                 Height = 20,
             };
-            SetupDisco();
+            //SetupDisco();
             imagesView.Add(graphView);
             return imagesView;
-        }
-
-        //private async Task<View> ImagesView()
-        private View ImagesView()
-        {
-            var imagesView = new View()
-            {
-                Width = Dim.Fill(),
-                Height = Dim.Fill()
-            };
-            var imagesFrame = new FrameView("Images");
-
-            var text = new Label()
-            {
-                Text = "",
-            };
-            imagesFrame.Add(text);
-            imagesView.Add(imagesFrame);
-            imagesView.Add(text);
-
-            Application.MainLoop.Invoke(async () =>
-            {
-                var x = await ShellCommandRunner.RunCommandAsync("ping", "-n", "20", "wp.pl");
-                text.Text += x.Value.std;
-                Application.Refresh();
-            });
-
-            return imagesView;
-        }
-        static void OnOutputDataReceived(object sender, DataReceivedEventArgs e, StringBuilder sb)
-        {
-            // Append each line of output to the StringBuilder object
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                sb.AppendLine(e.Data);
-            }
-        }
-
-        private View GetInteractiveTab()
-        {
-
-            var interactiveTab = new View()
-            {
-                Width = Dim.Fill(),
-                Height = Dim.Fill()
-            };
-            var lblName = new Label("Name:");
-            interactiveTab.Add(lblName);
-
-            var tbName = new TextField()
-            {
-                X = Pos.Right(lblName),
-                Width = 10
-            };
-            interactiveTab.Add(tbName);
-
-            var lblAddr = new Label("Address:")
-            {
-                Y = 1
-            };
-            interactiveTab.Add(lblAddr);
-
-            var tbAddr = new TextField()
-            {
-                X = Pos.Right(lblAddr),
-                Y = 1,
-                Width = 10
-            };
-            interactiveTab.Add(tbAddr);
-
-            return interactiveTab;
         }
 
         private void SetupDisco()
@@ -260,6 +245,28 @@ namespace Whale.Views
             graphView.AxisY.Visible = false;
 
             graphView.SetNeedsDisplay();
+        }
+
+        private void ShowContextMenu(int x, int y)
+        {
+            contextMenu = new ContextMenu(x, y,
+                new MenuBarItem(new MenuItem[] {
+                    new MenuItem ("_Configuration", "Show configuration", () => MessageBox.Query (50, 5, "Info", "This would open settings dialog", "Ok")),
+                    new MenuBarItem ("More options", new MenuItem [] {
+                        new MenuItem ("_Setup", "Change settings", () => MessageBox.Query (50, 5, "Info", "This would open setup dialog", "Ok")),
+                        new MenuItem ("_Maintenance", "Maintenance mode", () => MessageBox.Query (50, 5, "Info", "This would open maintenance dialog", "Ok")),
+                    }),
+                    miUseSubMenusSingleFrame = new MenuItem ("Use_SubMenusSingleFrame", "",
+                        () => contextMenu.UseSubMenusSingleFrame = miUseSubMenusSingleFrame.Checked = useSubMenusSingleFrame = !useSubMenusSingleFrame) {
+                            CheckType = MenuItemCheckStyle.Checked, Checked = useSubMenusSingleFrame
+                        },
+                    null,
+                    new MenuItem ("_Quit", "", () => Application.RequestStop ())
+                })
+            )
+            { ForceMinimumPosToZero = forceMinimumPosToZero, UseSubMenusSingleFrame = useSubMenusSingleFrame };
+
+            contextMenu.Show();
         }
     }
 }

@@ -1,14 +1,28 @@
 ﻿using Terminal.Gui;
 using Whale.Views;
 
+var cellHighlight = new ColorScheme()
+{
+    Normal = Terminal.Gui.Attribute.Make(Color.BrightCyan, Color.DarkGray),
+    HotNormal = Terminal.Gui.Attribute.Make(Color.Green, Color.Blue),
+    HotFocus = Terminal.Gui.Attribute.Make(Color.BrightYellow, Color.White),
+    Focus = Terminal.Gui.Attribute.Make(Color.Cyan, Color.Magenta),
+};
+
+
+
 Application.Init();
 var top = Application.Top;
+Colors.Base.Normal = Application.Driver.MakeAttribute(Color.BrightBlue, Color.Black);
+// change theme of app to black one
+//top.ColorScheme = cellHighlight;
 top.Add(CreateMenuBar());
 //top.Add(await MainWindow.CreateAsync());
 top.Add(MainWindow.CreateAsync());
 Application.Refresh();
 Application.Run();
 Application.Shutdown();
+
 
 static MenuBar CreateMenuBar()
 {
