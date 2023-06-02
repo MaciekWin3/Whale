@@ -199,7 +199,7 @@ namespace Whale.Views
                 Width = 60,
                 Height = 20,
             };
-            //SetupDisco();
+            SetupDisco();
             imagesView.Add(graphView);
             return imagesView;
         }

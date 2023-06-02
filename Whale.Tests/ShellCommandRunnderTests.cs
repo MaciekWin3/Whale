@@ -25,6 +25,7 @@ namespace Whale.Tests
         }
 
         [Test]
+        [Platform("Win")]
         public async Task ShouldReturnCmdSuccess()
         {
             // Arrange
