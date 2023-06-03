@@ -8,6 +8,12 @@ namespace Whale.Views
         {
             Width = Dim.Fill();
             Height = Dim.Fill();
+            Border = new Border
+            {
+                BorderStyle = BorderStyle.Rounded,
+                Effect3D = false,
+                Title = "Whale Dashboard"
+            };
             InitView();
         }
 

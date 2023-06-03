@@ -11,11 +11,8 @@ namespace Whale.Views
     {
         GraphView graphView = null!;
         private ContextMenu contextMenu = new ContextMenu();
-        private readonly List<CultureInfo> cultureInfos = Application.SupportedCultures;
-        private MenuItem miForceMinimumPosToZero;
         private bool forceMinimumPosToZero = true;
-        private TextField tfTopLeft, tfTopRight, tfMiddle, tfBottomLeft, tfBottomRight;
-        private MenuItem miUseSubMenusSingleFrame;
+        private MenuItem miUseSubMenusSingleFrame = null!;
         private bool useSubMenusSingleFrame;
         protected MainWindow() : base("Whale Dashboard")
         {
@@ -92,7 +89,7 @@ namespace Whale.Views
                 X = Pos.Right(tabView),
                 Y = 0,
                 Width = Dim.Percent(50),
-                Height = Dim.Percent(34),
+                Height = Dim.Percent(35),
                 Border = new Border
                 {
                     BorderStyle = BorderStyle.Rounded,
@@ -106,7 +103,13 @@ namespace Whale.Views
                 X = Pos.Right(tabView),
                 Y = Pos.Bottom(containersFrame),
                 Width = Dim.Percent(50),
-                Height = Dim.Percent(33),
+                Height = Dim.Percent(35),
+                Border = new Border
+                {
+                    BorderStyle = BorderStyle.Rounded,
+                    Effect3D = false,
+                    Title = "Containers"
+                }
             };
 
             var volumesFrame = new FrameView("Volumes")
@@ -114,7 +117,13 @@ namespace Whale.Views
                 X = Pos.Right(tabView),
                 Y = Pos.Bottom(imagesFrame),
                 Width = Dim.Percent(50),
-                Height = Dim.Percent(34),
+                Height = Dim.Percent(35),
+                Border = new Border
+                {
+                    BorderStyle = BorderStyle.Rounded,
+                    Effect3D = false,
+                    Title = "Containers"
+                }
             };
 
             var textContainers = new Label()
@@ -212,7 +221,7 @@ namespace Whale.Views
 
             var stiple = new GraphCellToRender('\u2593');
 
-            Random r = new Random();
+            Random r = new();
             var series = new DiscoBarSeries();
             var bars = new List<BarSeries.Bar>();
             for (int i = 0; i < 31; i++)
@@ -223,7 +232,10 @@ namespace Whale.Views
             Func<MainLoop, bool> genSample = (l) =>
             {
                 bars.RemoveAt(0);
-                bars.Add(new BarSeries.Bar(null, stiple, CommandValidator.GetCpuUsageOfContainer("420")));
+                //Random random = new Random();
+                //int randomNumber = random.Next(1, 101);
+                int randomNumber = 10;
+                bars.Add(new BarSeries.Bar(null, stiple, randomNumber));
                 graphView.SetNeedsDisplay();
 
                 // while the equaliser is showing
@@ -250,17 +262,19 @@ namespace Whale.Views
         private void ShowContextMenu(int x, int y)
         {
             contextMenu = new ContextMenu(x, y,
-                new MenuBarItem(new MenuItem[] {
+                new MenuBarItem(new MenuItem[]
+                {
                     new MenuItem ("_Configuration", "Show configuration", () => MessageBox.Query (50, 5, "Info", "This would open settings dialog", "Ok")),
-                    new MenuBarItem ("More options", new MenuItem [] {
+                    new MenuBarItem ("More options", new MenuItem []
+                    {
                         new MenuItem ("_Setup", "Change settings", () => MessageBox.Query (50, 5, "Info", "This would open setup dialog", "Ok")),
                         new MenuItem ("_Maintenance", "Maintenance mode", () => MessageBox.Query (50, 5, "Info", "This would open maintenance dialog", "Ok")),
                     }),
-                    miUseSubMenusSingleFrame = new MenuItem ("Use_SubMenusSingleFrame", "",
+                        miUseSubMenusSingleFrame = new MenuItem ("Use_SubMenusSingleFrame", "",
                         () => contextMenu.UseSubMenusSingleFrame = miUseSubMenusSingleFrame.Checked = useSubMenusSingleFrame = !useSubMenusSingleFrame) {
                             CheckType = MenuItemCheckStyle.Checked, Checked = useSubMenusSingleFrame
                         },
-                    null,
+                    null!,
                     new MenuItem ("_Quit", "", () => Application.RequestStop ())
                 })
             )

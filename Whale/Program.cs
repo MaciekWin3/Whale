@@ -9,13 +9,9 @@ var cellHighlight = new ColorScheme()
     Focus = Terminal.Gui.Attribute.Make(Color.Cyan, Color.Magenta),
 };
 
-
-
 Application.Init();
 var top = Application.Top;
-Colors.Base.Normal = Application.Driver.MakeAttribute(Color.BrightBlue, Color.Black);
-// change theme of app to black one
-//top.ColorScheme = cellHighlight;
+Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Gray, Color.Blue);
 top.Add(CreateMenuBar());
 //top.Add(await MainWindow.CreateAsync());
 top.Add(MainWindow.CreateAsync());
