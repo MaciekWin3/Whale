@@ -28,8 +28,6 @@ namespace Whale.Tests.Services
                 547a330db120   hello-world   "/hello"   11 days ago   Exited (0) 11 days ago               nifty_banach
                 """;
 
-
-
             shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", "ps", "-a"))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 

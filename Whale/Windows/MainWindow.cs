@@ -16,7 +16,7 @@ namespace Whale.Windows
         private MenuItem miUseSubMenusSingleFrame = null!;
         private bool useSubMenusSingleFrame;
         private ShellCommandRunner shellCommandRunner;
-        private DockerService dockerService;
+        private readonly IDockerService dockerService;
         protected MainWindow() : base("Whale Dashboard")
         {
             X = 0;

@@ -1,12 +1,16 @@
-﻿using NStack;
-using Terminal.Gui;
+﻿using Terminal.Gui;
+using Whale.Models;
+using Whale.Services;
+using Whale.Utils;
 
 namespace Whale.Windows
 {
     public class ImageWindow : Window
     {
         readonly Action<int, int> showContextMenu;
-        public ImageWindow(Action<int, int> showContextMenu)
+        private ShellCommandRunner shellCommandRunner = new();
+        private readonly IDockerService dockerService = new DockerService(new ShellCommandRunner());
+        public ImageWindow(Action<int, int> showContextMenu) : base()
         {
             Width = Dim.Fill();
             Height = Dim.Fill();
@@ -18,27 +22,32 @@ namespace Whale.Windows
             InitView();
         }
 
-        public void InitView()
+        public async void InitView()
         {
-            var items = new List<ustring>()
+            var items = new List<string>()
             {
-                "aaaa",
-                "bbb",
-                "Item1",
-                "Item2",
-                "Item3",
-                "xxx"
             };
+
+            Result<List<Container>> images;
 
             var listview = new ListView(items)
             {
                 X = 0,
                 Y = 0,
                 Height = Dim.Fill(2),
-                Width = Dim.Percent(20),
+                Width = Dim.Percent(40),
                 AllowsMarking = false,
                 AllowsMultipleSelection = false,
             };
+
+            Application.MainLoop.Invoke(async () =>
+            {
+                images = await dockerService.GetContainerListAsync();
+                var cont = images.Value?.Select(x => x.Id.ToString()).ToList();
+                listview.RemoveAll();
+                listview.SetSource(cont);
+                Application.Refresh();
+            });
 
             listview.KeyDown += (KeyEventEventArgs e) =>
             {

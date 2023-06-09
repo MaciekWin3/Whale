@@ -1,9 +1,12 @@
 ﻿using Terminal.Gui;
+using Whale.Services;
 
 namespace Whale.Windows
 {
     public class ContainerWindow : Window
     {
+        private ShellCommandRunner shellCommandRunner;
+        private readonly IDockerService dockerService;
         public ContainerWindow()
         {
             Width = Dim.Fill();
@@ -13,6 +16,8 @@ namespace Whale.Windows
                 BorderStyle = BorderStyle.None,
             };
             InitView();
+            shellCommandRunner = new ShellCommandRunner();
+            dockerService = new DockerService(shellCommandRunner);
         }
 
         public void InitView()
