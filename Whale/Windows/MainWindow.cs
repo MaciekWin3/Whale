@@ -200,6 +200,10 @@ namespace Whale.Windows
             tabView.AddTab(new TabView.Tab("Containers", new ContainerWindow()), false);
             tabView.AddTab(new TabView.Tab("Images", new ImageWindow(ShowContextMenu)), false);
             tabView.AddTab(new TabView.Tab("Volumes", new VolumeWindow(ShowContextMenu)), false);
+            // could you write me code that will capture event of swithc tabs and refresh data
+            // I want tabs to be initialized every time user changes tab
+
+
             // write me a code that will capture event of swithc tabs and refresh data
             tabView.SelectedTabChanged += (a, e) =>
             {

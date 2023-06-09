@@ -9,6 +9,7 @@ namespace Whale.Windows
     public class VolumeWindow : Window
     {
         readonly Action<int, int> showContextMenu;
+        private readonly ShellCommandRunner shellCommandRunner = new ShellCommandRunner();
         private readonly IDockerService dockerService =
             new DockerService(new ShellCommandRunner());
         public VolumeWindow(Action<int, int> showContextMenu) : base()
@@ -25,9 +26,7 @@ namespace Whale.Windows
 
         public void InitView()
         {
-            var items = new List<string>()
-            {
-            };
+            var items = new List<string>() { };
 
             Result<List<VolumeDTO>> images;
 
@@ -43,12 +42,31 @@ namespace Whale.Windows
 
             Application.MainLoop.Invoke(async () =>
             {
-                images = await dockerService.GetVolumeListAsync();
-                var cont = images.Value?.Select(x => x.Name.ToString()).ToList();
-                listview.RemoveAll();
-                listview.SetSource(cont);
-                Application.Refresh();
+                string cache = "";
+                while (true)
+                {
+                    Result<(string std, string error)> result = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
+                    if (result.IsSuccess)
+                    {
+                        if (cache != result.Value.std)
+                        {
+                            cache = result.Value.std;
+                            images = await dockerService.GetVolumeListAsync();
+                            var cont = images.Value?.Select(x => x.Name.ToString()).ToList();
+                            listview.RemoveAll();
+                            listview.SetSource(cont);
+                        }
+                        else
+                        {
+                            cache = result.Value.std;
+                        }
+                    }
+                }
             });
+
+            //Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), genSample);
+            // Hi i want to refresh app every two seconds
+            // var timer = new Timer(TimeSpan.FromSeconds(2));
 
             listview.KeyDown += (KeyEventEventArgs e) =>
             {

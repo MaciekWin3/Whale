@@ -21,6 +21,12 @@ var host = Host.CreateDefaultBuilder()
         services.AddTransient<IDockerService, DockerService>();
         services.AddTransient<IShellCommandRunner, ShellCommandRunner>();
 
+        // Windows
+        services.AddTransient<MainWindow>();
+        services.AddTransient<ContainerWindow>();
+        services.AddTransient<ImageWindow>();
+        services.AddTransient<VolumeWindow>();
+
         //        // services.AddLogging(builder =>
         //        // {
         //        //     builder
