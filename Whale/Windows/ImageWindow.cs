@@ -1,5 +1,6 @@
 ﻿using Terminal.Gui;
 using Whale.Models;
+using Whale.Objects.Volume;
 using Whale.Services;
 using Whale.Utils;
 
@@ -8,8 +9,8 @@ namespace Whale.Windows
     public class ImageWindow : Window
     {
         readonly Action<int, int> showContextMenu;
-        private ShellCommandRunner shellCommandRunner = new();
-        private readonly IDockerService dockerService = new DockerService(new ShellCommandRunner());
+        private readonly IDockerService dockerService =
+            new DockerService(new ShellCommandRunner());
         public ImageWindow(Action<int, int> showContextMenu) : base()
         {
             Width = Dim.Fill();
@@ -28,7 +29,7 @@ namespace Whale.Windows
             {
             };
 
-            Result<List<Container>> images;
+            Result<List<ContainerDTO>> images;
 
             var listview = new ListView(items)
             {
@@ -62,12 +63,12 @@ namespace Whale.Windows
                 }
             };
             //listview.SelectedItemChanged += (ListViewItemEventArgs e) => lbListView.Text = items[listview.SelectedItem];
-            listview.OpenSelectedItem += (ListViewItemEventArgs e) =>
+            listview.OpenSelectedItem += async (ListViewItemEventArgs e) =>
             {
-                if (e.Value.ToString() == "bbb")
-                {
-                    MessageBox.Query(50, 7, "Error", "Error message", "Ok");
-                }
+                //if (e.Value.ToString() == "bbb")
+                var name = e.Value.ToString();
+                var x = await dockerService.GetDockerObjectInfoAsync<Volume>("rosemary");
+                MessageBox.Query(50, 7, name, x.Value.Mountpoint.ToString(), "Ok");
             };
             Add(listview);
         }

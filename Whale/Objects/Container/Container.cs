@@ -1,11 +1,11 @@
 ﻿namespace Whale.Objects.Container
 {
-    public class Container
+    public class Container : DockerObject
     {
         public string? Id { get; set; }
         public string? Created { get; set; }
         public string? Path { get; set; }
-        public object[] Args { get; set; }
+        public object[]? Args { get; set; }
         public State? State { get; set; }
         public string? Image { get; set; }
         public string? ResolvConfPath { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Whale.Objects.Volume
 {
-    public class Volume
+    public class Volume : DockerObject
     {
         public DateTime? CreatedAt { get; set; }
         public string? Driver { get; set; }

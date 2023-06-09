@@ -1,6 +1,6 @@
 ﻿namespace Whale.Models
 {
-    public class Volume
+    public class VolumeDTO
     {
     }
 }

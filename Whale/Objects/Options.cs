@@ -1,4 +1,4 @@
-﻿namespace Whale.Objects.Volume
+﻿namespace Whale.Objects
 {
     public class Options
     {

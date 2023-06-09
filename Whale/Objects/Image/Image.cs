@@ -1,8 +1,8 @@
 ﻿namespace Whale.Objects.Image
 {
-    public class Image
+    public class Image : DockerObject
     {
-        public required string Id { get; set; }
+        public string Id { get; set; }
         public string[]? RepoTags { get; set; }
         public string[]? RepoDigests { get; set; }
         public string? Parent { get; set; }

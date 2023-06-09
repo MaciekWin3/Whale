@@ -1,6 +1,6 @@
 ﻿namespace Whale.Models
 {
-    public class Status
+    public class StatusDTO
     {
         public required string State { get; set; }
     }

@@ -1,4 +1,10 @@
-﻿using Whale.Models;
+﻿using System.Text.Json;
+using Whale.Models;
+using Whale.Objects;
+using Whale.Objects.Container;
+using Whale.Objects.Image;
+using Whale.Objects.Network;
+using Whale.Objects.Volume;
 using Whale.Utils;
 
 namespace Whale.Services
@@ -15,7 +21,7 @@ namespace Whale.Services
             this.shellCommandRunner = shellCommandRunner;
         }
 
-        public async Task<Result<List<Container>>> GetContainerListAsync()
+        public async Task<Result<List<ContainerDTO>>> GetContainerListAsync()
         {
             var result = await shellCommandRunner.RunCommandAsync("docker", "ps", "-a");
             if (result.IsSuccess)
@@ -25,9 +31,9 @@ namespace Whale.Services
                     var containers = MapCommandToContainerList(result.Value.std);
                     return containers;
                 }
-                return Result.Fail<List<Container>>("No containers found");
+                return Result.Fail<List<ContainerDTO>>("No containers found");
             }
-            return Result.Fail<List<Container>>("Command failed");
+            return Result.Fail<List<ContainerDTO>>("Command failed");
         }
 
         public async Task<Result<List<string>>> GetImageListAsync()
@@ -53,6 +59,38 @@ namespace Whale.Services
             return Result.Fail<List<string>>("Command failed");
         }
 
+        public async Task<Result<T>> GetDockerObjectInfoAsync<T>(string id)
+        {
+            var result = await shellCommandRunner
+                .RunCommandAsync("docker", "inspect", id);
+
+            if (result.IsFailure)
+            {
+                return Result.Fail<T>("Command failed");
+            }
+
+            //string jsonString = JsonSerializer.Serialize(result.Value.std);
+            JsonElement x = JsonDocument.Parse(result.Value.std, new JsonDocumentOptions
+            {
+                AllowTrailingCommas = true
+            }).RootElement;
+
+            JsonElement firstElement = x
+                .EnumerateArray()
+                .FirstOrDefault();
+
+            return Result.Ok(JsonSerializer.Deserialize<T>(firstElement));
+        }
+
+        public Type GetDockerObject(DockerObjectType type) => type switch
+        {
+            DockerObjectType.Container => typeof(Container),
+            DockerObjectType.Image => typeof(Image),
+            DockerObjectType.Network => typeof(Network),
+            DockerObjectType.Volume => typeof(Volume),
+            _ => throw new NotImplementedException(),
+        };
+
         private List<string> PrepareOutput(string output)
         {
             var lines = output
@@ -65,28 +103,29 @@ namespace Whale.Services
             return lines;
         }
 
-        private Result<List<Container>> MapCommandToContainerList(string output)
+        private Result<List<ContainerDTO>> MapCommandToContainerList(string output)
         {
             var lines = PrepareOutput(output);
-            var containers = new List<Container>();
+            var containers = new List<ContainerDTO>();
             foreach (var line in lines)
             {
                 var values = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                containers.Add(new Container()
+                containers.Add(new ContainerDTO()
                 {
                     Id = values[0],
-                    Image = new Image() { Name = values[1] },
+                    //Image = new Image() { Name = values[1] },
                     Command = values[2],
-                    CreatedDate = DateTime.Now,
-                    //Id = line.Split(" ")[0],
-                    //Image = new Image() { Name = line.Split(" ")[1] },
-                    //Command = line.Split(" ")[2],
-                    //CreatedDate = DateTime.Parse(line.Split(" ")[3]),
-                    //Status = new Status() { State = line.Split(" ")[4] },
+                    //CreatedDate = DateTime.Now,
                 });
             }
             return Result.Ok(containers);
         }
     }
+}
+
+
+public class Rootobject
+{
+    public Volume[] Property1 { get; set; }
 }
