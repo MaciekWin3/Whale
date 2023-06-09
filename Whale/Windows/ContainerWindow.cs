@@ -2,7 +2,7 @@
 
 namespace Whale.Windows
 {
-    public class ContainerWindow : View
+    public class ContainerWindow : Window
     {
         public ContainerWindow()
         {
