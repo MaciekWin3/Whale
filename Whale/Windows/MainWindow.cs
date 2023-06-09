@@ -4,16 +4,19 @@ using System.Globalization;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using Whale.Components;
+using Whale.Services;
 
 namespace Whale.Windows
 {
     public class MainWindow : Window
     {
         GraphView graphView = null!;
-        private ContextMenu contextMenu = new ContextMenu();
+        private ContextMenu contextMenu = new();
         private bool forceMinimumPosToZero = true;
         private MenuItem miUseSubMenusSingleFrame = null!;
         private bool useSubMenusSingleFrame;
+        private ShellCommandRunner shellCommandRunner;
+        private DockerService dockerService;
         protected MainWindow() : base("Whale Dashboard")
         {
             X = 0;
@@ -26,6 +29,8 @@ namespace Whale.Windows
                 Effect3D = false,
                 Title = "Whale Dashboard"
             };
+            shellCommandRunner = new ShellCommandRunner();
+            dockerService = new DockerService(shellCommandRunner);
         }
 
         //public static async Task<Window> CreateAsync()
@@ -155,10 +160,10 @@ namespace Whale.Windows
 
             Application.MainLoop.Invoke(async () =>
             {
-                var x = await ShellCommandRunner.RunCommandAsync("docker", "image", "ls");
+                var x = await shellCommandRunner.RunCommandAsync("docker", "image", "ls");
                 textImages.Text = x.Value.std;
                 //var y = await ShellCommandRunner.RunCommandAsync("docker", "container", "ls");
-                var z = await ShellCommandRunner.RunCommandAsync("docker", "volume", "ls");
+                var z = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
                 textVolumes.Text = z.Value.std;
                 //Application.Refresh();
             });
@@ -203,7 +208,7 @@ namespace Whale.Windows
                     textContainers.Text = "Loading...";
                     Application.MainLoop.Invoke(async () =>
                     {
-                        var x = await ShellCommandRunner.RunCommandAsync("docker", "container", "ls");
+                        var x = await shellCommandRunner.RunCommandAsync("docker", "container", "ls");
                         textContainers.Text = x.Value.std;
                     });
                 }
@@ -212,7 +217,7 @@ namespace Whale.Windows
                     textImages.Text = "Loading...";
                     Application.MainLoop.Invoke(async () =>
                     {
-                        var x = await ShellCommandRunner.RunCommandAsync("docker", "image", "ls");
+                        var x = await shellCommandRunner.RunCommandAsync("docker", "image", "ls");
                         textImages.Text = x.Value.std;
                     });
                 }

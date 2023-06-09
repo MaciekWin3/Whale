@@ -1,5 +1,8 @@
-﻿using NStack;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NStack;
 using Terminal.Gui;
+using Whale.Services;
 using Whale.Windows;
 
 var cellHighlight = new ColorScheme()
@@ -9,6 +12,22 @@ var cellHighlight = new ColorScheme()
     HotFocus = Terminal.Gui.Attribute.Make(Color.BrightYellow, Color.White),
     Focus = Terminal.Gui.Attribute.Make(Color.Cyan, Color.Magenta),
 };
+
+//var builder = new ConfigurationBuilder();
+var host = Host.CreateDefaultBuilder()
+    .ConfigureServices((context, services) =>
+    {
+        // Services
+        services.AddTransient<IDockerService, DockerService>();
+        services.AddTransient<IShellCommandRunner, ShellCommandRunner>();
+
+        //        // services.AddLogging(builder =>
+        //        // {
+        //        //     builder
+        //        //}
+    })
+    .Build();
+
 
 Application.Init();
 var top = Application.Top;

@@ -2,11 +2,22 @@
 
 namespace Whale.Services
 {
-    public class DockerService
+    public class DockerService : IDockerService
     {
+        private readonly IShellCommandRunner shellCommandRunner;
+        public DockerService(IShellCommandRunner shellCommandRunner)
+        {
+            this.shellCommandRunner = shellCommandRunner;
+        }
+        public DockerService(ShellCommandRunner shellCommandRunner)
+        {
+            this.shellCommandRunner = shellCommandRunner;
+        }
+
+
         public async Task<Result<List<string>>> GetContainerListAsync()
         {
-            var result = await ShellCommandRunner.RunCommandAsync("docker", "ps", "-a");
+            var result = await shellCommandRunner.RunCommandAsync("docker", "ps", "-a");
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)

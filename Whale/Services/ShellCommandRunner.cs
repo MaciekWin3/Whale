@@ -2,11 +2,11 @@
 using System.Text;
 using Whale.Utils;
 
-namespace Whale
+namespace Whale.Services
 {
-    public static class ShellCommandRunner
+    public class ShellCommandRunner : IShellCommandRunner
     {
-        public static async Task<Result<(string std, string error)>> RunCommandAsync(string command, params string[] arguments)
+        public async Task<Result<(string std, string error)>> RunCommandAsync(string command, params string[] arguments)
         {
             var stdOut = new StringBuilder();
             var stdErr = new StringBuilder();

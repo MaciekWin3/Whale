@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using Whale.Services;
 
-namespace Whale.Tests
+namespace Whale.Tests.Services
 {
     [TestFixture]
     public class ShellCommandRunnderTests
@@ -14,7 +15,8 @@ namespace Whale.Tests
             var arguments = new[] { "--info" };
 
             // Act
-            var result = await ShellCommandRunner.RunCommandAsync(command, arguments);
+            var service = CreateShellCommandRunner();
+            var result = await service.RunCommandAsync(command, arguments);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
@@ -33,7 +35,8 @@ namespace Whale.Tests
             var arguments = new[] { "/C", "echo", "hello" };
 
             // Act
-            var result = await ShellCommandRunner.RunCommandAsync(command, arguments);
+            var service = CreateShellCommandRunner();
+            var result = await service.RunCommandAsync(command, arguments);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
@@ -41,6 +44,11 @@ namespace Whale.Tests
                 .Trim()
                 .Should()
                 .Be("hello");
+        }
+
+        private ShellCommandRunner CreateShellCommandRunner()
+        {
+            return new ShellCommandRunner();
         }
     }
 }
