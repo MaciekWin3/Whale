@@ -53,20 +53,37 @@ namespace Whale.Services
             return Result.Fail<List<string>>("Command failed");
         }
 
+        private List<string> PrepareOutput(string output)
+        {
+            var lines = output
+                .Trim()
+                .Split("\n")
+                .ToList();
+
+            lines.RemoveAt(0);
+
+            return lines;
+        }
+
         private Result<List<Container>> MapCommandToContainerList(string output)
         {
-            var lines = output.Trim().Split("\n").ToList();
-            lines.RemoveAt(0);
+            var lines = PrepareOutput(output);
             var containers = new List<Container>();
             foreach (var line in lines)
             {
+                var values = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
                 containers.Add(new Container()
                 {
-                    Id = line.Split(" ")[0],
-                    Image = new Image() { Name = line.Split(" ")[1] },
-                    Command = line.Split(" ")[2],
+                    Id = values[0],
+                    Image = new Image() { Name = values[1] },
+                    Command = values[2],
+                    CreatedDate = DateTime.Now,
+                    //Id = line.Split(" ")[0],
+                    //Image = new Image() { Name = line.Split(" ")[1] },
+                    //Command = line.Split(" ")[2],
                     //CreatedDate = DateTime.Parse(line.Split(" ")[3]),
-                    Status = new Status() { State = line.Split(" ")[4] },
+                    //Status = new Status() { State = line.Split(" ")[4] },
                 });
             }
             return Result.Ok(containers);
