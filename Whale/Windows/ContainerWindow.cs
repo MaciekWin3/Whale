@@ -1,18 +1,16 @@
 ﻿using Terminal.Gui;
 
-namespace Whale.Views
+namespace Whale.Windows
 {
-    public class ContainerView : View
+    public class ContainerWindow : View
     {
-        public ContainerView()
+        public ContainerWindow()
         {
             Width = Dim.Fill();
             Height = Dim.Fill();
             Border = new Border
             {
-                BorderStyle = BorderStyle.Rounded,
-                Effect3D = false,
-                Title = "Whale Dashboard"
+                BorderStyle = BorderStyle.None,
             };
             InitView();
         }

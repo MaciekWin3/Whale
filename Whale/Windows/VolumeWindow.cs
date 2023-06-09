@@ -1,18 +1,16 @@
 ﻿using Terminal.Gui;
 
-namespace Whale.Views
+namespace Whale.Windows
 {
-    public class VolumeView : View
+    public class VolumeWindow : Window
     {
-        public VolumeView()
+        public VolumeWindow()
         {
             Height = Dim.Fill();
             Width = Dim.Fill();
             Border = new Border
             {
-                BorderStyle = BorderStyle.Rounded,
-                Effect3D = false,
-                Title = "Whale Dashboard"
+                BorderStyle = BorderStyle.None,
             };
             InitView();
         }

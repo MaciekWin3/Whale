@@ -5,7 +5,7 @@ using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using Whale.Components;
 
-namespace Whale.Views
+namespace Whale.Windows
 {
     public class MainWindow : Window
     {
@@ -38,7 +38,7 @@ namespace Whale.Views
             return window;
         }
 
-        public void InitWindow()
+        public void ConfigureContextMenu()
         {
             Point mousePos = default;
 
@@ -73,7 +73,11 @@ namespace Whale.Views
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
                 Application.RootMouseEvent -= Application_RootMouseEvent;
             };
+        }
 
+        public void InitWindow()
+        {
+            ConfigureContextMenu();
 
             var tabView = new TabView()
             {
@@ -187,10 +191,46 @@ namespace Whale.Views
 
 
             // Tabs
-            tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
-            tabView.AddTab(new TabView.Tab("Containers", new ContainerView()), false);
-            tabView.AddTab(new TabView.Tab("Images", new ImageView()), false);
-            tabView.AddTab(new TabView.Tab("Volumes", new ContainerView()), false);
+            //tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
+            tabView.AddTab(new TabView.Tab("Containers", new ContainerWindow()), false);
+            tabView.AddTab(new TabView.Tab("Images", new ImageWindow(ShowContextMenu)), false);
+            tabView.AddTab(new TabView.Tab("Volumes", new ContainerWindow()), false);
+            // write me a code that will capture event of swithc tabs and refresh data
+            tabView.SelectedTabChanged += (a, e) =>
+            {
+                if (e.NewTab.Text == "Containers")
+                {
+                    textContainers.Text = "Loading...";
+                    Application.MainLoop.Invoke(async () =>
+                    {
+                        var x = await ShellCommandRunner.RunCommandAsync("docker", "container", "ls");
+                        textContainers.Text = x.Value.std;
+                    });
+                }
+                else if (e.NewTab.Text == "Images")
+                {
+                    textImages.Text = "Loading...";
+                    Application.MainLoop.Invoke(async () =>
+                    {
+                        var x = await ShellCommandRunner.RunCommandAsync("docker", "image", "ls");
+                        textImages.Text = x.Value.std;
+                    });
+                }
+                else if (e.NewTab.Text == "Volumes")
+                {
+                    textVolumes.Text = "Loading...";
+                    Application.MainLoop.Invoke(async () =>
+                    {
+                        //var x = await ShellCommandRunner.RunCommandAsync("docker", "volume", "ls");
+                        //textVolumes.Text = x.Value.std;
+                        var x = "Fun word";
+                        textVolumes.Text = x;
+                    });
+                }
+            };
+            tabView.Style.ShowBorder = true;
+            tabView.ApplyStyleChanges();
+
             Add(tabView);
         }
 
