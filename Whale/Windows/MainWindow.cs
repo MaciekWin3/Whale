@@ -199,7 +199,7 @@ namespace Whale.Windows
             //tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
             tabView.AddTab(new TabView.Tab("Containers", new ContainerWindow()), false);
             tabView.AddTab(new TabView.Tab("Images", new ImageWindow(ShowContextMenu)), false);
-            tabView.AddTab(new TabView.Tab("Volumes", new ContainerWindow()), false);
+            tabView.AddTab(new TabView.Tab("Volumes", new VolumeWindow(ShowContextMenu)), false);
             // write me a code that will capture event of swithc tabs and refresh data
             tabView.SelectedTabChanged += (a, e) =>
             {
