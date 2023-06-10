@@ -1,5 +1,6 @@
 ﻿using Terminal.Gui;
 using Whale.Models;
+using Whale.Objects.Container;
 using Whale.Objects.Volume;
 using Whale.Services;
 using Whale.Utils;
@@ -9,7 +10,7 @@ namespace Whale.Windows
     public class VolumeWindow : Window
     {
         readonly Action<int, int> showContextMenu;
-        private readonly ShellCommandRunner shellCommandRunner = new ShellCommandRunner();
+        private readonly ShellCommandRunner shellCommandRunner = new();
         private readonly IDockerService dockerService =
             new DockerService(new ShellCommandRunner());
         public VolumeWindow(Action<int, int> showContextMenu) : base()
@@ -40,33 +41,32 @@ namespace Whale.Windows
                 AllowsMultipleSelection = false,
             };
 
+            // Listener
             Application.MainLoop.Invoke(async () =>
             {
-                string cache = "";
+                string cache = string.Empty;
                 while (true)
                 {
-                    Result<(string std, string error)> result = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
-                    if (result.IsSuccess)
+                    Result<(string std, string error)> result
+                        = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
+                    if (!result.IsSuccess)
                     {
-                        if (cache != result.Value.std)
-                        {
-                            cache = result.Value.std;
-                            images = await dockerService.GetVolumeListAsync();
-                            var cont = images.Value?.Select(x => x.Name.ToString()).ToList();
-                            listview.RemoveAll();
-                            listview.SetSource(cont);
-                        }
-                        else
-                        {
-                            cache = result.Value.std;
-                        }
+                        continue;
+                    }
+                    if (cache != result.Value.std)
+                    {
+                        cache = result.Value.std;
+                        images = await dockerService.GetVolumeListAsync();
+                        var cont = images.Value?.Select(x => x.Name.ToString()).ToList();
+                        listview.RemoveAll();
+                        listview.SetSource(cont);
+                    }
+                    else
+                    {
+                        cache = result.Value.std;
                     }
                 }
             });
-
-            //Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), genSample);
-            // Hi i want to refresh app every two seconds
-            // var timer = new Timer(TimeSpan.FromSeconds(2));
 
             listview.KeyDown += (KeyEventEventArgs e) =>
             {
@@ -79,7 +79,14 @@ namespace Whale.Windows
             {
                 var name = e.Value.ToString();
                 var x = await dockerService.GetDockerObjectInfoAsync<Volume>(name);
-                MessageBox.Query(50, 7, name, x.Value.Mountpoint.ToString(), "Ok");
+                var z = await dockerService.GetDockerObjectInfoAsync<Container>("a6e319bfe8b7");
+                MessageBox.Query(50, 7, name,
+                    $"""
+                     Name: {x?.Value?.Name}
+                     Mountpoint: {x?.Value?.Mountpoint}
+                     Driver: {x?.Value?.Driver}
+                     """,
+                    "Ok");
             };
             Add(listview);
         }

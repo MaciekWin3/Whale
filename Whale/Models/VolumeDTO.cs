@@ -2,7 +2,7 @@
 {
     public class VolumeDTO
     {
-        public string? Name { get; set; }
+        public required string Name { get; set; }
         public string? Driver { get; set; }
     }
 }

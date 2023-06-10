@@ -23,7 +23,7 @@ namespace Whale.Windows
             InitView();
         }
 
-        public async void InitView()
+        public void InitView()
         {
             var items = new List<string>()
             {
@@ -68,7 +68,7 @@ namespace Whale.Windows
                 //if (e.Value.ToString() == "bbb")
                 var name = e.Value.ToString();
                 var x = await dockerService.GetDockerObjectInfoAsync<Volume>("rosemary");
-                MessageBox.Query(50, 7, name, x.Value.Mountpoint.ToString(), "Ok");
+                MessageBox.Query(50, 7, name, x?.Value?.Mountpoint?.ToString(), "Ok");
             };
             Add(listview);
         }
