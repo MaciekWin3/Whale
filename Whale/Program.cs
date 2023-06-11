@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using NStack;
+﻿using NStack;
 using Terminal.Gui;
-using Whale.Services;
+using Whale.Components;
 using Whale.Windows;
 
 var cellHighlight = new ColorScheme()
@@ -14,32 +12,13 @@ var cellHighlight = new ColorScheme()
 };
 
 //var builder = new ConfigurationBuilder();
-var host = Host.CreateDefaultBuilder()
-    .ConfigureServices((context, services) =>
-    {
-        // Services
-        services.AddTransient<IDockerService, DockerService>();
-        services.AddTransient<IShellCommandRunner, ShellCommandRunner>();
-
-        // Windows
-        services.AddTransient<MainWindow>();
-        services.AddTransient<ContainerWindow>();
-        services.AddTransient<ImageWindow>();
-        services.AddTransient<VolumeWindow>();
-
-        //        // services.AddLogging(builder =>
-        //        // {
-        //        //     builder
-        //        //}
-    })
-    .Build();
-
 
 Application.Init();
 var top = Application.Top;
 //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Gray, Color.Blue);
 Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightBlue);
-top.Add(CreateMenuBar());
+//top.Add(CreateMenuBar());
+top.Add(MenuBarX.CreateMenuBar());
 //top.Add(await MainWindow.CreateAsync());
 top.Add(MainWindow.CreateAsync());
 //TestView();
@@ -55,7 +34,8 @@ static MenuBar CreateMenuBar()
         {
             new MenuItem("Open", "Open file", () => Application.RequestStop(), null, null, Key.CtrlMask | Key.C),
             new MenuItem("Update", "Update App", () => Application.RequestStop(), null, null, Key.CtrlMask | Key.C),
-            new MenuItem("Quit", "Quit App", () => Application.RequestStop(), null, null, Key.CtrlMask | Key.C)
+            new MenuItem("Quit", "Quit App", () => Application.RequestStop(), null, null, Key.CtrlMask | Key.C),
+
         })
     });
 }

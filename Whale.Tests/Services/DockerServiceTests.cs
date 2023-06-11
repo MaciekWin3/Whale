@@ -18,7 +18,7 @@ namespace Whale.Tests.Services
         }
 
         [Test]
-        public async Task GetContainerListAsync_WhenCalled_ReturnsListOfContainers()
+        public async Task GetContainerListAsyncWhenCalledReturnsListOfContainers()
         {
             // Arrange
             var std =
@@ -37,6 +37,24 @@ namespace Whale.Tests.Services
 
             // Assert
             result.IsSuccess.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task GetContainerListAsyncWhenCalledReturnsError()
+        {
+            // Arrange
+            var std = "Command failed";
+
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", "ps", "-a"))
+                .ReturnsAsync(Result.Fail<(string std, string err)>(std));
+
+            // Act
+            var service = CreateDockerService();
+            var result = await service.GetContainerListAsync();
+
+            // Assert
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be(std);
         }
 
         private DockerService CreateDockerService()

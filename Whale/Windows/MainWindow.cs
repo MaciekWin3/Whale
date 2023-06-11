@@ -1,6 +1,4 @@
-﻿using CliWrap;
-using CliWrap.EventStream;
-using System.Globalization;
+﻿using System.Globalization;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using Whale.Components;
@@ -12,7 +10,6 @@ namespace Whale.Windows
     {
         GraphView graphView = null!;
         private ContextMenu contextMenu = new();
-        private bool forceMinimumPosToZero = true;
         private MenuItem miUseSubMenusSingleFrame = null!;
         private bool useSubMenusSingleFrame;
         private ShellCommandRunner shellCommandRunner;
@@ -88,7 +85,7 @@ namespace Whale.Windows
             {
                 X = 0,
                 Y = 0,
-                Width = Dim.Percent(50),
+                Width = Dim.Percent(30),
                 Height = Dim.Fill(),
 
             };
@@ -97,8 +94,8 @@ namespace Whale.Windows
             {
                 X = Pos.Right(tabView),
                 Y = 0,
-                Width = Dim.Percent(50),
-                Height = Dim.Percent(35),
+                Width = Dim.Percent(70),
+                Height = Dim.Percent(100),
                 Border = new Border
                 {
                     BorderStyle = BorderStyle.Rounded,
@@ -111,7 +108,7 @@ namespace Whale.Windows
             {
                 X = Pos.Right(tabView),
                 Y = Pos.Bottom(containersFrame),
-                Width = Dim.Percent(50),
+                Width = Dim.Percent(70),
                 Height = Dim.Percent(35),
                 Border = new Border
                 {
@@ -125,7 +122,7 @@ namespace Whale.Windows
             {
                 X = Pos.Right(tabView),
                 Y = Pos.Bottom(imagesFrame),
-                Width = Dim.Percent(50),
+                Width = Dim.Percent(70),
                 Height = Dim.Percent(35),
                 Border = new Border
                 {
@@ -150,49 +147,25 @@ namespace Whale.Windows
                 Text = "Loading..."
             };
 
-            imagesFrame.Add(textImages);
-            Add(imagesFrame);
+            //imagesFrame.Add(textImages);
+            //Add(imagesFrame);
             containersFrame.Add(textContainers);
             Add(containersFrame);
-            volumesFrame.Add(textVolumes);
-            Add(volumesFrame);
+            //volumesFrame.Add(textVolumes);
+            //Add(volumesFrame);
 
 
             Application.MainLoop.Invoke(async () =>
             {
                 var x = await shellCommandRunner.RunCommandAsync("docker", "image", "ls");
                 textImages.Text = x.Value.std;
-                //var y = await ShellCommandRunner.RunCommandAsync("docker", "container", "ls");
                 var z = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
                 textVolumes.Text = z.Value.std;
-                //Application.Refresh();
+                var y = await shellCommandRunner.RunCommandAsync("cmd", "/C", "echo", "TEst");
+                textContainers.Text = y.Value.std;
             });
 
-            Application.MainLoop.Invoke(async () =>
-            {
-                var cmd = Cli.Wrap("ping").WithArguments("wp.pl");
-                await foreach (var cmdEvent in cmd.ListenAsync())
-                {
-                    switch (cmdEvent)
-                    {
-                        case StartedCommandEvent started:
-                            //_output.WriteLine($"Process started; ID: {started.ProcessId}");
-                            textVolumes.Clear();
-                            break;
-                        case StandardOutputCommandEvent stdOut:
-                            //_output.WriteLine($"Out> {stdOut.Text}");
-                            textVolumes.Text += $"{stdOut.Text}\n";
-                            break;
-                        case StandardErrorCommandEvent stdErr:
-                            //_output.WriteLine($"Err> {stdErr.Text}");
-                            break;
-                        case ExitedCommandEvent exited:
-                            //_output.WriteLine($"Process exited; Code: {exited.ExitCode}");
-                            break;
-                    }
-                }
-                //Application.Refresh();
-            });
+
 
 
             // Tabs
@@ -200,11 +173,7 @@ namespace Whale.Windows
             tabView.AddTab(new TabView.Tab("Containers", new ContainerWindow(ShowContextMenu)), false);
             tabView.AddTab(new TabView.Tab("Images", new ImageWindow(ShowContextMenu)), false);
             tabView.AddTab(new TabView.Tab("Volumes", new VolumeWindow(ShowContextMenu)), false);
-            // could you write me code that will capture event of swithc tabs and refresh data
-            // I want tabs to be initialized every time user changes tab
 
-
-            // write me a code that will capture event of swithc tabs and refresh data
             tabView.SelectedTabChanged += (a, e) =>
             {
                 if (e.NewTab.Text == "Containers")
@@ -230,10 +199,8 @@ namespace Whale.Windows
                     textVolumes.Text = "Loading...";
                     Application.MainLoop.Invoke(async () =>
                     {
-                        //var x = await ShellCommandRunner.RunCommandAsync("docker", "volume", "ls");
-                        //textVolumes.Text = x.Value.std;
-                        var x = "Fun word";
-                        textVolumes.Text = x;
+                        var x = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
+                        textVolumes.Text = x.Value.std;
                     });
                 }
             };
@@ -327,7 +294,7 @@ namespace Whale.Windows
                     new MenuItem ("_Quit", "", () => Application.RequestStop ())
                 })
             )
-            { ForceMinimumPosToZero = forceMinimumPosToZero, UseSubMenusSingleFrame = useSubMenusSingleFrame };
+            { ForceMinimumPosToZero = true, UseSubMenusSingleFrame = useSubMenusSingleFrame };
 
             contextMenu.Show();
         }
