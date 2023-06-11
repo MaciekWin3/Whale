@@ -1,6 +1,6 @@
 ﻿namespace Whale.Models
 {
-    public class ContainerDTO
+    public record ContainerDTO
     {
         public required string Id { get; set; }
         public ImageDTO Image { get; set; }

@@ -1,6 +1,5 @@
 ﻿using Terminal.Gui;
 using Whale.Models;
-using Whale.Objects.Container;
 using Whale.Objects.Volume;
 using Whale.Services;
 using Whale.Utils;
@@ -79,7 +78,6 @@ namespace Whale.Windows
             {
                 var name = e.Value.ToString();
                 var x = await dockerService.GetDockerObjectInfoAsync<Volume>(name);
-                var z = await dockerService.GetDockerObjectInfoAsync<Container>("a6e319bfe8b7");
                 MessageBox.Query(50, 7, name,
                     $"""
                      Name: {x?.Value?.Name}

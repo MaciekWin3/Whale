@@ -53,16 +53,8 @@ namespace Whale.Services
             {
                 if (result.Value.std.Length > 0)
                 {
-                    var lines = result.Value.std.Split("\n");
-                    var images = new List<string>();
-                    foreach (var line in lines)
-                    {
-                        if (line.Length > 0)
-                        {
-                            images.Add(line);
-                        }
-                    }
-                    return Result.Ok(new List<ImageDTO>());
+                    var images = Mapper.MapCommandToImageList(result.Value.std);
+                    return images;
                 }
                 return Result.Fail<List<ImageDTO>>("No images found");
             }

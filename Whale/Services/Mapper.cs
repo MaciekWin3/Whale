@@ -24,6 +24,22 @@ namespace Whale.Services
             return Result.Ok(containers);
         }
 
+        public static Result<List<ImageDTO>> MapCommandToImageList(string output)
+        {
+            var lines = PrepareOutput(output);
+            var containers = new List<ImageDTO>();
+            foreach (var line in lines)
+            {
+                var values = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                containers.Add(new ImageDTO()
+                {
+                    Name = values[0],
+                });
+            }
+            return Result.Ok(containers);
+        }
+
         public static Result<List<VolumeDTO>> MapCommandToVolumeList(string output)
         {
             var lines = PrepareOutput(output);

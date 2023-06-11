@@ -1,6 +1,6 @@
 ﻿using Terminal.Gui;
 using Whale.Models;
-using Whale.Objects.Volume;
+using Whale.Objects.Image;
 using Whale.Services;
 using Whale.Utils;
 
@@ -25,11 +25,9 @@ namespace Whale.Windows
 
         public void InitView()
         {
-            var items = new List<string>()
-            {
-            };
+            var items = new List<string>() { };
 
-            Result<List<ContainerDTO>> images;
+            Result<List<ImageDTO>> images;
 
             var listview = new ListView(items)
             {
@@ -41,34 +39,49 @@ namespace Whale.Windows
                 AllowsMultipleSelection = false,
             };
 
+            // Listener
             Application.MainLoop.Invoke(async () =>
             {
-                images = await dockerService.GetContainerListAsync();
-                var cont = images.Value?.Select(x => x.Id.ToString()).ToList();
-                listview.RemoveAll();
-                listview.SetSource(cont);
-                Application.Refresh();
+                Result<List<ImageDTO>> cache = Result.Fail<List<ImageDTO>>("Initial cache value");
+                while (true)
+                {
+                    Result<List<ImageDTO>> result = await dockerService.GetImageListAsync();
+                    if (!result.IsSuccess)
+                    {
+                        continue;
+                    }
+                    if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
+                    {
+                        cache = result;
+                    }
+                    else
+                    {
+                        cache = result;
+                        images = await dockerService.GetImageListAsync();
+                        var cont = images.Value?.Select(x => x.Name.ToString()).ToList();
+                        listview.RemoveAll();
+                        listview.SetSource(cont);
+                    }
+                }
             });
 
             listview.KeyDown += (KeyEventEventArgs e) =>
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
-                    // i want to context menu to pop up
                     showContextMenu.Invoke(1, 1);
-                    //var selected = listview.SelectedItem;
-                    //var selectedText = items[selected];
-                    //var dialog = new Dialog(selectedText.ToString(), 60, 20, new Button("Ok", is_default: true));
-                    //Application.Run(dialog);
                 }
             };
-            //listview.SelectedItemChanged += (ListViewItemEventArgs e) => lbListView.Text = items[listview.SelectedItem];
             listview.OpenSelectedItem += async (ListViewItemEventArgs e) =>
             {
-                //if (e.Value.ToString() == "bbb")
                 var name = e.Value.ToString();
-                var x = await dockerService.GetDockerObjectInfoAsync<Volume>("rosemary");
-                MessageBox.Query(50, 7, name, x?.Value?.Mountpoint?.ToString(), "Ok");
+                var x = await dockerService.GetDockerObjectInfoAsync<Image>(name);
+                MessageBox.Query(50, 7, name,
+                    $"""
+                     Name: {x?.Value?.Id}
+                     Platform: {x?.Value?.Os}
+                     """,
+                    "Ok");
             };
             Add(listview);
         }
