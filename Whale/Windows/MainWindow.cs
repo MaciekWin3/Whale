@@ -1,7 +1,9 @@
 ﻿using System.Globalization;
+using System.Text.Json;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using Whale.Components;
+using Whale.Objects.Container;
 using Whale.Services;
 
 namespace Whale.Windows
@@ -14,8 +16,12 @@ namespace Whale.Windows
         private bool useSubMenusSingleFrame;
         private ShellCommandRunner shellCommandRunner;
         private readonly IDockerService dockerService;
-        protected MainWindow() : base("Whale Dashboard")
+        private readonly Dictionary<string, Delegate> events;
+
+        public Label ContainerText { get; set; } = new Label("Loading");
+        public MainWindow() : base("Whale Dashboard")
         {
+
             X = 0;
             Y = 1;
             Width = Dim.Fill();
@@ -28,6 +34,14 @@ namespace Whale.Windows
             };
             shellCommandRunner = new ShellCommandRunner();
             dockerService = new DockerService(shellCommandRunner);
+
+            events = new Dictionary<string, Delegate>
+            {
+                { "Update", new Action(() => Application.RequestStop()) },
+                { "Quit", new Action(() => Application.RequestStop()) },
+                { nameof(ShowContextMenu), new Action<int, int>(ShowContextMenu) },
+                { nameof(ChangeText), new Func<string, Task>(ChangeText) },
+            };
         }
 
         //public static async Task<Window> CreateAsync()
@@ -104,6 +118,7 @@ namespace Whale.Windows
                 }
             };
 
+
             var imagesFrame = new FrameView("Images")
             {
                 X = Pos.Right(tabView),
@@ -132,11 +147,6 @@ namespace Whale.Windows
                 }
             };
 
-            var textContainers = new Label()
-            {
-                Text = "Loading...",
-            };
-
             var textImages = new Label()
             {
                 Text = "Loading..."
@@ -149,7 +159,7 @@ namespace Whale.Windows
 
             //imagesFrame.Add(textImages);
             //Add(imagesFrame);
-            containersFrame.Add(textContainers);
+            containersFrame.Add(ContainerText);
             Add(containersFrame);
             //volumesFrame.Add(textVolumes);
             //Add(volumesFrame);
@@ -162,27 +172,31 @@ namespace Whale.Windows
                 var z = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
                 textVolumes.Text = z.Value.std;
                 var y = await shellCommandRunner.RunCommandAsync("cmd", "/C", "echo", "TEst");
-                textContainers.Text = y.Value.std;
+                ContainerText.Text = y.Value.std;
             });
-
-
-
 
             // Tabs
             //tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
-            tabView.AddTab(new TabView.Tab("Containers", new ContainerWindow(ShowContextMenu)), false);
-            tabView.AddTab(new TabView.Tab("Images", new ImageWindow(ShowContextMenu)), false);
-            tabView.AddTab(new TabView.Tab("Volumes", new VolumeWindow(ShowContextMenu)), false);
+            var containerWindow = new ContainerWindow(events);
+            var imageWindow = new ImageWindow(ShowContextMenu);
+            var volumeWindow = new VolumeWindow(ShowContextMenu);
+
+            tabView.AddTab(new TabView.Tab("Containers", containerWindow), false);
+            tabView.AddTab(new TabView.Tab("Images", imageWindow), false);
+            tabView.AddTab(new TabView.Tab("Volumes", volumeWindow), false);
 
             tabView.SelectedTabChanged += (a, e) =>
             {
                 if (e.NewTab.Text == "Containers")
                 {
-                    textContainers.Text = "Loading...";
+                    ContainerText.Text = "Loading...";
                     Application.MainLoop.Invoke(async () =>
                     {
-                        var x = await shellCommandRunner.RunCommandAsync("docker", "container", "ls");
-                        textContainers.Text = x.Value.std;
+                        var z = containerWindow.GetCurrnetContainerName();
+                        //var x = await shellCommandRunner.RunCommandAsync("docker", "container", "ls");
+                        var x = await shellCommandRunner.RunCommandAsync("docker", "inspect", z);
+                        //textContainers.Text = x.Value.std;
+                        //ContainerText.Text = x.ToString();
                     });
                 }
                 else if (e.NewTab.Text == "Images")
@@ -208,6 +222,19 @@ namespace Whale.Windows
             tabView.ApplyStyleChanges();
 
             Add(tabView);
+        }
+
+        public async Task ChangeText(string text)
+        {
+            var d = await dockerService.GetDockerObjectInfoAsync<Container>(text);
+            if (d.Value is not null)
+            {
+                var jsonText = JsonSerializer.Serialize(d.Value, new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                });
+                ContainerText.Text = jsonText;
+            }
         }
 
         private View Bar()
@@ -275,7 +302,7 @@ namespace Whale.Windows
             graphView.SetNeedsDisplay();
         }
 
-        private void ShowContextMenu(int x, int y)
+        public void ShowContextMenu(int x, int y)
         {
             contextMenu = new ContextMenu(x, y,
                 new MenuBarItem(new MenuItem[]

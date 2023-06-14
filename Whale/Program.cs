@@ -11,8 +11,6 @@ var cellHighlight = new ColorScheme()
     Focus = Terminal.Gui.Attribute.Make(Color.Cyan, Color.Magenta),
 };
 
-//var builder = new ConfigurationBuilder();
-
 Application.Init();
 var top = Application.Top;
 //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Gray, Color.Blue);
@@ -22,7 +20,6 @@ top.Add(MenuBarX.CreateMenuBar());
 //top.Add(await MainWindow.CreateAsync());
 top.Add(MainWindow.CreateAsync());
 //TestView();
-Application.Refresh();
 Application.Run();
 Application.Shutdown();
 

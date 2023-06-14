@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Whale.Models;
+using Whale.Objects.Container;
 using Whale.Utils;
 
 namespace Whale.Services
@@ -72,16 +73,23 @@ namespace Whale.Services
             }
 
             //string jsonString = JsonSerializer.Serialize(result.Value.std);
-            JsonElement x = JsonDocument.Parse(result.Value.std, new JsonDocumentOptions
-            {
-                AllowTrailingCommas = true
-            }).RootElement;
+            JsonElement x = JsonDocument.Parse(result.Value.std).RootElement;
 
             JsonElement firstElement = x
                 .EnumerateArray()
                 .FirstOrDefault();
 
-            return Result.Ok(JsonSerializer.Deserialize<T>(firstElement));
+            var d = firstElement.GetRawText();
+            var z = JsonSerializer.Deserialize<T>(d, new JsonSerializerOptions()
+            {
+            });
+
+            return Result.Ok(z);
+        }
+
+        public Container Des(string x)
+        {
+            return JsonSerializer.Deserialize<Container>(x);
         }
     }
 }
