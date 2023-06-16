@@ -78,6 +78,10 @@ namespace Whale.Windows
             };
             ListView.OpenSelectedItem += async (ListViewItemEventArgs e) =>
             {
+                if (e.Value is null)
+                {
+                    return;
+                }
                 var name = e.Value.ToString();
                 var x = await dockerService.GetDockerObjectInfoAsync<Container>(name);
                 events["ChangeText"].DynamicInvoke(name);

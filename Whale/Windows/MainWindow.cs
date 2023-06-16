@@ -18,10 +18,9 @@ namespace Whale.Windows
         private readonly IDockerService dockerService;
         private readonly Dictionary<string, Delegate> events;
 
-        public Label ContainerText { get; set; } = new Label("Loading");
+        public TextView DetailsText { get; set; }
         public MainWindow() : base("Whale Dashboard")
         {
-
             X = 0;
             Y = 1;
             Width = Dim.Fill();
@@ -101,79 +100,7 @@ namespace Whale.Windows
                 Y = 0,
                 Width = Dim.Percent(30),
                 Height = Dim.Fill(),
-
             };
-
-            var containersFrame = new FrameView("Containers")
-            {
-                X = Pos.Right(tabView),
-                Y = 0,
-                Width = Dim.Percent(70),
-                Height = Dim.Percent(100),
-                Border = new Border
-                {
-                    BorderStyle = BorderStyle.Rounded,
-                    Effect3D = false,
-                    Title = "Containers"
-                }
-            };
-
-
-            var imagesFrame = new FrameView("Images")
-            {
-                X = Pos.Right(tabView),
-                Y = Pos.Bottom(containersFrame),
-                Width = Dim.Percent(70),
-                Height = Dim.Percent(35),
-                Border = new Border
-                {
-                    BorderStyle = BorderStyle.Rounded,
-                    Effect3D = false,
-                    Title = "Containers"
-                }
-            };
-
-            var volumesFrame = new FrameView("Volumes")
-            {
-                X = Pos.Right(tabView),
-                Y = Pos.Bottom(imagesFrame),
-                Width = Dim.Percent(70),
-                Height = Dim.Percent(35),
-                Border = new Border
-                {
-                    BorderStyle = BorderStyle.Rounded,
-                    Effect3D = false,
-                    Title = "Containers"
-                }
-            };
-
-            var textImages = new Label()
-            {
-                Text = "Loading..."
-            };
-
-            var textVolumes = new Label()
-            {
-                Text = "Loading..."
-            };
-
-            //imagesFrame.Add(textImages);
-            //Add(imagesFrame);
-            containersFrame.Add(ContainerText);
-            Add(containersFrame);
-            //volumesFrame.Add(textVolumes);
-            //Add(volumesFrame);
-
-
-            Application.MainLoop.Invoke(async () =>
-            {
-                var x = await shellCommandRunner.RunCommandAsync("docker", "image", "ls");
-                textImages.Text = x.Value.std;
-                var z = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
-                textVolumes.Text = z.Value.std;
-                var y = await shellCommandRunner.RunCommandAsync("cmd", "/C", "echo", "TEst");
-                ContainerText.Text = y.Value.std;
-            });
 
             // Tabs
             //tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
@@ -189,39 +116,54 @@ namespace Whale.Windows
             {
                 if (e.NewTab.Text == "Containers")
                 {
-                    ContainerText.Text = "Loading...";
+                    DetailsText.Text = "Loading...";
                     Application.MainLoop.Invoke(async () =>
                     {
                         var z = containerWindow.GetCurrnetContainerName();
-                        //var x = await shellCommandRunner.RunCommandAsync("docker", "container", "ls");
                         var x = await shellCommandRunner.RunCommandAsync("docker", "inspect", z);
-                        //textContainers.Text = x.Value.std;
-                        //ContainerText.Text = x.ToString();
                     });
                 }
                 else if (e.NewTab.Text == "Images")
                 {
-                    textImages.Text = "Loading...";
-                    Application.MainLoop.Invoke(async () =>
-                    {
-                        var x = await shellCommandRunner.RunCommandAsync("docker", "image", "ls");
-                        textImages.Text = x.Value.std;
-                    });
                 }
                 else if (e.NewTab.Text == "Volumes")
                 {
-                    textVolumes.Text = "Loading...";
-                    Application.MainLoop.Invoke(async () =>
-                    {
-                        var x = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
-                        textVolumes.Text = x.Value.std;
-                    });
                 }
             };
             tabView.Style.ShowBorder = true;
             tabView.ApplyStyleChanges();
 
             Add(tabView);
+
+            var scrollView = new ScrollView
+            {
+                X = Pos.Right(tabView),
+                Y = 0,
+                Width = Dim.Percent(70),
+                Height = Dim.Percent(100),
+                ContentSize = new Size(500, 500),
+                ShowVerticalScrollIndicator = true,
+                ShowHorizontalScrollIndicator = true,
+            };
+
+            DetailsText = new TextView()
+            {
+                X = 1,
+                Y = 1,
+                AutoSize = true,
+                ColorScheme = Colors.Dialog,
+                Width = Dim.Percent(50) - 1,
+                Height = Dim.Percent(50) - 1,
+            };
+
+            scrollView.Add(DetailsText);
+            Add(scrollView);
+
+            Application.MainLoop.Invoke(async () =>
+            {
+                var y = await shellCommandRunner.RunCommandAsync("cmd", "/C", "echo", "TEst");
+                DetailsText.Text = y.Value.std.Trim();
+            });
         }
 
         public async Task ChangeText(string text)
@@ -233,7 +175,7 @@ namespace Whale.Windows
                 {
                     WriteIndented = true,
                 });
-                ContainerText.Text = jsonText;
+                DetailsText.Text = jsonText;
             }
         }
 
