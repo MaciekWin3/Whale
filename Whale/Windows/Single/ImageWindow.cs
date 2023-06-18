@@ -30,7 +30,7 @@ namespace Whale.Windows.Single
             goBack.Clicked += () =>
             {
                 Application.Top.RemoveAll();
-                var mainWindow = new MainWindow();
+                var mainWindow = MainWindow.CreateAsync();
                 Application.Top.Add(mainWindow);
                 Application.Top.Add(MenuBarX.CreateMenuBar());
                 Application.Refresh();

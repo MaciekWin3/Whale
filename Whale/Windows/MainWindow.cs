@@ -18,6 +18,9 @@ namespace Whale.Windows
         private readonly ShellCommandRunner shellCommandRunner;
         private readonly IDockerService dockerService;
         private readonly Dictionary<string, Delegate> events;
+        private readonly ContainerListWindow containerWindow;
+        private readonly ImageListWindow imageWindow;
+        private readonly VolumeListWindow volumeWindow;
 
         public TextView DetailsText { get; set; }
         public MainWindow() : base("Whale Dashboard")
@@ -42,6 +45,9 @@ namespace Whale.Windows
                 { nameof(ShowContextMenu), new Action<int, int>(ShowContextMenu) },
                 { nameof(ChangeText), new Func<string, Task>(ChangeText) },
             };
+            containerWindow = new ContainerListWindow(events);
+            imageWindow = new ImageListWindow(ShowContextMenu);
+            volumeWindow = new VolumeListWindow(ShowContextMenu);
         }
 
         //public static async Task<Window> CreateAsync()
@@ -117,7 +123,6 @@ namespace Whale.Windows
             {
                 if (e.NewTab.Text == "Containers")
                 {
-                    DetailsText.Text = "Loading...";
                     Application.MainLoop.Invoke(async () =>
                     {
                         var z = containerWindow.GetCurrnetContainerName();
@@ -140,35 +145,11 @@ namespace Whale.Windows
 
             Add(tabView);
 
-            var scrollView = new ScrollView
-            {
-                X = Pos.Right(tabView),
-                Y = 0,
-                Width = Dim.Percent(70),
-                Height = Dim.Percent(100),
-                ContentSize = new Size(500, 500),
-                ShowVerticalScrollIndicator = true,
-                ShowHorizontalScrollIndicator = true,
-            };
-
-            DetailsText = new TextView()
-            {
-                X = 1,
-                Y = 1,
-                AutoSize = true,
-                ColorScheme = Colors.Dialog,
-                Width = Dim.Percent(50) - 1,
-                Height = Dim.Percent(50) - 1,
-            };
-
-            //scrollView.Add(DetailsText);
-            //Add(scrollView);
-
-            Application.MainLoop.Invoke(async () =>
-            {
-                var y = await shellCommandRunner.RunCommandAsync("cmd", "/C", "echo", "TEst");
-                DetailsText.Text = y.Value.std.Trim();
-            });
+            //Application.MainLoop.Invoke(async () =>
+            //{
+            //    var y = await shellCommandRunner.RunCommandAsync("cmd", "/C", "echo", "TEst");
+            //    DetailsText.Text = y.Value.std.Trim();
+            //});
         }
 
         public async Task ChangeText(string text)

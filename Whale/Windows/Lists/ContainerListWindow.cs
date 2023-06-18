@@ -77,6 +77,7 @@ namespace Whale.Windows.Lists
                     events["ShowContextMenu"].DynamicInvoke(1, 1);
                 }
             };
+
             ListView.OpenSelectedItem += (e) =>
             {
                 var name = e.Value.ToString();
