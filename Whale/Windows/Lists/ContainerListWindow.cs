@@ -1,8 +1,9 @@
 ﻿using Terminal.Gui;
+using Whale.Components;
 using Whale.Models;
-using Whale.Objects.Container;
 using Whale.Services;
 using Whale.Utils;
+using Whale.Windows.Single;
 
 namespace Whale.Windows.Lists
 {
@@ -76,15 +77,17 @@ namespace Whale.Windows.Lists
                     events["ShowContextMenu"].DynamicInvoke(1, 1);
                 }
             };
-            ListView.OpenSelectedItem += async (e) =>
+            ListView.OpenSelectedItem += (e) =>
             {
-                if (e.Value is null)
-                {
-                    return;
-                }
                 var name = e.Value.ToString();
-                var x = await dockerService.GetDockerObjectInfoAsync<Container>(name);
-                events["ChangeText"].DynamicInvoke(name);
+                if (name is not null)
+                {
+                    Application.Top.RemoveAll();
+                    var containerWindow = new ContainerWindow(name);
+                    Application.Top.Add(containerWindow);
+                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Refresh();
+                }
             };
             Add(ListView);
         }

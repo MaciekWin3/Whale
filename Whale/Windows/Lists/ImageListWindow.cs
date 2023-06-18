@@ -1,8 +1,9 @@
 ﻿using Terminal.Gui;
+using Whale.Components;
 using Whale.Models;
-using Whale.Objects.Image;
 using Whale.Services;
 using Whale.Utils;
+using Whale.Windows.Single;
 
 namespace Whale.Windows.Lists
 {
@@ -14,7 +15,7 @@ namespace Whale.Windows.Lists
         public ImageListWindow(Action<int, int> showContextMenu) : base()
         {
             X = 0;
-            Y = 1;
+            Y = 0;
             Width = Dim.Fill();
             Height = Dim.Fill();
             Border = new Border()
@@ -74,16 +75,17 @@ namespace Whale.Windows.Lists
                     showContextMenu.Invoke(1, 1);
                 }
             };
-            listview.OpenSelectedItem += async (e) =>
+            listview.OpenSelectedItem += (e) =>
             {
                 var name = e.Value.ToString();
-                var x = await dockerService.GetDockerObjectInfoAsync<Image>(name);
-                MessageBox.Query(50, 7, name,
-                    $"""
-                     Name: {x?.Value?.Id}
-                     Platform: {x?.Value?.Os}
-                     """,
-                    "Ok");
+                if (name is not null)
+                {
+                    Application.Top.RemoveAll();
+                    var imageWindow = new ImageWindow(name);
+                    Application.Top.Add(imageWindow);
+                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Refresh();
+                }
             };
             Add(listview);
         }

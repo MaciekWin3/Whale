@@ -1,8 +1,10 @@
 ﻿using Terminal.Gui;
+using Whale.Components;
 using Whale.Models;
 using Whale.Objects.Volume;
 using Whale.Services;
 using Whale.Utils;
+using Whale.Windows.Single;
 
 namespace Whale.Windows.Lists
 {
@@ -74,17 +76,19 @@ namespace Whale.Windows.Lists
                     showContextMenu.Invoke(1, 1);
                 }
             };
+
             listview.OpenSelectedItem += async (e) =>
             {
                 var name = e.Value.ToString();
-                var x = await dockerService.GetDockerObjectInfoAsync<Volume>(name);
-                MessageBox.Query(50, 7, name,
-                    $"""
-                     Name: {x?.Value?.Name}
-                     Mountpoint: {x?.Value?.Mountpoint}
-                     Driver: {x?.Value?.Driver}
-                     """,
-                    "Ok");
+                if (name is not null)
+                {
+                    var x = await dockerService.GetDockerObjectInfoAsync<Volume>(name);
+                    Application.Top.RemoveAll();
+                    var volumeWindow = new VolumeWindow(name);
+                    Application.Top.Add(volumeWindow);
+                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Refresh();
+                }
             };
             Add(listview);
         }

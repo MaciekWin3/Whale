@@ -9,7 +9,7 @@ using Whale.Windows.Lists;
 
 namespace Whale.Windows
 {
-    public class MainWindow : Window
+    public class MainWindow : Window, IDisposable
     {
         GraphView graphView = null!;
         private ContextMenu contextMenu = new();
@@ -99,7 +99,7 @@ namespace Whale.Windows
             {
                 X = 0,
                 Y = 0,
-                Width = Dim.Percent(30),
+                Width = Dim.Percent(100),
                 Height = Dim.Fill(),
             };
 
@@ -110,6 +110,7 @@ namespace Whale.Windows
             var volumeWindow = new VolumeListWindow(ShowContextMenu);
 
             tabView.AddTab(new TabView.Tab("Containers", containerWindow), false);
+            tabView.AddTab(new TabView.Tab("Images", imageWindow), false);
             tabView.AddTab(new TabView.Tab("Volumes", volumeWindow), false);
 
             tabView.SelectedTabChanged += (a, e) =>
@@ -128,10 +129,10 @@ namespace Whale.Windows
                 }
                 else if (e.NewTab.Text == "Volumes")
                 {
-                    Application.Top.RemoveAll();
-                    Application.Top.Add(imageWindow);
-                    Application.Top.Add(MenuBarX.CreateMenuBar());
-                    Application.Refresh();
+                    //Application.Top.RemoveAll();
+                    //Application.Top.Add(imageWindow);
+                    //Application.Top.Add(MenuBarX.CreateMenuBar());
+                    //Application.Refresh();
                 }
             };
             tabView.Style.ShowBorder = true;
@@ -160,8 +161,8 @@ namespace Whale.Windows
                 Height = Dim.Percent(50) - 1,
             };
 
-            scrollView.Add(DetailsText);
-            Add(scrollView);
+            //scrollView.Add(DetailsText);
+            //Add(scrollView);
 
             Application.MainLoop.Invoke(async () =>
             {

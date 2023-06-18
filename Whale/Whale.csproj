@@ -19,8 +19,4 @@
     <PackageReference Include="Terminal.Gui" Version="1.12.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Windows\Single\" />
-  </ItemGroup>
-
 </Project>
