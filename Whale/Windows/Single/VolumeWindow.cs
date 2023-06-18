@@ -1,13 +1,14 @@
 ﻿using Terminal.Gui;
+using Whale.Components;
 
 namespace Whale.Windows.Single
 {
     public class VolumeWindow : Window
     {
         public string VolumeId { get; init; }
-        public VolumeWindow(string imageId) : base("Image")
+        public VolumeWindow(string volumeId) : base("Image")
         {
-            VolumeId = imageId;
+            VolumeId = volumeId;
             InitView();
         }
         public void InitView()
@@ -16,10 +17,23 @@ namespace Whale.Windows.Single
             {
                 X = 5,
                 Y = 5,
-                Width = Dim.Fill(),
-                Height = Dim.Fill(),
             };
             Add(label);
+
+            var goBack = new Button("Go back")
+            {
+                X = 6,
+                Y = Pos.Bottom(label),
+            };
+            goBack.Clicked += () =>
+            {
+                Application.Top.RemoveAll();
+                var mainWindow = MainWindow.CreateAsync();
+                Application.Top.Add(mainWindow);
+                Application.Top.Add(MenuBarX.CreateMenuBar());
+                Application.Refresh();
+            };
+            Add(goBack);
         }
     }
 }

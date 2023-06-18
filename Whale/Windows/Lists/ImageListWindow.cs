@@ -37,7 +37,7 @@ namespace Whale.Windows.Lists
                 X = 0,
                 Y = 0,
                 Height = Dim.Fill(2),
-                Width = Dim.Percent(40),
+                Width = Dim.Fill(),
                 AllowsMarking = false,
                 AllowsMultipleSelection = false,
             };

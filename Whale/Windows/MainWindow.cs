@@ -123,33 +123,18 @@ namespace Whale.Windows
             {
                 if (e.NewTab.Text == "Containers")
                 {
-                    Application.MainLoop.Invoke(async () =>
-                    {
-                        var z = containerWindow.GetCurrnetContainerName();
-                        var x = await shellCommandRunner.RunCommandAsync("docker", "inspect", z);
-                    });
                 }
                 else if (e.NewTab.Text == "Images")
                 {
                 }
                 else if (e.NewTab.Text == "Volumes")
                 {
-                    //Application.Top.RemoveAll();
-                    //Application.Top.Add(imageWindow);
-                    //Application.Top.Add(MenuBarX.CreateMenuBar());
-                    //Application.Refresh();
                 }
             };
             tabView.Style.ShowBorder = true;
             tabView.ApplyStyleChanges();
 
             Add(tabView);
-
-            //Application.MainLoop.Invoke(async () =>
-            //{
-            //    var y = await shellCommandRunner.RunCommandAsync("cmd", "/C", "echo", "TEst");
-            //    DetailsText.Text = y.Value.std.Trim();
-            //});
         }
 
         public async Task ChangeText(string text)

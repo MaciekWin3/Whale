@@ -1,4 +1,5 @@
-﻿using Terminal.Gui;
+﻿using System.Data;
+using Terminal.Gui;
 using Whale.Components;
 using Whale.Models;
 using Whale.Services;
@@ -35,14 +36,48 @@ namespace Whale.Windows.Lists
 
             Result<List<ContainerDTO>> containers;
 
+            var label = new Label("CONTAINER ID   IMAGE         COMMAND    CREATED       STATUS                     PORTS     NAMES")
+            {
+                X = 0,
+                Y = 0
+            };
+
+            Add(label);
+
             ListView = new ListView(ContainerList)
             {
                 X = 0,
-                Y = 0,
+                Y = 1,
                 Height = Dim.Fill(2),
-                Width = Dim.Percent(40),
+                Width = Dim.Fill(),
                 AllowsMarking = false,
                 AllowsMultipleSelection = false,
+            };
+
+            // Table Editor for the container list
+            var tableView = new TableView()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                FullRowSelect = true,
+            };
+            // When i select row any cell show me the container id
+            tableView.CellActivated += (e) =>
+            {
+                //var name = e.Value.ToString();
+                int row = e.Row;
+                // get me first cell and row from the table
+                var name = (string)e.Table.Rows[row][0];
+                if (name is not null)
+                {
+                    Application.Top.RemoveAll();
+                    var containerWindow = new ContainerWindow(name);
+                    Application.Top.Add(containerWindow);
+                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Refresh();
+                }
             };
 
             // Listener
@@ -64,13 +99,16 @@ namespace Whale.Windows.Lists
                     {
                         cache = result;
                         containers = await dockerService.GetContainerListAsync();
-                        ContainerList = containers.Value?.Select(x => x.Id.ToString()).ToList();
+                        //ContainerList = containers.Value?.Select(x => x.Id.ToString()).ToList();
+                        // I want you to select ID, Image , Command, Created, Status, Ports, Names from the docker ps command
+                        //ContainerList = containers.Value.Select(x => $"{x.Id} {x.Image} {x.Command} {x.CreatedDate} {x.Status} {x.Ports} {x.Names}").ToList();
+                        tableView.Table = ConvertListToDataTable(containers.Value);
                         ListView.SetSource(ContainerList);
                     }
                 }
             });
 
-            ListView.KeyDown += (e) =>
+            KeyDown += (e) =>
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
@@ -90,7 +128,26 @@ namespace Whale.Windows.Lists
                     Application.Refresh();
                 }
             };
-            Add(ListView);
+            //Add(ListView);
+            Add(tableView);
+        }
+
+        public static DataTable ConvertListToDataTable(List<ContainerDTO> list)
+        {
+            var table = new DataTable();
+            table.Columns.Add("ID", typeof(string));
+            table.Columns.Add("Image", typeof(string));
+            table.Columns.Add("Command", typeof(string));
+            table.Columns.Add("Created", typeof(string));
+            table.Columns.Add("Status", typeof(string));
+            table.Columns.Add("Ports", typeof(string));
+            table.Columns.Add("Names", typeof(string));
+
+            foreach (var item in list)
+            {
+                table.Rows.Add(item.Id, item.Image, item.Command, item.CreatedDate, item.Status, item.Ports, item.Names);
+            }
+            return table;
         }
 
         public string GetCurrnetContainerName()
