@@ -12,16 +12,17 @@ var cellHighlight = new ColorScheme()
 };
 
 Application.Init();
-var top = Application.Top;
-//Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Gray, Color.Blue);
-Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightBlue);
-//top.Add(CreateMenuBar());
-top.Add(MenuBarX.CreateMenuBar());
-//top.Add(await MainWindow.CreateAsync());
-top.Add(MainWindow.CreateAsync());
-//TestView();
-Application.Run();
-Application.Shutdown();
+InitApp(Application.Top);
+
+static void InitApp(Toplevel top)
+{
+    top.Add(MenuBarX.CreateMenuBar());
+    //top.Add(await MainWindow.CreateAsync());
+    top.Add(MainWindow.CreateAsync());
+    Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightBlue);
+    Application.Run();
+    Application.Shutdown();
+}
 
 static MenuBar CreateMenuBar()
 {
@@ -61,7 +62,7 @@ void TestView()
         Width = Dim.Percent(20)
     };
     listview.SelectedItemChanged += (ListViewItemEventArgs e) => lbListView.Text = items[listview.SelectedItem];
-    top.Add(lbListView, listview);
+    // top.Add(lbListView, listview);
 
     var _scrollBar = new ScrollBarView(listview, true);
 

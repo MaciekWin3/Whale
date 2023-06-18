@@ -4,15 +4,15 @@ using Whale.Objects.Volume;
 using Whale.Services;
 using Whale.Utils;
 
-namespace Whale.Windows
+namespace Whale.Windows.Lists
 {
-    public class VolumeWindow : Window
+    public class VolumeListWindow : Window
     {
         readonly Action<int, int> showContextMenu;
         private readonly ShellCommandRunner shellCommandRunner = new();
         private readonly IDockerService dockerService =
             new DockerService(new ShellCommandRunner());
-        public VolumeWindow(Action<int, int> showContextMenu) : base()
+        public VolumeListWindow(Action<int, int> showContextMenu) : base()
         {
             Width = Dim.Fill();
             Height = Dim.Fill();
@@ -67,14 +67,14 @@ namespace Whale.Windows
                 }
             });
 
-            listview.KeyDown += (KeyEventEventArgs e) =>
+            listview.KeyDown += (e) =>
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
                     showContextMenu.Invoke(1, 1);
                 }
             };
-            listview.OpenSelectedItem += async (ListViewItemEventArgs e) =>
+            listview.OpenSelectedItem += async (e) =>
             {
                 var name = e.Value.ToString();
                 var x = await dockerService.GetDockerObjectInfoAsync<Volume>(name);

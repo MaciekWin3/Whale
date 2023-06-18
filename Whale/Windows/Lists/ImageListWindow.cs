@@ -4,15 +4,17 @@ using Whale.Objects.Image;
 using Whale.Services;
 using Whale.Utils;
 
-namespace Whale.Windows
+namespace Whale.Windows.Lists
 {
-    public class ImageWindow : Window
+    public class ImageListWindow : Window
     {
         readonly Action<int, int> showContextMenu;
         private readonly IDockerService dockerService =
             new DockerService(new ShellCommandRunner());
-        public ImageWindow(Action<int, int> showContextMenu) : base()
+        public ImageListWindow(Action<int, int> showContextMenu) : base()
         {
+            X = 0;
+            Y = 1;
             Width = Dim.Fill();
             Height = Dim.Fill();
             Border = new Border()
@@ -65,14 +67,14 @@ namespace Whale.Windows
                 }
             });
 
-            listview.KeyDown += (KeyEventEventArgs e) =>
+            listview.KeyDown += (e) =>
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
                     showContextMenu.Invoke(1, 1);
                 }
             };
-            listview.OpenSelectedItem += async (ListViewItemEventArgs e) =>
+            listview.OpenSelectedItem += async (e) =>
             {
                 var name = e.Value.ToString();
                 var x = await dockerService.GetDockerObjectInfoAsync<Image>(name);

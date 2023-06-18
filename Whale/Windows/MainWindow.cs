@@ -5,6 +5,7 @@ using Terminal.Gui.Graphs;
 using Whale.Components;
 using Whale.Objects.Container;
 using Whale.Services;
+using Whale.Windows.Lists;
 
 namespace Whale.Windows
 {
@@ -14,7 +15,7 @@ namespace Whale.Windows
         private ContextMenu contextMenu = new();
         private MenuItem miUseSubMenusSingleFrame = null!;
         private bool useSubMenusSingleFrame;
-        private ShellCommandRunner shellCommandRunner;
+        private readonly ShellCommandRunner shellCommandRunner;
         private readonly IDockerService dockerService;
         private readonly Dictionary<string, Delegate> events;
 
@@ -104,12 +105,11 @@ namespace Whale.Windows
 
             // Tabs
             //tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
-            var containerWindow = new ContainerWindow(events);
-            var imageWindow = new ImageWindow(ShowContextMenu);
-            var volumeWindow = new VolumeWindow(ShowContextMenu);
+            var containerWindow = new ContainerListWindow(events);
+            var imageWindow = new ImageListWindow(ShowContextMenu);
+            var volumeWindow = new VolumeListWindow(ShowContextMenu);
 
             tabView.AddTab(new TabView.Tab("Containers", containerWindow), false);
-            tabView.AddTab(new TabView.Tab("Images", imageWindow), false);
             tabView.AddTab(new TabView.Tab("Volumes", volumeWindow), false);
 
             tabView.SelectedTabChanged += (a, e) =>
@@ -128,6 +128,10 @@ namespace Whale.Windows
                 }
                 else if (e.NewTab.Text == "Volumes")
                 {
+                    Application.Top.RemoveAll();
+                    Application.Top.Add(imageWindow);
+                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Refresh();
                 }
             };
             tabView.Style.ShowBorder = true;

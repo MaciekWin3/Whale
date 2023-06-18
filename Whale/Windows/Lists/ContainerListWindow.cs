@@ -4,9 +4,9 @@ using Whale.Objects.Container;
 using Whale.Services;
 using Whale.Utils;
 
-namespace Whale.Windows
+namespace Whale.Windows.Lists
 {
-    public class ContainerWindow : Window
+    public class ContainerListWindow : Window
     {
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerService dockerService;
@@ -14,7 +14,7 @@ namespace Whale.Windows
         public List<string> ContainerList { get; set; } = new();
 
         private readonly Dictionary<string, Delegate> events = new();
-        public ContainerWindow(Dictionary<string, Delegate> events)
+        public ContainerListWindow(Dictionary<string, Delegate> events)
         {
             Width = Dim.Fill();
             Height = Dim.Fill();
@@ -69,14 +69,14 @@ namespace Whale.Windows
                 }
             });
 
-            ListView.KeyDown += (KeyEventEventArgs e) =>
+            ListView.KeyDown += (e) =>
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
                     events["ShowContextMenu"].DynamicInvoke(1, 1);
                 }
             };
-            ListView.OpenSelectedItem += async (ListViewItemEventArgs e) =>
+            ListView.OpenSelectedItem += async (e) =>
             {
                 if (e.Value is null)
                 {
