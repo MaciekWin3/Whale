@@ -1,4 +1,5 @@
-﻿using Terminal.Gui;
+﻿using System.Data;
+using Terminal.Gui;
 using Whale.Components;
 using Whale.Models;
 using Whale.Services;
@@ -7,7 +8,7 @@ using Whale.Windows.Single;
 
 namespace Whale.Windows.Lists
 {
-    public class ImageListWindow : Window, IDisposable
+    public class ImageListWindow : Window
     {
         readonly Action<int, int> showContextMenu;
         private readonly IDockerService dockerService =
@@ -30,17 +31,31 @@ namespace Whale.Windows.Lists
         {
             var items = new List<string>() { };
 
-            Result<List<ImageDTO>> images;
-
-            var listview = new ListView(items)
+            var tableView = new TableView()
             {
                 X = 0,
                 Y = 0,
-                Height = Dim.Fill(2),
                 Width = Dim.Fill(),
-                AllowsMarking = false,
-                AllowsMultipleSelection = false,
+                Height = Dim.Fill(),
+                FullRowSelect = true,
             };
+            Add(tableView);
+
+            tableView.CellActivated += (e) =>
+            {
+                int row = e.Row;
+                var name = (string)e.Table.Rows[row][0];
+                if (name is not null)
+                {
+                    Application.Top.RemoveAll();
+                    var containerWindow = new ContainerWindow(name);
+                    Application.Top.Add(containerWindow);
+                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Refresh();
+                }
+            };
+
+            Result<List<ImageDTO>> images;
 
             // Listener
             Application.MainLoop.Invoke(async () =>
@@ -61,33 +76,36 @@ namespace Whale.Windows.Lists
                     {
                         cache = result;
                         images = await dockerService.GetImageListAsync();
-                        var cont = images.Value?.Select(x => x.Name.ToString()).ToList();
-                        listview.RemoveAll();
-                        listview.SetSource(cont);
+                        tableView.Table = ConvertListToDataTable(images.Value);
                     }
                 }
             });
 
-            listview.KeyDown += (e) =>
+            KeyDown += (e) =>
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
                     showContextMenu.Invoke(1, 1);
                 }
             };
-            listview.OpenSelectedItem += (e) =>
+        }
+
+        public static DataTable ConvertListToDataTable(List<ImageDTO> list)
+        {
+            var table = new DataTable();
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("Tag", typeof(string));
+            table.Columns.Add("Command", typeof(string));
+            table.Columns.Add("CreatedData", typeof(string));
+            table.Columns.Add("Status", typeof(string));
+            table.Columns.Add("Ports", typeof(string));
+            table.Columns.Add("Names", typeof(string));
+
+            foreach (var item in list)
             {
-                var name = e.Value.ToString();
-                if (name is not null)
-                {
-                    Application.Top.RemoveAll();
-                    var imageWindow = new ImageWindow(name);
-                    Application.Top.Add(imageWindow);
-                    Application.Top.Add(MenuBarX.CreateMenuBar());
-                    Application.Refresh();
-                }
-            };
-            Add(listview);
+                table.Rows.Add(item.Name, item.Tag, item.Command, item.CreatedDate, item.Status, item.Ports, item.Names);
+            }
+            return table;
         }
     }
 }

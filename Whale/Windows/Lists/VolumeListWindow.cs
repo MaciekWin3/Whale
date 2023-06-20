@@ -1,7 +1,7 @@
-﻿using Terminal.Gui;
+﻿using System.Data;
+using Terminal.Gui;
 using Whale.Components;
 using Whale.Models;
-using Whale.Objects.Volume;
 using Whale.Services;
 using Whale.Utils;
 using Whale.Windows.Single;
@@ -30,16 +30,31 @@ namespace Whale.Windows.Lists
         {
             var items = new List<string>() { };
 
-            Result<List<VolumeDTO>> images;
+            Result<List<VolumeDTO>> volumes;
 
-            var listview = new ListView(items)
+            var tableView = new TableView()
             {
                 X = 0,
                 Y = 0,
-                Height = Dim.Fill(2),
                 Width = Dim.Fill(),
-                AllowsMarking = false,
-                AllowsMultipleSelection = false,
+                Height = Dim.Fill(),
+                FullRowSelect = true,
+            };
+
+            Add(tableView);
+
+            tableView.CellActivated += (e) =>
+            {
+                int row = e.Row;
+                var name = (string)e.Table.Rows[row][0];
+                if (name is not null)
+                {
+                    Application.Top.RemoveAll();
+                    var containerWindow = new ContainerWindow(name);
+                    Application.Top.Add(containerWindow);
+                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Refresh();
+                }
             };
 
             // Listener
@@ -57,40 +72,37 @@ namespace Whale.Windows.Lists
                     if (cache != result.Value.std)
                     {
                         cache = result.Value.std;
-                        images = await dockerService.GetVolumeListAsync();
-                        var cont = images.Value?.Select(x => x.Name.ToString()).ToList();
-                        listview.RemoveAll();
-                        listview.SetSource(cont);
+                        volumes = await dockerService.GetVolumeListAsync();
                     }
                     else
                     {
                         cache = result.Value.std;
+                        volumes = await dockerService.GetVolumeListAsync();
+                        tableView.Table = ConvertListToDataTable(volumes.Value);
                     }
                 }
             });
 
-            listview.KeyDown += (e) =>
+            KeyDown += (e) =>
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
                     showContextMenu.Invoke(1, 1);
                 }
             };
+        }
 
-            listview.OpenSelectedItem += async (e) =>
+        // More info?
+        public static DataTable ConvertListToDataTable(List<VolumeDTO> list)
+        {
+            var table = new DataTable();
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("Driver", typeof(string));
+            foreach (var item in list)
             {
-                var name = e.Value.ToString();
-                if (name is not null)
-                {
-                    var x = await dockerService.GetDockerObjectInfoAsync<Volume>(name);
-                    Application.Top.RemoveAll();
-                    var volumeWindow = new VolumeWindow(name);
-                    Application.Top.Add(volumeWindow);
-                    Application.Top.Add(MenuBarX.CreateMenuBar());
-                    Application.Refresh();
-                }
-            };
-            Add(listview);
+                table.Rows.Add(item.Name, item.Driver);
+            }
+            return table;
         }
     }
 }

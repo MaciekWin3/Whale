@@ -12,7 +12,6 @@ namespace Whale.Windows.Lists
     {
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerService dockerService;
-        public ListView ListView { get; set; } = new();
         public List<string> ContainerList { get; set; } = new();
 
         private readonly Dictionary<string, Delegate> events = new();
@@ -36,24 +35,6 @@ namespace Whale.Windows.Lists
 
             Result<List<ContainerDTO>> containers;
 
-            var label = new Label("CONTAINER ID   IMAGE         COMMAND    CREATED       STATUS                     PORTS     NAMES")
-            {
-                X = 0,
-                Y = 0
-            };
-
-            Add(label);
-
-            ListView = new ListView(ContainerList)
-            {
-                X = 0,
-                Y = 1,
-                Height = Dim.Fill(2),
-                Width = Dim.Fill(),
-                AllowsMarking = false,
-                AllowsMultipleSelection = false,
-            };
-
             // Table Editor for the container list
             var tableView = new TableView()
             {
@@ -66,9 +47,7 @@ namespace Whale.Windows.Lists
             // When i select row any cell show me the container id
             tableView.CellActivated += (e) =>
             {
-                //var name = e.Value.ToString();
                 int row = e.Row;
-                // get me first cell and row from the table
                 var name = (string)e.Table.Rows[row][0];
                 if (name is not null)
                 {
@@ -103,7 +82,6 @@ namespace Whale.Windows.Lists
                         // I want you to select ID, Image , Command, Created, Status, Ports, Names from the docker ps command
                         //ContainerList = containers.Value.Select(x => $"{x.Id} {x.Image} {x.Command} {x.CreatedDate} {x.Status} {x.Ports} {x.Names}").ToList();
                         tableView.Table = ConvertListToDataTable(containers.Value);
-                        ListView.SetSource(ContainerList);
                     }
                 }
             });
@@ -116,18 +94,6 @@ namespace Whale.Windows.Lists
                 }
             };
 
-            ListView.OpenSelectedItem += (e) =>
-            {
-                var name = e.Value.ToString();
-                if (name is not null)
-                {
-                    Application.Top.RemoveAll();
-                    var containerWindow = new ContainerWindow(name);
-                    Application.Top.Add(containerWindow);
-                    Application.Top.Add(MenuBarX.CreateMenuBar());
-                    Application.Refresh();
-                }
-            };
             //Add(ListView);
             Add(tableView);
         }
@@ -148,12 +114,6 @@ namespace Whale.Windows.Lists
                 table.Rows.Add(item.Id, item.Image, item.Command, item.CreatedDate, item.Status, item.Ports, item.Names);
             }
             return table;
-        }
-
-        public string GetCurrnetContainerName()
-        {
-            var currentContainer = ListView.SelectedItem;
-            return ContainerList[currentContainer];
         }
     }
 }
