@@ -13,7 +13,7 @@ namespace Whale.Windows.Lists
         readonly Action<int, int> showContextMenu;
         private readonly IDockerService dockerService =
             new DockerService(new ShellCommandRunner());
-        private MainWindow mainWindow;
+        private readonly MainWindow mainWindow;
         public ImageListWindow(Action<int, int> showContextMenu, MainWindow mainWindow) : base()
         {
             X = 0;
@@ -62,15 +62,17 @@ namespace Whale.Windows.Lists
                 while (true)
                 {
                     Result<List<ImageDTO>> result = await dockerService.GetImageListAsync();
-                    if (mainWindow.GetSelectedTab() is "Images")
+                    if (mainWindow.GetSelectedTab() is "Images" && result.IsSuccess)
                     {
-                        if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
+                        bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());
+                        bool? isCacheSuccessful = cache?.IsSuccess;
+                        if (isSame == true && isCacheSuccessful == true)
                         {
                             continue;
                         }
                         else
                         {
-                            tableView.Table = ConvertListToDataTable(result.Value);
+                            tableView.Table = ConvertListToDataTable(result.GetValue());
                             cache = result;
                         }
                     }

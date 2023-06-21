@@ -71,19 +71,21 @@ namespace Whale.Services
                 return Result.Fail<T>("Command failed");
             }
 
-            //string jsonString = JsonSerializer.Serialize(result.Value.std);
             JsonElement x = JsonDocument.Parse(result.Value.std).RootElement;
 
             JsonElement firstElement = x
                 .EnumerateArray()
                 .FirstOrDefault();
 
-            var d = firstElement.GetRawText();
-            var z = JsonSerializer.Deserialize<T>(d, new JsonSerializerOptions()
-            {
-            });
+            var rawText = firstElement.GetRawText();
+            var dockerObject = JsonSerializer.Deserialize<T>(rawText, new JsonSerializerOptions() { });
 
-            return Result.Ok(z);
+            if (dockerObject is null)
+            {
+                return Result.Fail<T>("Failed to deserialize object");
+            }
+
+            return Result.Ok(dockerObject);
         }
     }
 }

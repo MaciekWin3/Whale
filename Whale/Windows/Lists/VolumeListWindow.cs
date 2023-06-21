@@ -11,7 +11,6 @@ namespace Whale.Windows.Lists
     public class VolumeListWindow : Window
     {
         readonly Action<int, int> showContextMenu;
-        private readonly ShellCommandRunner shellCommandRunner = new();
         private readonly MainWindow mainWindow;
         private readonly IDockerService dockerService =
             new DockerService(new ShellCommandRunner());
@@ -62,15 +61,17 @@ namespace Whale.Windows.Lists
                 while (true)
                 {
                     Result<List<VolumeDTO>> result = await dockerService.GetVolumeListAsync();
-                    if (mainWindow.GetSelectedTab() is "Volumes")
+                    if (mainWindow.GetSelectedTab() is "Volumes" && result.IsSuccess)
                     {
-                        if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
+                        bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());
+                        bool? isCacheSuccessful = cache?.IsSuccess;
+                        if (isSame == true && isCacheSuccessful == true)
                         {
                             continue;
                         }
                         else
                         {
-                            tableView.Table = ConvertListToDataTable(result.Value);
+                            tableView.Table = ConvertListToDataTable(result.GetValue());
                             cache = result;
                         }
                     }
@@ -91,7 +92,7 @@ namespace Whale.Windows.Lists
         }
 
         // More info?
-        public DataTable ConvertListToDataTable(List<VolumeDTO> list)
+        public static DataTable ConvertListToDataTable(List<VolumeDTO> list)
         {
             var table = new DataTable();
             table.Columns.Add("Name", typeof(string));

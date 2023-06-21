@@ -1,9 +1,7 @@
 ﻿using System.Globalization;
-using System.Text.Json;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using Whale.Components;
-using Whale.Objects.Container;
 using Whale.Services;
 using Whale.Windows.Lists;
 
@@ -21,9 +19,7 @@ namespace Whale.Windows
         private readonly ContainerListWindow containerWindow;
         private readonly ImageListWindow imageWindow;
         private readonly VolumeListWindow volumeWindow;
-        private TabView tabView;
-
-        public TextView DetailsText { get; set; }
+        private TabView tabView = null!;
         public MainWindow() : base("Whale Dashboard")
         {
             X = 0;
@@ -44,7 +40,6 @@ namespace Whale.Windows
                 { "Update", new Action(() => Application.RequestStop()) },
                 { "Quit", new Action(() => Application.RequestStop()) },
                 { nameof(ShowContextMenu), new Action<int, int>(ShowContextMenu) },
-                { nameof(ChangeText), new Func<string, Task>(ChangeText) },
             };
             containerWindow = new ContainerListWindow(events, this);
             imageWindow = new ImageListWindow(ShowContextMenu, this);
@@ -135,18 +130,6 @@ namespace Whale.Windows
             Add(tabView);
         }
 
-        public async Task ChangeText(string text)
-        {
-            var d = await dockerService.GetDockerObjectInfoAsync<Container>(text);
-            if (d.Value is not null)
-            {
-                var jsonText = JsonSerializer.Serialize(d.Value, new JsonSerializerOptions
-                {
-                    WriteIndented = true,
-                });
-                DetailsText.Text = jsonText;
-            }
-        }
 
         public string GetSelectedTab()
         {

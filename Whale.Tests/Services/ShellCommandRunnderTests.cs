@@ -46,7 +46,7 @@ namespace Whale.Tests.Services
                 .Be("hello");
         }
 
-        private ShellCommandRunner CreateShellCommandRunner()
+        private static ShellCommandRunner CreateShellCommandRunner()
         {
             return new ShellCommandRunner();
         }

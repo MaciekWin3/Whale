@@ -15,7 +15,7 @@ namespace Whale.Windows.Lists
         public List<string> ContainerList { get; set; } = new();
 
         private readonly Dictionary<string, Delegate> events = new();
-        private MainWindow mainWindow;
+        private readonly MainWindow mainWindow;
         public ContainerListWindow(Dictionary<string, Delegate> events, MainWindow mainWindow)
         {
             Width = Dim.Fill();
@@ -33,10 +33,6 @@ namespace Whale.Windows.Lists
 
         public void InitView()
         {
-            ContainerList = new List<string>() { };
-
-            Result<List<ContainerDTO>> containers;
-
             // Table Editor for the container list
             var tableView = new TableView()
             {
@@ -68,15 +64,17 @@ namespace Whale.Windows.Lists
                 while (true)
                 {
                     Result<List<ContainerDTO>> result = await dockerService.GetContainerListAsync();
-                    if (mainWindow.GetSelectedTab() is "Containers")
+                    if (mainWindow.GetSelectedTab() is "Containers" && result.IsSuccess)
                     {
-                        if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
+                        bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());
+                        bool? isCacheSuccessful = cache?.IsSuccess;
+                        if (isSame == true && isCacheSuccessful == true)
                         {
                             continue;
                         }
                         else
                         {
-                            tableView.Table = ConvertListToDataTable(result.Value);
+                            tableView.Table = ConvertListToDataTable(result.GetValue());
                             cache = result;
                         }
                     }
