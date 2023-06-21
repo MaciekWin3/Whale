@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using Whale.Models;
-using Whale.Objects.Container;
 using Whale.Utils;
 
 namespace Whale.Services
@@ -17,9 +16,9 @@ namespace Whale.Services
             this.shellCommandRunner = shellCommandRunner;
         }
 
-        public async Task<Result<List<ContainerDTO>>> GetContainerListAsync()
+        public async Task<Result<List<ContainerDTO>>> GetContainerListAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", "ps", "-a");
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "ps", "-a" }, token);
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)
@@ -32,9 +31,9 @@ namespace Whale.Services
             return Result.Fail<List<ContainerDTO>>("Command failed");
         }
 
-        public async Task<Result<List<VolumeDTO>>> GetVolumeListAsync()
+        public async Task<Result<List<VolumeDTO>>> GetVolumeListAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "volume", "ls" }, token);
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)
@@ -47,9 +46,9 @@ namespace Whale.Services
             return Result.Fail<List<VolumeDTO>>("Command failed");
         }
 
-        public async Task<Result<List<ImageDTO>>> GetImageListAsync()
+        public async Task<Result<List<ImageDTO>>> GetImageListAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", "images");
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "images" }, token);
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)
@@ -62,10 +61,10 @@ namespace Whale.Services
             return Result.Fail<List<ImageDTO>>("Command failed");
         }
 
-        public async Task<Result<T>> GetDockerObjectInfoAsync<T>(string id)
+        public async Task<Result<T>> GetDockerObjectInfoAsync<T>(string id, CancellationToken token = default)
         {
             var result = await shellCommandRunner
-                .RunCommandAsync("docker", "inspect", id);
+                .RunCommandAsync("docker", new[] { "inspect", id }, token);
 
             if (result.IsFailure)
             {
@@ -85,11 +84,6 @@ namespace Whale.Services
             });
 
             return Result.Ok(z);
-        }
-
-        public Container Des(string x)
-        {
-            return JsonSerializer.Deserialize<Container>(x);
         }
     }
 }

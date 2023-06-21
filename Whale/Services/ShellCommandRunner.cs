@@ -8,7 +8,7 @@ namespace Whale.Services
 {
     public class ShellCommandRunner : IShellCommandRunner
     {
-        public async Task<Result<(string std, string error)>> RunCommandAsync(string command, params string[] arguments)
+        public async Task<Result<(string std, string error)>> RunCommandAsync(string command, string[] arguments, CancellationToken token = default)
         {
             var stdOut = new StringBuilder();
             var stdErr = new StringBuilder();
@@ -16,11 +16,11 @@ namespace Whale.Services
 
             try
             {
-                await Cli.Wrap(command)
+                var z = await Cli.Wrap(command)
                     .WithArguments(joinedArguments)
                     .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOut))
                     .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErr))
-                    .ExecuteAsync();
+                    .ExecuteAsync(token);
             }
             catch (Exception e)
             {

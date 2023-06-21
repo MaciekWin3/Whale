@@ -15,7 +15,8 @@ namespace Whale.Windows.Lists
         public List<string> ContainerList { get; set; } = new();
 
         private readonly Dictionary<string, Delegate> events = new();
-        public ContainerListWindow(Dictionary<string, Delegate> events)
+        private MainWindow mainWindow;
+        public ContainerListWindow(Dictionary<string, Delegate> events, MainWindow mainWindow)
         {
             Width = Dim.Fill();
             Height = Dim.Fill();
@@ -27,6 +28,7 @@ namespace Whale.Windows.Lists
             shellCommandRunner = new ShellCommandRunner();
             dockerService = new DockerService(shellCommandRunner);
             this.events = events;
+            this.mainWindow = mainWindow;
         }
 
         public void InitView()
@@ -66,22 +68,21 @@ namespace Whale.Windows.Lists
                 while (true)
                 {
                     Result<List<ContainerDTO>> result = await dockerService.GetContainerListAsync();
-                    if (!result.IsSuccess)
+                    if (mainWindow.GetSelectedTab() is "Containers")
                     {
-                        continue;
-                    }
-                    if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
-                    {
-                        cache = result;
+                        if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            tableView.Table = ConvertListToDataTable(result.Value);
+                            cache = result;
+                        }
                     }
                     else
                     {
-                        cache = result;
-                        containers = await dockerService.GetContainerListAsync();
-                        //ContainerList = containers.Value?.Select(x => x.Id.ToString()).ToList();
-                        // I want you to select ID, Image , Command, Created, Status, Ports, Names from the docker ps command
-                        //ContainerList = containers.Value.Select(x => $"{x.Id} {x.Image} {x.Command} {x.CreatedDate} {x.Status} {x.Ports} {x.Names}").ToList();
-                        tableView.Table = ConvertListToDataTable(containers.Value);
+                        continue;
                     }
                 }
             });

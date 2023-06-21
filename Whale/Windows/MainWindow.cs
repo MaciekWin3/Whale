@@ -21,6 +21,7 @@ namespace Whale.Windows
         private readonly ContainerListWindow containerWindow;
         private readonly ImageListWindow imageWindow;
         private readonly VolumeListWindow volumeWindow;
+        private TabView tabView;
 
         public TextView DetailsText { get; set; }
         public MainWindow() : base("Whale Dashboard")
@@ -45,9 +46,9 @@ namespace Whale.Windows
                 { nameof(ShowContextMenu), new Action<int, int>(ShowContextMenu) },
                 { nameof(ChangeText), new Func<string, Task>(ChangeText) },
             };
-            containerWindow = new ContainerListWindow(events);
-            imageWindow = new ImageListWindow(ShowContextMenu);
-            volumeWindow = new VolumeListWindow(ShowContextMenu);
+            containerWindow = new ContainerListWindow(events, this);
+            imageWindow = new ImageListWindow(ShowContextMenu, this);
+            volumeWindow = new VolumeListWindow(ShowContextMenu, this);
         }
 
         //public static async Task<Window> CreateAsync()
@@ -101,7 +102,7 @@ namespace Whale.Windows
         {
             ConfigureContextMenu();
 
-            var tabView = new TabView()
+            tabView = new TabView()
             {
                 X = 0,
                 Y = 0,
@@ -111,9 +112,6 @@ namespace Whale.Windows
 
             // Tabs
             //tabView.AddTab(new TabView.Tab("Chart", Bar()), false);
-            var containerWindow = new ContainerListWindow(events);
-            var imageWindow = new ImageListWindow(ShowContextMenu);
-            var volumeWindow = new VolumeListWindow(ShowContextMenu);
 
             tabView.AddTab(new TabView.Tab("Containers", containerWindow), false);
             tabView.AddTab(new TabView.Tab("Images", imageWindow), false);
@@ -148,6 +146,12 @@ namespace Whale.Windows
                 });
                 DetailsText.Text = jsonText;
             }
+        }
+
+        public string GetSelectedTab()
+        {
+            // return name of curtrenct active tab
+            return (string)tabView.SelectedTab.Text;
         }
 
         private View Bar()

@@ -13,7 +13,8 @@ namespace Whale.Windows.Lists
         readonly Action<int, int> showContextMenu;
         private readonly IDockerService dockerService =
             new DockerService(new ShellCommandRunner());
-        public ImageListWindow(Action<int, int> showContextMenu) : base()
+        private MainWindow mainWindow;
+        public ImageListWindow(Action<int, int> showContextMenu, MainWindow mainWindow) : base()
         {
             X = 0;
             Y = 0;
@@ -25,12 +26,11 @@ namespace Whale.Windows.Lists
             };
             this.showContextMenu = showContextMenu;
             InitView();
+            this.mainWindow = mainWindow;
         }
 
         public void InitView()
         {
-            var items = new List<string>() { };
-
             var tableView = new TableView()
             {
                 X = 0,
@@ -55,8 +55,6 @@ namespace Whale.Windows.Lists
                 }
             };
 
-            Result<List<ImageDTO>> images;
-
             // Listener
             Application.MainLoop.Invoke(async () =>
             {
@@ -64,19 +62,21 @@ namespace Whale.Windows.Lists
                 while (true)
                 {
                     Result<List<ImageDTO>> result = await dockerService.GetImageListAsync();
-                    if (!result.IsSuccess)
+                    if (mainWindow.GetSelectedTab() is "Images")
                     {
-                        continue;
-                    }
-                    if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
-                    {
-                        cache = result;
+                        if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            tableView.Table = ConvertListToDataTable(result.Value);
+                            cache = result;
+                        }
                     }
                     else
                     {
-                        cache = result;
-                        images = await dockerService.GetImageListAsync();
-                        tableView.Table = ConvertListToDataTable(images.Value);
+                        continue;
                     }
                 }
             });

@@ -4,6 +4,6 @@ namespace Whale.Services
 {
     public interface IShellCommandRunner
     {
-        Task<Result<(string std, string error)>> RunCommandAsync(string command, params string[] arguments);
+        Task<Result<(string std, string error)>> RunCommandAsync(string command, string[] arguments, CancellationToken cancellationToken = default);
     }
 }

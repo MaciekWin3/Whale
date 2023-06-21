@@ -12,9 +12,10 @@ namespace Whale.Windows.Lists
     {
         readonly Action<int, int> showContextMenu;
         private readonly ShellCommandRunner shellCommandRunner = new();
+        private readonly MainWindow mainWindow;
         private readonly IDockerService dockerService =
             new DockerService(new ShellCommandRunner());
-        public VolumeListWindow(Action<int, int> showContextMenu) : base()
+        public VolumeListWindow(Action<int, int> showContextMenu, MainWindow mainWindow) : base()
         {
             Width = Dim.Fill();
             Height = Dim.Fill();
@@ -24,14 +25,11 @@ namespace Whale.Windows.Lists
             };
             this.showContextMenu = showContextMenu;
             InitView();
+            this.mainWindow = mainWindow;
         }
 
         public void InitView()
         {
-            var items = new List<string>() { };
-
-            Result<List<VolumeDTO>> volumes;
-
             var tableView = new TableView()
             {
                 X = 0,
@@ -50,8 +48,8 @@ namespace Whale.Windows.Lists
                 if (name is not null)
                 {
                     Application.Top.RemoveAll();
-                    var containerWindow = new ContainerWindow(name);
-                    Application.Top.Add(containerWindow);
+                    var volumeWindow = new VolumeWindow(name);
+                    Application.Top.Add(volumeWindow);
                     Application.Top.Add(MenuBarX.CreateMenuBar());
                     Application.Refresh();
                 }
@@ -60,25 +58,25 @@ namespace Whale.Windows.Lists
             // Listener
             Application.MainLoop.Invoke(async () =>
             {
-                string cache = string.Empty;
+                Result<List<VolumeDTO>> cache = Result.Fail<List<VolumeDTO>>("Inital cache value");
                 while (true)
                 {
-                    Result<(string std, string error)> result
-                        = await shellCommandRunner.RunCommandAsync("docker", "volume", "ls");
-                    if (!result.IsSuccess)
+                    Result<List<VolumeDTO>> result = await dockerService.GetVolumeListAsync();
+                    if (mainWindow.GetSelectedTab() is "Volumes")
                     {
-                        continue;
-                    }
-                    if (cache != result.Value.std)
-                    {
-                        cache = result.Value.std;
-                        volumes = await dockerService.GetVolumeListAsync();
+                        if (cache.IsSuccess && cache.Value.SequenceEqual(result.Value))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            tableView.Table = ConvertListToDataTable(result.Value);
+                            cache = result;
+                        }
                     }
                     else
                     {
-                        cache = result.Value.std;
-                        volumes = await dockerService.GetVolumeListAsync();
-                        tableView.Table = ConvertListToDataTable(volumes.Value);
+                        continue;
                     }
                 }
             });
@@ -93,7 +91,7 @@ namespace Whale.Windows.Lists
         }
 
         // More info?
-        public static DataTable ConvertListToDataTable(List<VolumeDTO> list)
+        public DataTable ConvertListToDataTable(List<VolumeDTO> list)
         {
             var table = new DataTable();
             table.Columns.Add("Name", typeof(string));
