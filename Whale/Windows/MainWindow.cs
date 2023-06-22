@@ -56,42 +56,7 @@ namespace Whale.Windows
             return window;
         }
 
-        public void ConfigureContextMenu()
-        {
-            Point mousePos = default;
 
-            KeyPress += (e) =>
-            {
-                if (e.KeyEvent.Key == (Key.m))
-                {
-                    ShowContextMenu(mousePos.X, mousePos.Y);
-                    e.Handled = true;
-                }
-            };
-
-            MouseClick += (e) =>
-            {
-                if (e.MouseEvent.Flags == contextMenu.MouseFlags)
-                {
-                    ShowContextMenu(e.MouseEvent.X, e.MouseEvent.Y);
-                    e.Handled = true;
-                }
-            };
-            Application.RootMouseEvent += Application_RootMouseEvent;
-
-            void Application_RootMouseEvent(MouseEvent me)
-            {
-                mousePos = new Point(me.X, me.Y);
-            }
-
-            WantMousePositionReports = true;
-
-            Application.Top.Closed += (_) =>
-            {
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
-                Application.RootMouseEvent -= Application_RootMouseEvent;
-            };
-        }
 
         public void InitWindow()
         {
@@ -128,6 +93,14 @@ namespace Whale.Windows
             tabView.ApplyStyleChanges();
 
             Add(tabView);
+            Application.MainLoop.Invoke(async () =>
+            {
+                var isDockerDaemonRunning = await dockerService.CheckIfDockerDaemonIsRunningAsync();
+                if (isDockerDaemonRunning.IsFailure)
+                {
+                    MessageBox.ErrorQuery(50, 7, "Error", "Docker daemon is not running", "Ok");
+                }
+            });
         }
 
 
@@ -135,6 +108,43 @@ namespace Whale.Windows
         {
             // return name of curtrenct active tab
             return (string)tabView.SelectedTab.Text;
+        }
+
+        public void ConfigureContextMenu()
+        {
+            Point mousePos = default;
+
+            KeyPress += (e) =>
+            {
+                if (e.KeyEvent.Key == (Key.m))
+                {
+                    ShowContextMenu(mousePos.X, mousePos.Y);
+                    e.Handled = true;
+                }
+            };
+
+            MouseClick += (e) =>
+            {
+                if (e.MouseEvent.Flags == contextMenu.MouseFlags)
+                {
+                    ShowContextMenu(e.MouseEvent.X, e.MouseEvent.Y);
+                    e.Handled = true;
+                }
+            };
+            Application.RootMouseEvent += Application_RootMouseEvent;
+
+            void Application_RootMouseEvent(MouseEvent me)
+            {
+                mousePos = new Point(me.X, me.Y);
+            }
+
+            WantMousePositionReports = true;
+
+            Application.Top.Closed += (_) =>
+            {
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+                Application.RootMouseEvent -= Application_RootMouseEvent;
+            };
         }
 
         private View Bar()

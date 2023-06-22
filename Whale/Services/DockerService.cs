@@ -87,5 +87,15 @@ namespace Whale.Services
 
             return Result.Ok(dockerObject);
         }
+
+        public async Task<Result<bool>> CheckIfDockerDaemonIsRunningAsync(CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "info" }, token);
+            if (result.IsSuccess)
+            {
+                return Result.Ok(true);
+            }
+            return Result.Fail<bool>("Docker daemon is not running");
+        }
     }
 }
