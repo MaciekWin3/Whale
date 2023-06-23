@@ -23,7 +23,6 @@ namespace Whale.Windows.Single.ContainerTabs
                 Height = Dim.Fill(),
                 BottomOffset = 1,
                 RightOffset = 1,
-                ReadOnly = true
             };
             Add(textField);
 

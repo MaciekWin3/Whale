@@ -22,7 +22,7 @@ namespace Whale.Windows.Single
                 Height = Dim.Fill(),
             };
 
-            tabView.AddTab(new TabView.Tab("Logs", new ContainerLogsWindow()), false);
+            tabView.AddTab(new TabView.Tab("Logs", new ContainerLogsWindow(ContainerId)), false);
             tabView.AddTab(new TabView.Tab("Inspect", new ContainerInspectWindow()), false);
             tabView.AddTab(new TabView.Tab("Terminal", new ContainerTerminalWindow()), false);
             tabView.AddTab(new TabView.Tab("Files", new ContainerFilesWindow()), false);
