@@ -16,6 +16,7 @@ namespace Whale.Windows.Lists
 
         private readonly Dictionary<string, Delegate> events = new();
         private readonly MainWindow mainWindow;
+        ColorScheme alternatingColorScheme = null!;
         public ContainerListWindow(Dictionary<string, Delegate> events, MainWindow mainWindow)
         {
             Width = Dim.Fill();
@@ -41,6 +42,19 @@ namespace Whale.Windows.Lists
                 Height = Dim.Fill(),
                 FullRowSelect = true,
             };
+
+            alternatingColorScheme = new ColorScheme()
+            {
+
+                Disabled = ColorScheme.Disabled,
+                HotFocus = ColorScheme.HotFocus,
+                Focus = ColorScheme.Focus,
+                Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightGreen)
+            };
+
+            tableView.Style.SmoothHorizontalScrolling = true;
+            tableView.Style.ExpandLastColumn = true;
+            //tableView.Style.RowColorGetter = (a) => { return a.RowIndex % 2 == 0 ? alternatingColorScheme : null; };
 
             tableView.CellActivated += (e) =>
             {
@@ -113,5 +127,7 @@ namespace Whale.Windows.Lists
             }
             return table;
         }
+
+
     }
 }

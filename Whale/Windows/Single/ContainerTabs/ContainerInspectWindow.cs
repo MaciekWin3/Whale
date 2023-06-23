@@ -3,9 +3,9 @@ using Whale.Components;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
-    public class ContainerLogsWindow : Window
+    public class ContainerInspectWindow : Window
     {
-        public ContainerLogsWindow() : base()
+        public ContainerInspectWindow() : base()
         {
             Border = new Border
             {
@@ -13,7 +13,6 @@ namespace Whale.Windows.Single.ContainerTabs
             };
             InitView();
         }
-
         public void InitView()
         {
             var label = new Label("Test Window")

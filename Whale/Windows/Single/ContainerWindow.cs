@@ -14,7 +14,6 @@ namespace Whale.Windows.Single
 
         public void InitView()
         {
-
             var tabView = new TabView()
             {
                 X = 0,
@@ -24,6 +23,10 @@ namespace Whale.Windows.Single
             };
 
             tabView.AddTab(new TabView.Tab("Logs", new ContainerLogsWindow()), false);
+            tabView.AddTab(new TabView.Tab("Inspect", new ContainerInspectWindow()), false);
+            tabView.AddTab(new TabView.Tab("Terminal", new ContainerTerminalWindow()), false);
+            tabView.AddTab(new TabView.Tab("Files", new ContainerFilesWindow()), false);
+            tabView.AddTab(new TabView.Tab("Stats", new ContainerStatsWindow()), false);
 
             Add(tabView);
 

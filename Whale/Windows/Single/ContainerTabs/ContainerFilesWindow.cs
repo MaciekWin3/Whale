@@ -3,9 +3,9 @@ using Whale.Components;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
-    public class ContainerLogsWindow : Window
+    public class ContainerFilesWindow : Window
     {
-        public ContainerLogsWindow() : base()
+        public ContainerFilesWindow()
         {
             Border = new Border
             {
