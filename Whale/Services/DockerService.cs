@@ -61,6 +61,16 @@ namespace Whale.Services
             return Result.Fail<List<ImageDTO>>("Command failed");
         }
 
+        public async Task<Result<(string std, string err)>> GetContainerLogsAsync(string containerId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "logs", containerId }, default);
+            if (result.IsSuccess)
+            {
+                return result.Value;
+            }
+            return Result.Fail<(string std, string err)>("Command failed");
+        }
+
         public async Task<Result<T>> GetDockerObjectInfoAsync<T>(string id, CancellationToken token = default)
         {
             var result = await shellCommandRunner

@@ -1,5 +1,4 @@
 ﻿using Terminal.Gui;
-using Whale.Components;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
@@ -16,27 +15,17 @@ namespace Whale.Windows.Single.ContainerTabs
 
         public void InitView()
         {
-            var label = new Label("Test Window")
+            var textField = new TextView
             {
-                X = 5,
-                Y = 5,
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                BottomOffset = 1,
+                RightOffset = 1,
+                DesiredCursorVisibility = CursorVisibility.Vertical,
             };
-            Add(label);
-
-            var goBack = new Button("Go back")
-            {
-                X = 6,
-                Y = Pos.Bottom(label),
-            };
-            goBack.Clicked += () =>
-            {
-                Application.Top.RemoveAll();
-                var mainWindow = MainWindow.CreateAsync();
-                Application.Top.Add(mainWindow);
-                Application.Top.Add(MenuBarX.CreateMenuBar());
-                Application.Refresh();
-            };
-            Add(goBack);
+            Add(textField);
         }
     }
 }
