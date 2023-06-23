@@ -33,7 +33,6 @@ namespace Whale.Windows.Lists
 
         public void InitView()
         {
-            // Table Editor for the container list
             var tableView = new TableView()
             {
                 X = 0,
@@ -42,7 +41,7 @@ namespace Whale.Windows.Lists
                 Height = Dim.Fill(),
                 FullRowSelect = true,
             };
-            // When i select row any cell show me the container id
+
             tableView.CellActivated += (e) =>
             {
                 int row = e.Row;

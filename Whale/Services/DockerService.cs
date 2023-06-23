@@ -90,7 +90,7 @@ namespace Whale.Services
 
         public async Task<Result<bool>> CheckIfDockerDaemonIsRunningAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "info" }, token);
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "ps" }, token);
             if (result.IsSuccess)
             {
                 return Result.Ok(true);
