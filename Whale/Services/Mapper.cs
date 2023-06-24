@@ -5,15 +5,15 @@ namespace Whale.Services
 {
     public static class Mapper
     {
-        public static Result<List<ContainerDTO>> MapCommandToContainerList(string output)
+        public static Result<List<Container>> MapCommandToContainerList(string output)
         {
             var lines = PrepareOutput(output);
-            var containers = new List<ContainerDTO>();
+            var containers = new List<Container>();
             foreach (var line in lines)
             {
                 var values = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                containers.Add(new ContainerDTO()
+                containers.Add(new Container()
                 {
                     Id = values[0],
                     //Image = new Image() { Name = values[1] },
@@ -24,15 +24,15 @@ namespace Whale.Services
             return Result.Ok(containers);
         }
 
-        public static Result<List<ImageDTO>> MapCommandToImageList(string output)
+        public static Result<List<Image>> MapCommandToImageList(string output)
         {
             var lines = PrepareOutput(output);
-            var containers = new List<ImageDTO>();
+            var containers = new List<Image>();
             foreach (var line in lines)
             {
                 var values = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                containers.Add(new ImageDTO()
+                containers.Add(new Image()
                 {
                     Name = values[0],
                 });
@@ -40,15 +40,15 @@ namespace Whale.Services
             return Result.Ok(containers);
         }
 
-        public static Result<List<VolumeDTO>> MapCommandToVolumeList(string output)
+        public static Result<List<Volume>> MapCommandToVolumeList(string output)
         {
             var lines = PrepareOutput(output);
-            var containers = new List<VolumeDTO>();
+            var containers = new List<Volume>();
             foreach (var line in lines)
             {
                 var values = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                containers.Add(new VolumeDTO()
+                containers.Add(new Volume()
                 {
                     Driver = values[0],
                     Name = values[1],

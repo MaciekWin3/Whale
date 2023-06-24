@@ -16,7 +16,7 @@ namespace Whale.Services
 
             try
             {
-                var z = await Cli.Wrap(command)
+                await Cli.Wrap(command)
                     .WithArguments(joinedArguments)
                     .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOut))
                     .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErr))
@@ -33,7 +33,7 @@ namespace Whale.Services
         }
 
         // i want to try out observe from cliwrap
-        public async Task<Result<(string std, string error)>> ObserveCommandAsync(string command, params string[] arguments)
+        public async Task<Result<(string std, string error)>> ObserveCommandAsync(string command, string[] arguments, CancellationToken token = default)
         {
             var stdOutSb = new StringBuilder();
             var stdErrSb = new StringBuilder();

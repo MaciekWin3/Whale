@@ -58,10 +58,10 @@ namespace Whale.Windows.Lists
             // Listener
             Application.MainLoop.Invoke(async () =>
             {
-                Result<List<ImageDTO>> cache = Result.Fail<List<ImageDTO>>("Initial cache value");
+                Result<List<Image>> cache = Result.Fail<List<Image>>("Initial cache value");
                 while (true)
                 {
-                    Result<List<ImageDTO>> result = await dockerService.GetImageListAsync();
+                    Result<List<Image>> result = await dockerService.GetImageListAsync();
                     if (mainWindow.GetSelectedTab() is "Images" && result.IsSuccess)
                     {
                         bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());
@@ -92,7 +92,7 @@ namespace Whale.Windows.Lists
             };
         }
 
-        public static DataTable ConvertListToDataTable(List<ImageDTO> list)
+        public static DataTable ConvertListToDataTable(List<Image> list)
         {
             var table = new DataTable();
             table.Columns.Add("Name", typeof(string));

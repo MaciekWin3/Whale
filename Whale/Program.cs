@@ -18,7 +18,7 @@ static void InitApp(Toplevel top)
     top.Add(MenuBarX.CreateMenuBar());
     //top.Add(await MainWindow.CreateAsync());
     top.Add(MainWindow.CreateAsync());
-    Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightBlue);
+    //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightBlue);
     Application.Run();
     Application.Shutdown();
 }

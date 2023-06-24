@@ -16,7 +16,7 @@ namespace Whale.Services
             this.shellCommandRunner = shellCommandRunner;
         }
 
-        public async Task<Result<List<ContainerDTO>>> GetContainerListAsync(CancellationToken token = default)
+        public async Task<Result<List<Container>>> GetContainerListAsync(CancellationToken token = default)
         {
             var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "ps", "-a" }, token);
             if (result.IsSuccess)
@@ -26,12 +26,12 @@ namespace Whale.Services
                     var containers = Mapper.MapCommandToContainerList(result.Value.std);
                     return containers;
                 }
-                return Result.Fail<List<ContainerDTO>>("No containers found");
+                return Result.Fail<List<Container>>("No containers found");
             }
-            return Result.Fail<List<ContainerDTO>>("Command failed");
+            return Result.Fail<List<Container>>("Command failed");
         }
 
-        public async Task<Result<List<VolumeDTO>>> GetVolumeListAsync(CancellationToken token = default)
+        public async Task<Result<List<Volume>>> GetVolumeListAsync(CancellationToken token = default)
         {
             var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "volume", "ls" }, token);
             if (result.IsSuccess)
@@ -41,12 +41,12 @@ namespace Whale.Services
                     var volumes = Mapper.MapCommandToVolumeList(result.Value.std);
                     return volumes;
                 }
-                return Result.Fail<List<VolumeDTO>>("No containers found");
+                return Result.Fail<List<Volume>>("No containers found");
             }
-            return Result.Fail<List<VolumeDTO>>("Command failed");
+            return Result.Fail<List<Volume>>("Command failed");
         }
 
-        public async Task<Result<List<ImageDTO>>> GetImageListAsync(CancellationToken token = default)
+        public async Task<Result<List<Image>>> GetImageListAsync(CancellationToken token = default)
         {
             var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "images" }, token);
             if (result.IsSuccess)
@@ -56,9 +56,9 @@ namespace Whale.Services
                     var images = Mapper.MapCommandToImageList(result.Value.std);
                     return images;
                 }
-                return Result.Fail<List<ImageDTO>>("No images found");
+                return Result.Fail<List<Image>>("No images found");
             }
-            return Result.Fail<List<ImageDTO>>("Command failed");
+            return Result.Fail<List<Image>>("Command failed");
         }
 
         public async Task<Result<(string std, string err)>> GetContainerLogsAsync(string containerId, CancellationToken token = default)
@@ -71,6 +71,16 @@ namespace Whale.Services
             }
             return Result.Fail<(string std, string err)>("Command failed");
         }
+
+        //public async Task<Result> GetContainerStatsAsync(string containerId, CancellationToken token = default)
+        //{
+        //    var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "stats", containerId }, default);
+        //    if (result.IsSuccess)
+        //    {
+        //        return result.Value;
+        //    }
+        //    return Result.Fail<(string std, string err)>("Command failed");
+        //}
 
         public async Task<Result<T>> GetDockerObjectInfoAsync<T>(string id, CancellationToken token = default)
         {

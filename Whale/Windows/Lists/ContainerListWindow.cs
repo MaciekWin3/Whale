@@ -73,10 +73,10 @@ namespace Whale.Windows.Lists
             // Listener
             Application.MainLoop.Invoke(async () =>
             {
-                Result<List<ContainerDTO>> cache = Result.Fail<List<ContainerDTO>>("Initial cache value");
+                Result<List<Container>> cache = Result.Fail<List<Container>>("Initial cache value");
                 while (true)
                 {
-                    Result<List<ContainerDTO>> result = await dockerService.GetContainerListAsync();
+                    Result<List<Container>> result = await dockerService.GetContainerListAsync();
                     if (mainWindow.GetSelectedTab() is "Containers" && result.IsSuccess)
                     {
                         bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());
@@ -110,7 +110,7 @@ namespace Whale.Windows.Lists
             Add(tableView);
         }
 
-        public static DataTable ConvertListToDataTable(List<ContainerDTO> list)
+        public static DataTable ConvertListToDataTable(List<Container> list)
         {
             var table = new DataTable();
             table.Columns.Add("ID", typeof(string));

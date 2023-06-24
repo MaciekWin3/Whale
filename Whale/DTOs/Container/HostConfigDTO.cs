@@ -1,0 +1,71 @@
+﻿namespace Whale.Objects.Container
+{
+    public class HostConfigDTO
+    {
+        public object? Binds { get; set; }
+        public string? ContainerIDFile { get; set; }
+        public LogConfigDTO? LogConfig { get; set; }
+        public string? NetworkMode { get; set; }
+        public PortBindingsDTO? PortBindings { get; set; }
+        public RestartpolicyDTO? RestartPolicy { get; set; }
+        public bool? AutoRemove { get; set; }
+        public string? VolumeDriver { get; set; }
+        public object? VolumesFrom { get; set; }
+        public object? CapAdd { get; set; }
+        public object? CapDrop { get; set; }
+        public string? CgroupnsMode { get; set; }
+        public object[]? Dns { get; set; }
+        public object[]? DnsOptions { get; set; }
+        public object[]? DnsSearch { get; set; }
+        public object? ExtraHosts { get; set; }
+        public object? GroupAdd { get; set; }
+        public string? IpcMode { get; set; }
+        public string? Cgroup { get; set; }
+        public object? Links { get; set; }
+        public int? OomScoreAdj { get; set; }
+        public string? PidMode { get; set; }
+        public bool? Privileged { get; set; }
+        public bool? PublishAllPorts { get; set; }
+        public bool? ReadonlyRootfs { get; set; }
+        public object? SecurityOpt { get; set; }
+        public string? UTSMode { get; set; }
+        public string? UsernsMode { get; set; }
+        public int? ShmSize { get; set; }
+        public string? Runtime { get; set; }
+        public int[]? ConsoleSize { get; set; }
+        public string? Isolation { get; set; }
+        public int? CpuShares { get; set; }
+        public int? Memory { get; set; }
+        public int? NanoCpus { get; set; }
+        public string? CgroupParent { get; set; }
+        public int? BlkioWeight { get; set; }
+        public object[]? BlkioWeightDevice { get; set; }
+        public object? BlkioDeviceReadBps { get; set; }
+        public object? BlkioDeviceWriteBps { get; set; }
+        public object? BlkioDeviceReadIOps { get; set; }
+        public object? BlkioDeviceWriteIOps { get; set; }
+        public int? CpuPeriod { get; set; }
+        public int? CpuQuota { get; set; }
+        public int? CpuRealtimePeriod { get; set; }
+        public int? CpuRealtimeRuntime { get; set; }
+        public string? CpusetCpus { get; set; }
+        public string? CpusetMems { get; set; }
+        public object[]? Devices { get; set; }
+        public object? DeviceCgroupRules { get; set; }
+        public object? DeviceRequests { get; set; }
+        public int? KernelMemory { get; set; }
+        public int? KernelMemoryTCP { get; set; }
+        public int? MemoryReservation { get; set; }
+        public int? MemorySwap { get; set; }
+        public object? MemorySwappiness { get; set; }
+        public bool? OomKillDisable { get; set; }
+        public object? PidsLimit { get; set; }
+        public object? Ulimits { get; set; }
+        public int? CpuCount { get; set; }
+        public int? CpuPercent { get; set; }
+        public int? IOMaximumIOps { get; set; }
+        public int? IOMaximumBandwidth { get; set; }
+        public string[]? MaskedPaths { get; set; }
+        public string[]? ReadonlyPaths { get; set; }
+    }
+}
