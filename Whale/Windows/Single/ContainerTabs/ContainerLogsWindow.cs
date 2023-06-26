@@ -37,7 +37,7 @@ namespace Whale.Windows.Single.ContainerTabs
 
             Application.MainLoop.Invoke(async () =>
             {
-                string cache = string.Empty;
+                string? cache = string.Empty;
                 while (true)
                 {
                     var logs = await dockerService.GetContainerLogsAsync(ContainerId);
@@ -47,8 +47,11 @@ namespace Whale.Windows.Single.ContainerTabs
                     }
                     else
                     {
-                        textField.Text = logs.Value.std;
-                        cache = logs.Value.std;
+                        textField.Text = logs?.Value.std ?? string.Empty;
+                        if (logs?.Value.std is not null)
+                        {
+                            cache = logs?.Value.std;
+                        }
                     }
                 }
             });

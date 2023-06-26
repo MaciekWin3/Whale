@@ -54,8 +54,6 @@ namespace Whale.Windows
             return window;
         }
 
-
-
         public void InitWindow()
         {
             ConfigureContextMenu();

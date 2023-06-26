@@ -9,8 +9,8 @@ namespace Whale.Services
         Task<Result<List<Volume>>> GetVolumeListAsync(CancellationToken token = default);
         Task<Result<List<Image>>> GetImageListAsync(CancellationToken token = default);
         Task<Result<(string std, string err)>> GetContainerLogsAsync(string containerId, CancellationToken token = default);
+        Task<Result> CreateContainerAsync(List<string> arguments);
         Task<Result<T>> GetDockerObjectInfoAsync<T>(string id, CancellationToken token = default);
-
         Task<Result<bool>> CheckIfDockerDaemonIsRunningAsync(CancellationToken token = default);
     }
 }

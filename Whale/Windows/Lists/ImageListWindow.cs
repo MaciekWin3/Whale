@@ -48,8 +48,8 @@ namespace Whale.Windows.Lists
                 if (name is not null)
                 {
                     Application.Top.RemoveAll();
-                    var containerWindow = new ContainerWindow(name);
-                    Application.Top.Add(containerWindow);
+                    var imageWindow = new ImageWindow(name);
+                    Application.Top.Add(imageWindow);
                     Application.Top.Add(MenuBarX.CreateMenuBar());
                     Application.Refresh();
                 }

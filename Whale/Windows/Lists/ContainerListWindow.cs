@@ -116,14 +116,15 @@ namespace Whale.Windows.Lists
             table.Columns.Add("ID", typeof(string));
             table.Columns.Add("Image", typeof(string));
             table.Columns.Add("Command", typeof(string));
-            table.Columns.Add("Created", typeof(string));
+            //table.Columns.Add("Created", typeof(string));
             table.Columns.Add("Status", typeof(string));
             table.Columns.Add("Ports", typeof(string));
             table.Columns.Add("Names", typeof(string));
 
             foreach (var item in list)
             {
-                table.Rows.Add(item.Id, item.Image, item.Command, item.CreatedDate, item.Status, item.Ports, item.Names);
+                //table.Rows.Add(item.ID, item.Image, item.Command, item.CreatedAt, item.Status, item.Ports, item.Names);
+                table.Rows.Add(item.ID, item.Image, item.Command, item.Status, item.Ports, item.Names);
             }
             return table;
         }

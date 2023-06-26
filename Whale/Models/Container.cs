@@ -1,13 +1,20 @@
 ﻿namespace Whale.Models
 {
-    public record Container
+    public class Container
     {
-        public required string Id { get; set; }
-        public Image Image { get; set; }
-        public required string Command { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public Status Status { get; set; }
-        public List<Port> Ports { get; set; }
-        public List<string> Names { get; set; }
+        public string? ID { get; set; }
+        public string? Command { get; set; }
+        public string? CreatedAt { get; set; }
+        public string? Image { get; set; }
+        public string? Labels { get; set; }
+        public string? LocalVolumes { get; set; }
+        public string? Mounts { get; set; }
+        public string? Names { get; set; }
+        public string? Networks { get; set; }
+        public string? Ports { get; set; }
+        public string? RunningFor { get; set; }
+        public string? Size { get; set; }
+        public string? State { get; set; }
+        public string? Status { get; set; }
     }
 }
