@@ -1,11 +1,19 @@
 ﻿using Terminal.Gui;
+using Whale.Services;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
     public class ContainerTerminalWindow : Window
     {
-        public ContainerTerminalWindow() : base()
+        private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerService dockerService;
+        public string ContainerId { get; set; }
+        TextView terminal = null!;
+        public ContainerTerminalWindow(string containerId) : base()
         {
+            ContainerId = containerId;
+            shellCommandRunner = new ShellCommandRunner();
+            dockerService = new DockerService(shellCommandRunner);
             Border = new Border
             {
                 BorderStyle = BorderStyle.None,
@@ -14,7 +22,7 @@ namespace Whale.Windows.Single.ContainerTabs
         }
         public void InitView()
         {
-            var terminal = new TextView()
+            terminal = new TextView()
             {
                 X = 0,
                 Y = 0,
@@ -44,34 +52,32 @@ namespace Whale.Windows.Single.ContainerTabs
 
             Add(prompt);
 
-            //Application.MainLoop.Invoke(async () =>
-            //{
-            //    while (true)
-            //    {
-            //        var logs = await dockerService.GetContainerLogsAsync(ContainerId);
-            //        if (logs.Value.std == cache)
-            //        {
-            //            continue;
-            //        }
-            //        else
-            //        {
-            //            textField.Text = logs?.Value.std ?? string.Empty;
-            //            if (logs?.Value.std is not null)
-            //            {
-            //                cache = logs?.Value.std;
-            //            }
-            //        }
-            //    }
-            //});
+            Application.MainLoop.Invoke(async () =>
+            {
 
-            KeyPress += (e) =>
+            });
+
+            KeyPress += async (e) =>
             {
                 if (e.KeyEvent.Key == Key.Enter)
                 {
                     terminal.Text += prompt.Text + "\n";
-                    prompt.Text = "> ";
+                    HandleInput(prompt.Text.ToString());
+                    prompt.Text = "";
                 }
             };
+        }
+
+        private void HandleInput(string command)
+        {
+            Application.MainLoop.Invoke(async () =>
+            {
+                var result = await dockerService.RunCommandInsideDockerContainerAsync(ContainerId, command);
+                if (result.IsSuccess)
+                {
+                    terminal.Text += result.Value;
+                }
+            });
         }
     }
 }

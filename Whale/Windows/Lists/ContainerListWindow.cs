@@ -106,7 +106,6 @@ namespace Whale.Windows.Lists
                 }
             };
 
-            //Add(ListView);
             Add(tableView);
         }
 

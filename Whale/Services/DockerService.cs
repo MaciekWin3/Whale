@@ -20,7 +20,6 @@ namespace Whale.Services
         {
             var result = await shellCommandRunner.RunCommandAsync("docker",
                 new[] { "container", "ls", "--all", "--format", "json" }, token);
-            //    new[] { "ps", "-a" }, token);
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)
@@ -93,6 +92,16 @@ namespace Whale.Services
                 return result;
             }
             return Result.Fail<(string std, string err)>("Command failed");
+        }
+
+        public async Task<Result<string>> RunCommandInsideDockerContainerAsync(string containerId, string command, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "exec", containerId, command }, token);
+            if (result.IsSuccess)
+            {
+                return Result.Ok(result.Value.std);
+            }
+            return Result.Fail<string>("Command failed");
         }
 
         public async Task<Result<T>> GetDockerObjectInfoAsync<T>(string id, CancellationToken token = default)
