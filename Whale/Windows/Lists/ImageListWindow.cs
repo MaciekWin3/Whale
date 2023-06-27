@@ -97,15 +97,13 @@ namespace Whale.Windows.Lists
             var table = new DataTable();
             table.Columns.Add("Name", typeof(string));
             table.Columns.Add("Tag", typeof(string));
-            table.Columns.Add("Command", typeof(string));
-            table.Columns.Add("CreatedData", typeof(string));
-            table.Columns.Add("Status", typeof(string));
-            table.Columns.Add("Ports", typeof(string));
-            table.Columns.Add("Names", typeof(string));
+            table.Columns.Add("ID", typeof(string));
+            table.Columns.Add("Created", typeof(string));
+            table.Columns.Add("Size", typeof(string));
 
             foreach (var item in list)
             {
-                table.Rows.Add(item.Name, item.Tag, item.Command, item.CreatedDate, item.Status, item.Ports, item.Names);
+                table.Rows.Add(item.Repository, item.Tag, item.ID, item.CreatedSince, item.Size);
             }
             return table;
         }

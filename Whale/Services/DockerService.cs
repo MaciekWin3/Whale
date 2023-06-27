@@ -24,7 +24,7 @@ namespace Whale.Services
             {
                 if (result.Value.std.Length > 0)
                 {
-                    var containers = Mapper.MapCommandToContainerList(result.Value.std);
+                    var containers = Mapper.MapCommandToDockerObjectList<Container>(result.Value.std);
                     return containers;
                 }
                 return Result.Fail<List<Container>>("No containers found");
@@ -34,12 +34,13 @@ namespace Whale.Services
 
         public async Task<Result<List<Volume>>> GetVolumeListAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "volume", "ls" }, token);
+            var result = await shellCommandRunner.RunCommandAsync("docker",
+                new[] { "volume", "ls", "--format", "json" }, token);
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)
                 {
-                    var volumes = Mapper.MapCommandToVolumeList(result.Value.std);
+                    var volumes = Mapper.MapCommandToDockerObjectList<Volume>(result.Value.std);
                     return volumes;
                 }
                 return Result.Fail<List<Volume>>("No containers found");
@@ -49,12 +50,13 @@ namespace Whale.Services
 
         public async Task<Result<List<Image>>> GetImageListAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "images" }, token);
+            var result = await shellCommandRunner.RunCommandAsync("docker",
+                new[] { "image", "ls", "--all", "--format", "json" }, token);
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)
                 {
-                    var images = Mapper.MapCommandToImageList(result.Value.std);
+                    var images = Mapper.MapCommandToDockerObjectList<Image>(result.Value.std);
                     return images;
                 }
                 return Result.Fail<List<Image>>("No images found");
@@ -73,15 +75,19 @@ namespace Whale.Services
             return Result.Fail<(string std, string err)>("Command failed");
         }
 
-        //public async Task<Result> GetContainerStatsAsync(string containerId, CancellationToken token = default)
-        //{
-        //    var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "stats", containerId }, default);
-        //    if (result.IsSuccess)
-        //    {
-        //        return result.Value;
-        //    }
-        //    return Result.Fail<(string std, string err)>("Command failed");
-        //}
+        public async Task<Result> GetContainerStatsAsync(string containerId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "stats", containerId }, default);
+            if (result.IsSuccess)
+            {
+                var stats = Mapper.MapCommandToDockerObjectList<ContainerStats>(result.Value.std);
+                if (stats.IsSuccess && stats is not null && stats.Value.Count() > 0)
+                {
+                    return Result.Ok(stats.Value.First());
+                }
+            }
+            return Result.Fail<(string std, string err)>("Command failed");
+        }
 
         public async Task<Result> CreateContainerAsync(List<string> arguments)
         {

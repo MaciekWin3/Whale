@@ -29,6 +29,13 @@ namespace Whale.Windows.Single.ContainerTabs
                 Width = Dim.Fill(),
                 Height = Dim.Fill() - 2,
                 ReadOnly = true,
+                ColorScheme = new ColorScheme()
+                {
+                    Disabled = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+                    HotFocus = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+                    Focus = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+                    Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black)
+                }
             };
             Add(terminal);
 
@@ -47,17 +54,11 @@ namespace Whale.Windows.Single.ContainerTabs
                 Y = Pos.Bottom(line),
                 Width = Dim.Fill(),
                 Height = 1,
-                //Text = "> "
             };
 
             Add(prompt);
 
-            Application.MainLoop.Invoke(async () =>
-            {
-
-            });
-
-            KeyPress += async (e) =>
+            KeyPress += (e) =>
             {
                 if (e.KeyEvent.Key == Key.Enter)
                 {
@@ -77,6 +78,8 @@ namespace Whale.Windows.Single.ContainerTabs
                 {
                     terminal.Text += result.Value;
                 }
+                int idx = terminal.Lines;
+                terminal.ScrollTo(idx - terminal.Bounds.Height - 1);
             });
         }
     }
