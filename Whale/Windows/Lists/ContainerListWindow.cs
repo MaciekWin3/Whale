@@ -49,12 +49,19 @@ namespace Whale.Windows.Lists
                 Disabled = ColorScheme.Disabled,
                 HotFocus = ColorScheme.HotFocus,
                 Focus = ColorScheme.Focus,
-                Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightGreen)
+                Normal = Application.Driver.MakeAttribute(Color.BrightGreen, Color.Blue)
             };
 
             tableView.Style.SmoothHorizontalScrolling = true;
             tableView.Style.ExpandLastColumn = true;
-            //tableView.Style.RowColorGetter = (a) => { return a.RowIndex % 2 == 0 ? alternatingColorScheme : null; };
+            tableView.Style.RowColorGetter = (a) =>
+            {
+                if (a.Table.Rows[a.RowIndex][3].ToString().Contains("Up"))
+                {
+                    return alternatingColorScheme;
+                }
+                return null;
+            };
 
             tableView.CellActivated += (e) =>
             {
