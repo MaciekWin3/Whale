@@ -75,18 +75,18 @@ namespace Whale.Services
             return Result.Fail<(string std, string err)>("Command failed");
         }
 
-        public async Task<Result> GetContainerStatsAsync(string containerId, CancellationToken token = default)
+        public async Task<Result<ContainerStats>> GetContainerStatsAsync(string containerId, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "stats", containerId }, default);
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "stats", "--no-stream", "--format", "json", containerId }, default);
             if (result.IsSuccess)
             {
                 var stats = Mapper.MapCommandToDockerObjectList<ContainerStats>(result.Value.std);
-                if (stats.IsSuccess && stats is not null && stats.Value.Count() > 0)
+                if (stats.IsSuccess && stats is not null && stats.Value.Count > 0)
                 {
                     return Result.Ok(stats.Value.First());
                 }
             }
-            return Result.Fail<(string std, string err)>("Command failed");
+            return Result.Fail<ContainerStats>("Command failed");
         }
 
         public async Task<Result> CreateContainerAsync(List<string> arguments)

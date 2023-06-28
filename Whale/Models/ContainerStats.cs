@@ -2,14 +2,14 @@
 {
     public class ContainerStats
     {
-        public required string ContainerId { get; init; }
-        public required string ContainerName { get; init; }
-        public float CpuPercentage { get; init; }
-        public int BlockIO { get; init; }
-        public int BlockIOLimit { get; init; }
-        public float MemoryPercentage { get; init; }
-        public float MemoryUsage { get; init; }
-        public float MemoryLimit { get; init; }
-        public int Pids { get; init; }
+        public string ID { get; set; }
+        public string Container { get; set; }
+        public string BlockIO { get; set; }
+        public string CPUPerc { get; set; }
+        public string MemPerc { get; set; }
+        public string MemUsage { get; set; }
+        public string Name { get; set; }
+        public string NetIO { get; set; }
+        public string PIDs { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace Whale.Windows.Single.ContainerTabs
 
         public void InitView()
         {
+            // File sysytem exploer
             var treeView = new TreeView
             {
                 X = 0,

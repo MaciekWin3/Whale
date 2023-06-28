@@ -26,7 +26,7 @@ namespace Whale.Windows.Single
             tabView.AddTab(new TabView.Tab("Inspect", new ContainerInspectWindow()), false);
             tabView.AddTab(new TabView.Tab("Terminal", new ContainerTerminalWindow(ContainerId)), false);
             tabView.AddTab(new TabView.Tab("Files", new ContainerFilesWindow()), false);
-            tabView.AddTab(new TabView.Tab("Stats", new ContainerStatsWindow()), false);
+            tabView.AddTab(new TabView.Tab("Stats", new ContainerStatsWindow(ContainerId)), false);
 
             Add(tabView);
 

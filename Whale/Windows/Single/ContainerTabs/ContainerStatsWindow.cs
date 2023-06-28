@@ -1,17 +1,25 @@
 ﻿using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using Whale.Components;
+using Whale.Services;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
+
     public class ContainerStatsWindow : Window
     {
         GraphView graphView = null!;
         GraphView graphView2 = null!;
         GraphView graphView3 = null!;
         GraphView graphView4 = null!;
-        public ContainerStatsWindow() : base()
+        private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerService dockerService;
+        public string ContainerId { get; set; }
+        public ContainerStatsWindow(string containerId) : base()
         {
+            ContainerId = containerId;
+            shellCommandRunner = new ShellCommandRunner();
+            dockerService = new DockerService(shellCommandRunner);
             Border = new Border
             {
                 BorderStyle = BorderStyle.None,
@@ -74,20 +82,79 @@ namespace Whale.Windows.Single.ContainerTabs
                 Width = Dim.Percent(50),
                 Height = Dim.Percent(50),
             };
+            // GraphView graphView = new GraphView()
 
-            cpuFrame.Add(graphView);
-            memFrame.Add(graphView2);
-            diskFrame.Add(graphView3);
-            netFrame.Add(graphView4);
+            //cpuFrame.Add(graphView);
+            //memFrame.Add(graphView2);
+            //diskFrame.Add(graphView3);
+            //netFrame.Add(graphView4);
 
             Add(cpuFrame, memFrame, diskFrame, netFrame);
 
+            var cpuLabel = new Label("CPU Usage")
+            {
+                X = Pos.Center(),
+                Y = Pos.Center(),
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                TextAlignment = TextAlignment.Centered,
+                VerticalTextAlignment = VerticalTextAlignment.Middle
+            };
+            cpuFrame.Add(cpuLabel);
+
+            var memLabel = new Label("Memory Usage")
+            {
+                X = Pos.Center(),
+                Y = Pos.Center(),
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                TextAlignment = TextAlignment.Centered,
+                VerticalTextAlignment = VerticalTextAlignment.Middle
+            };
+            memFrame.Add(memLabel);
+
+            var diskLabel = new Label("Disk Usage")
+            {
+                X = Pos.Center(),
+                Y = Pos.Center(),
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                TextAlignment = TextAlignment.Centered,
+                VerticalTextAlignment = VerticalTextAlignment.Middle
+            };
+
+            diskFrame.Add(diskLabel);
+
+            var netLabel = new Label("Network Usage")
+            {
+                X = Pos.Center(),
+                Y = Pos.Center(),
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                TextAlignment = TextAlignment.Centered,
+                VerticalTextAlignment = VerticalTextAlignment.Middle
+            };
+
+            netFrame.Add(netLabel);
+
+            Application.MainLoop.Invoke(async () =>
+            {
+                while (true)
+                {
+                    var stats = await dockerService.GetContainerStatsAsync(ContainerId);
+                    cpuLabel.Text = stats.Value.CPUPerc.ToString();
+                    memLabel.Text = stats.Value.MemPerc.ToString();
+                    diskLabel.Text = stats.Value.BlockIO.ToString();
+                    netLabel.Text = stats.Value.NetIO.ToString();
+                }
+            });
+
             // now i want text inside each frameview that is centerd bothj verticaly and horizontaly
             //cpuFrame.Add(new Label("CPU USage") { VerticalTextAlignment = VerticalTextAlignment.Middle });
-            SetupDisco();
-            SetupDisco2();
-            SetupDisco3();
-            SetupDisco4();
+            //SetupDisco();
+            //SetupDisco2();
+            //SetupDisco3();
+            //SetupDisco4();
         }
 
         private void SetupDisco()
@@ -106,10 +173,10 @@ namespace Whale.Windows.Single.ContainerTabs
                 bars.Add(new BarSeries.Bar(null, stiple, 1));
             }
 
-            Func<MainLoop, bool> genSample = (l) =>
+            bool genSample(MainLoop l)
             {
                 bars.RemoveAt(0);
-                Random random = new Random();
+                Random random = new();
                 int randomNumber = random.Next(1, 101);
                 //int randomNumber = 10;
                 bars.Add(new BarSeries.Bar(null, stiple, randomNumber));
@@ -117,7 +184,7 @@ namespace Whale.Windows.Single.ContainerTabs
 
                 // while the equaliser is showing
                 return graphView.Series.Contains(series);
-            };
+            }
 
             Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(500), genSample);
 
@@ -155,7 +222,7 @@ namespace Whale.Windows.Single.ContainerTabs
             Func<MainLoop, bool> genSample = (l) =>
             {
                 bars.RemoveAt(0);
-                Random random = new Random();
+                Random random = new();
                 int randomNumber = random.Next(1, 101);
                 //int randomNumber = 10;
                 bars.Add(new BarSeries.Bar(null, stiple, randomNumber));
@@ -198,17 +265,17 @@ namespace Whale.Windows.Single.ContainerTabs
                 bars.Add(new BarSeries.Bar(null, stiple, 1));
             }
 
-            Func<MainLoop, bool> genSample = (l) =>
+            bool genSample(MainLoop l)
             {
                 bars.RemoveAt(0);
-                Random random = new Random();
+                Random random = new();
                 int randomNumber = random.Next(1, 101);
                 bars.Add(new BarSeries.Bar(null, stiple, randomNumber));
                 graphView3.SetNeedsDisplay();
 
                 // while the equaliser is showing
                 return graphView3.Series.Contains(series);
-            };
+            }
 
             Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(500), genSample);
 
@@ -242,10 +309,10 @@ namespace Whale.Windows.Single.ContainerTabs
                 bars.Add(new BarSeries.Bar(null, stiple, 1));
             }
 
-            Func<MainLoop, bool> genSample = (l) =>
+            bool genSample(MainLoop l)
             {
                 bars.RemoveAt(0);
-                Random random = new Random();
+                Random random = new();
                 int randomNumber = random.Next(1, 101);
                 //int randomNumber = 10;
                 bars.Add(new BarSeries.Bar(null, stiple, randomNumber));
@@ -253,7 +320,7 @@ namespace Whale.Windows.Single.ContainerTabs
 
                 // while the equaliser is showing
                 return graphView4.Series.Contains(series);
-            };
+            }
 
             Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(500), genSample);
 
