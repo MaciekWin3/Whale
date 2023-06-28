@@ -27,29 +27,16 @@ namespace Whale.Components
             int x = start.X;
             for (int y = end.Y; y <= start.Y; y++)
             {
-
                 var height = graph.ScreenToGraphSpace(x, y).Y;
 
-                if (height >= 85)
+                driver.SetAttribute(height switch
                 {
-                    driver.SetAttribute(red);
-                }
-                else if (height >= 66)
-                {
-                    driver.SetAttribute(brightred);
-                }
-                else if (height >= 45)
-                {
-                    driver.SetAttribute(brightyellow);
-                }
-                else if (height >= 25)
-                {
-                    driver.SetAttribute(brightgreen);
-                }
-                else
-                {
-                    driver.SetAttribute(green);
-                }
+                    var h when h >= 85 => red,
+                    var h when h >= 66 => brightred,
+                    var h when h >= 45 => brightyellow,
+                    var h when h >= 25 => brightgreen,
+                    _ => green
+                });
 
                 graph.AddRune(x, y, beingDrawn.Fill.Rune);
             }

@@ -81,6 +81,9 @@ namespace Whale.Windows.Single.ContainerTabs
             netFrame.Add(graphView4);
 
             Add(cpuFrame, memFrame, diskFrame, netFrame);
+
+            // now i want text inside each frameview that is centerd bothj verticaly and horizontaly
+            //cpuFrame.Add(new Label("CPU USage") { VerticalTextAlignment = VerticalTextAlignment.Middle });
             SetupDisco();
             SetupDisco2();
             SetupDisco3();
@@ -200,7 +203,6 @@ namespace Whale.Windows.Single.ContainerTabs
                 bars.RemoveAt(0);
                 Random random = new Random();
                 int randomNumber = random.Next(1, 101);
-                //int randomNumber = 10;
                 bars.Add(new BarSeries.Bar(null, stiple, randomNumber));
                 graphView3.SetNeedsDisplay();
 
@@ -219,8 +221,8 @@ namespace Whale.Windows.Single.ContainerTabs
             graphView3.AxisX.Increment = 0; // No graph ticks
             graphView3.AxisX.ShowLabelsEvery = 0; // no labels
 
-            graphView3.AxisX.Visible = false;
-            graphView3.AxisY.Visible = false;
+            graphView3.AxisX.Visible = true;
+            graphView3.AxisY.Visible = true;
 
             graphView3.SetNeedsDisplay();
         }
