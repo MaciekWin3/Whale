@@ -52,6 +52,8 @@ namespace Whale.Windows.Single.ContainerTabs
                         {
                             cache = logs?.Value.std;
                         }
+                        int idx = textField.Lines;
+                        textField.ScrollTo(idx - textField.Bounds.Height - 1);
                     }
                 }
             });

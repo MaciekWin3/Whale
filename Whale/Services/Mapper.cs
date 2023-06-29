@@ -25,5 +25,15 @@ namespace Whale.Services
             }
             return Result.Ok(dockerObjectList);
         }
+
+        public static Result<T> MapCommandToDockerObject<T>(string output)
+        {
+            var dockerObject = JsonSerializer.Deserialize<T>(output);
+            if (dockerObject is null)
+            {
+                return Result.Fail<T>("Failed to deserialize object");
+            }
+            return Result.Ok(dockerObject);
+        }
     }
 }

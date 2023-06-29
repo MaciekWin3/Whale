@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Whale.Models;
+using Whale.Models.Version;
 using Whale.Utils;
 
 namespace Whale.Services
@@ -80,13 +81,27 @@ namespace Whale.Services
             var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "stats", "--no-stream", "--format", "json", containerId }, default);
             if (result.IsSuccess)
             {
-                var stats = Mapper.MapCommandToDockerObjectList<ContainerStats>(result.Value.std);
-                if (stats.IsSuccess && stats is not null && stats.Value.Count > 0)
+                var stats = Mapper.MapCommandToDockerObject<ContainerStats>(result.Value.std);
+                if (stats.IsSuccess && stats.Value is not null)
                 {
-                    return Result.Ok(stats.Value.First());
+                    return Result.Ok(stats.Value);
                 }
             }
             return Result.Fail<ContainerStats>("Command failed");
+        }
+
+        public async Task<Result<DockerVersion>> GetDockerVersionObjectAsync(CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "version", "--format", "json" }, default);
+            if (result.IsSuccess)
+            {
+                var stats = Mapper.MapCommandToDockerObject<DockerVersion>(result.Value.std);
+                if (stats.IsSuccess && stats.Value is not null)
+                {
+                    return Result.Ok(stats.Value);
+                }
+            }
+            return Result.Fail<DockerVersion>("Command failed");
         }
 
         public async Task<Result> CreateContainerAsync(List<string> arguments)

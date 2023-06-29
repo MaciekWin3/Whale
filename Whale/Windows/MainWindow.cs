@@ -18,6 +18,7 @@ namespace Whale.Windows
         private readonly ImageListWindow imageWindow;
         private readonly VolumeListWindow volumeWindow;
         private TabView tabView = null!;
+
         public MainWindow() : base("Whale Dashboard")
         {
             X = 0;
@@ -28,7 +29,8 @@ namespace Whale.Windows
             {
                 BorderStyle = BorderStyle.Rounded,
                 Effect3D = false,
-                Title = "Whale Dashboard"
+                Title = "Whale Dashboard",
+                Padding = new Thickness(1, 0, 1, 0),
             };
             shellCommandRunner = new ShellCommandRunner();
             dockerService = new DockerService(shellCommandRunner);
@@ -87,6 +89,10 @@ namespace Whale.Windows
             tabView.ApplyStyleChanges();
 
             Add(tabView);
+
+
+
+
             Application.MainLoop.Invoke(async () =>
             {
                 var isDockerDaemonRunning = await dockerService.CheckIfDockerDaemonIsRunningAsync();
@@ -95,6 +101,7 @@ namespace Whale.Windows
                     MessageBox.ErrorQuery(50, 7, "Error", "Docker daemon is not running", "Ok");
                 }
             });
+
         }
 
         public string GetSelectedTab()

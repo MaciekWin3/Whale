@@ -11,14 +11,18 @@ var cellHighlight = new ColorScheme()
 };
 
 Application.Init();
-InitApp(Application.Top);
+await InitApp(Application.Top);
 
-static void InitApp(Toplevel top)
+async Task InitApp(Toplevel top)
 {
     top.Add(MenuBarX.CreateMenuBar());
+    top.Add(await AppInfoBar.Create());
     //top.Add(await MainWindow.CreateAsync());
     top.Add(MainWindow.CreateAsync());
     //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightBlue);
     Application.Run();
     Application.Shutdown();
 }
+
+
+
