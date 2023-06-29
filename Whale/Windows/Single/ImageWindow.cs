@@ -37,6 +37,9 @@ namespace Whale.Windows.Single
             {
                 Dialog dialog = null!;
                 dialog = new Dialog("Image: " + ImageId, 60, 20);
+                var label = new Label(1, 1, "Container Name:");
+                var textField = new TextField(1, 2, 40, "");
+                dialog.Add(label, textField);
                 dialog.AddButton(create);
                 dialog.AddButton(exit);
                 Application.Run(dialog);

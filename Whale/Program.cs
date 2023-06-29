@@ -1,5 +1,6 @@
 ﻿using Terminal.Gui;
 using Whale.Components;
+using Whale.Services;
 using Whale.Windows;
 
 var cellHighlight = new ColorScheme()
@@ -10,19 +11,21 @@ var cellHighlight = new ColorScheme()
     Focus = Terminal.Gui.Attribute.Make(Color.Cyan, Color.Magenta),
 };
 
-Application.Init();
-await InitApp(Application.Top);
+var shellCommandRunner = new ShellCommandRunner();
+var dockerService = new DockerService(shellCommandRunner);
+string version = dockerService.GetDockerVersionObjectAsync().Result.Value.Client.Version;
 
-async Task InitApp(Toplevel top)
+Application.Init();
+InitApp(Application.Top);
+
+void InitApp(Toplevel top)
 {
     top.Add(MenuBarX.CreateMenuBar());
-    top.Add(await AppInfoBar.Create());
+    top.Add(AppInfoBar.Create(version));
     //top.Add(await MainWindow.CreateAsync());
     top.Add(MainWindow.CreateAsync());
     //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightBlue);
     Application.Run();
     Application.Shutdown();
 }
-
-
 
