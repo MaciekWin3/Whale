@@ -20,6 +20,7 @@ namespace Whale.Services
                     .WithArguments(joinedArguments)
                     .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOut))
                     .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErr))
+                //.ExecuteBufferedAsync(token);
                     .ExecuteAsync(token);
             }
             catch (Exception e)

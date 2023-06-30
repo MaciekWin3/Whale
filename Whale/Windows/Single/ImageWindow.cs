@@ -37,9 +37,35 @@ namespace Whale.Windows.Single
             {
                 Dialog dialog = null!;
                 dialog = new Dialog("Image: " + ImageId, 60, 20);
-                var label = new Label(1, 1, "Container Name:");
-                var textField = new TextField(1, 2, 40, "");
-                dialog.Add(label, textField);
+                var label = new Label("Container Name:")
+                {
+                    X = 0,
+                    Y = 1,
+                };
+                var textField = new TextField("")
+                {
+                    X = 0,
+                    Y = Pos.Bottom(label),
+                    Width = Dim.Fill()
+                };
+                var portsLabel = new Label("Ports:")
+                {
+                    X = 0,
+                    Y = Pos.Bottom(textField)
+                };
+                var portsKeyField = new TextField("")
+                {
+                    X = 0,
+                    Y = Pos.Bottom(portsLabel),
+                    Width = Dim.Percent(50),
+                };
+                var portsValueField = new TextField("")
+                {
+                    X = Pos.Right(portsKeyField),
+                    Y = Pos.Bottom(portsLabel),
+                    Width = Dim.Percent(50)
+                };
+                dialog.Add(label, textField, portsLabel, portsKeyField, portsValueField);
                 dialog.AddButton(create);
                 dialog.AddButton(exit);
                 Application.Run(dialog);

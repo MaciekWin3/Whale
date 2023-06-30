@@ -13,7 +13,15 @@ var cellHighlight = new ColorScheme()
 
 var shellCommandRunner = new ShellCommandRunner();
 var dockerService = new DockerService(shellCommandRunner);
-string version = dockerService.GetDockerVersionObjectAsync().Result.Value.Client.Version;
+
+string version = "Unkown";
+try
+{
+    version = dockerService.GetDockerVersionObjectAsync().Result.Value.Client.Version;
+}
+catch
+{
+}
 
 Application.Init();
 InitApp(Application.Top);

@@ -85,13 +85,26 @@ namespace Whale.Windows
                 {
                 }
             };
+
+            KeyPress += (e) =>
+            {
+                if (e.KeyEvent.Key == (Key.Tab))
+                {
+                    var tabs = tabView.Tabs.Count;
+                    if (tabView.SelectedTab == tabView.Tabs.ToArray()[tabs - 1])
+                    {
+                        tabView.SelectedTab = tabView.Tabs.ToArray()[0];
+                    }
+                    else
+                    {
+                        tabView.SwitchTabBy(1);
+                    }
+                    e.Handled = true;
+                }
+            };
             tabView.Style.ShowBorder = true;
             tabView.ApplyStyleChanges();
-
             Add(tabView);
-
-
-
 
             Application.MainLoop.Invoke(async () =>
             {

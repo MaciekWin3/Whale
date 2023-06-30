@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using Whale.Models;
 using Whale.Models.Version;
 using Whale.Utils;
@@ -19,6 +20,7 @@ namespace Whale.Services
 
         public async Task<Result<List<Container>>> GetContainerListAsync(CancellationToken token = default)
         {
+            Debug.WriteLine("Get Container List Async");
             var result = await shellCommandRunner.RunCommandAsync("docker",
                 new[] { "container", "ls", "--all", "--format", "json" }, token);
             if (result.IsSuccess)
@@ -35,6 +37,7 @@ namespace Whale.Services
 
         public async Task<Result<List<Volume>>> GetVolumeListAsync(CancellationToken token = default)
         {
+            Debug.WriteLine("Get Volume List Async");
             var result = await shellCommandRunner.RunCommandAsync("docker",
                 new[] { "volume", "ls", "--format", "json" }, token);
             if (result.IsSuccess)
@@ -51,6 +54,7 @@ namespace Whale.Services
 
         public async Task<Result<List<Image>>> GetImageListAsync(CancellationToken token = default)
         {
+            Debug.WriteLine("Get Image List Async");
             var result = await shellCommandRunner.RunCommandAsync("docker",
                 new[] { "image", "ls", "--all", "--format", "json" }, token);
             if (result.IsSuccess)
