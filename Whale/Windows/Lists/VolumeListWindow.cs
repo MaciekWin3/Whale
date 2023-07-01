@@ -8,7 +8,7 @@ using Whale.Windows.Single;
 
 namespace Whale.Windows.Lists
 {
-    public class VolumeListWindow : Window
+    public sealed class VolumeListWindow : Toplevel
     {
         readonly Action<int, int> showContextMenu;
         private readonly MainWindow mainWindow;

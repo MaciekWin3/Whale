@@ -2,7 +2,7 @@
 
 namespace Whale.Windows.Single.ContainerTabs
 {
-    public class ContainerFilesWindow : Window
+    public sealed class ContainerFilesWindow : Toplevel
     {
         public ContainerFilesWindow()
         {

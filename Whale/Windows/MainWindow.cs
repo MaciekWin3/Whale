@@ -5,9 +5,8 @@ using Whale.Windows.Lists;
 
 namespace Whale.Windows
 {
-    public class MainWindow : Window, IDisposable
+    public sealed class MainWindow : Window
     {
-
         private ContextMenu contextMenu = new();
         private MenuItem miUseSubMenusSingleFrame = null!;
         private bool useSubMenusSingleFrame;
@@ -69,22 +68,10 @@ namespace Whale.Windows
             };
 
             // Tabs
-            tabView.AddTab(new TabView.Tab("Containers", containerWindow), false);
+            tabView.AddTab(new TabView.Tab("Containers", containerWindow), true);
             tabView.AddTab(new TabView.Tab("Images", imageWindow), false);
             tabView.AddTab(new TabView.Tab("Volumes", volumeWindow), false);
 
-            tabView.SelectedTabChanged += (a, e) =>
-            {
-                if (e.NewTab.Text == "Containers")
-                {
-                }
-                else if (e.NewTab.Text == "Images")
-                {
-                }
-                else if (e.NewTab.Text == "Volumes")
-                {
-                }
-            };
 
             KeyPress += (e) =>
             {

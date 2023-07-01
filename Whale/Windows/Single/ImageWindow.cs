@@ -4,7 +4,7 @@ using Whale.Components;
 
 namespace Whale.Windows.Single
 {
-    public class ImageWindow : Window
+    public sealed class ImageWindow : Window
     {
         private ContextMenu contextMenu = new();
         public string ImageId { get; init; }

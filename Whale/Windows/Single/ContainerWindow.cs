@@ -3,7 +3,7 @@ using Whale.Windows.Single.ContainerTabs;
 
 namespace Whale.Windows.Single
 {
-    public class ContainerWindow : Window
+    public sealed class ContainerWindow : Window
     {
         public string ContainerId { get; init; }
         public ContainerWindow(string containerId) : base("Container: " + containerId)
@@ -27,6 +27,23 @@ namespace Whale.Windows.Single
             tabView.AddTab(new TabView.Tab("Terminal", new ContainerTerminalWindow(ContainerId)), false);
             tabView.AddTab(new TabView.Tab("Files", new ContainerFilesWindow()), false);
             tabView.AddTab(new TabView.Tab("Stats", new ContainerStatsWindow(ContainerId)), false);
+
+            KeyPress += (e) =>
+            {
+                if (e.KeyEvent.Key == (Key.Tab))
+                {
+                    var tabs = tabView.Tabs.Count;
+                    if (tabView.SelectedTab == tabView.Tabs.ToArray()[tabs - 1])
+                    {
+                        tabView.SelectedTab = tabView.Tabs.ToArray()[0];
+                    }
+                    else
+                    {
+                        tabView.SwitchTabBy(1);
+                    }
+                    e.Handled = true;
+                }
+            };
 
             Add(tabView);
 

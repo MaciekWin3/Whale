@@ -8,7 +8,7 @@ using Whale.Windows.Single;
 
 namespace Whale.Windows.Lists
 {
-    public class ImageListWindow : Window
+    public sealed class ImageListWindow : Toplevel
     {
         readonly Action<int, int> showContextMenu;
         private readonly IDockerService dockerService =

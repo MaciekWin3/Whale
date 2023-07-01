@@ -6,7 +6,7 @@ using Whale.Services;
 namespace Whale.Windows.Single.ContainerTabs
 {
 
-    public class ContainerStatsWindow : Window
+    public sealed class ContainerStatsWindow : Toplevel
     {
         GraphView graphView = null!;
         GraphView graphView2 = null!;

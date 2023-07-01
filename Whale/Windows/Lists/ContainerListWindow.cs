@@ -8,7 +8,7 @@ using Whale.Windows.Single;
 
 namespace Whale.Windows.Lists
 {
-    public class ContainerListWindow : Window
+    public sealed class ContainerListWindow : Toplevel
     {
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerService dockerService;

@@ -3,7 +3,7 @@ using Whale.Components;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
-    public class ContainerInspectWindow : Window
+    public sealed class ContainerInspectWindow : Toplevel
     {
         public ContainerInspectWindow() : base()
         {

@@ -3,7 +3,7 @@ using Whale.Components;
 
 namespace Whale.Windows.Single
 {
-    public class VolumeWindow : Window
+    public sealed class VolumeWindow : Window
     {
         public string VolumeId { get; init; }
         public VolumeWindow(string volumeId) : base("Image")

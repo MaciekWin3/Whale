@@ -3,7 +3,7 @@ using Whale.Services;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
-    public class ContainerTerminalWindow : Window
+    public sealed class ContainerTerminalWindow : Toplevel
     {
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerService dockerService;
