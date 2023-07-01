@@ -30,6 +30,7 @@ namespace Whale.Windows.Lists
             dockerService = new DockerService(shellCommandRunner);
             this.events = events;
             this.mainWindow = mainWindow;
+            ColorScheme = Colors.Base;
         }
 
         public void InitView()

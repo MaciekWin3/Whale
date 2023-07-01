@@ -11,6 +11,7 @@ namespace Whale.Windows.Single.ContainerTabs
                 BorderStyle = BorderStyle.None,
             };
             InitView();
+            ColorScheme = Colors.Base;
         }
 
         public void InitView()

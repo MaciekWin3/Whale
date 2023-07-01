@@ -25,6 +25,7 @@ namespace Whale.Windows.Lists
             this.showContextMenu = showContextMenu;
             InitView();
             this.mainWindow = mainWindow;
+            ColorScheme = Colors.Base;
         }
 
         public void InitView()

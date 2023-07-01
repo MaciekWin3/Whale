@@ -32,7 +32,7 @@ void InitApp(Toplevel top)
     top.Add(AppInfoBar.Create(version));
     //top.Add(await MainWindow.CreateAsync());
     top.Add(MainWindow.CreateAsync());
-    //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Magenta, Color.BrightBlue);
+    //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black);
     Application.Run();
     Application.Shutdown();
 }

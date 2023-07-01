@@ -73,40 +73,46 @@ namespace Whale.Windows
             tabView.AddTab(new TabView.Tab("Volumes", volumeWindow), false);
 
 
+            // Shortcuts
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key == (Key.Tab))
+                // do apttern matchin on key press
+                switch (e.KeyEvent.Key)
                 {
-                    var tabs = tabView.Tabs.Count;
-                    if (tabView.SelectedTab == tabView.Tabs.ToArray()[tabs - 1])
-                    {
-                        tabView.SelectedTab = tabView.Tabs.ToArray()[0];
-                    }
-                    else
-                    {
-                        tabView.SwitchTabBy(1);
-                    }
-                    e.Handled = true;
+                    case (Key.Tab):
+                        var tabs = tabView.Tabs.Count;
+                        if (tabView.SelectedTab == tabView.Tabs.ToArray()[tabs - 1])
+                        {
+                            tabView.SelectedTab = tabView.Tabs.ToArray()[0];
+                        }
+                        else
+                        {
+                            tabView.SwitchTabBy(1);
+                        }
+                        e.Handled = true;
+                        break;
+                    default:
+                        break;
                 }
             };
+
             tabView.Style.ShowBorder = true;
             tabView.ApplyStyleChanges();
             Add(tabView);
 
             Application.MainLoop.Invoke(async () =>
-            {
-                var isDockerDaemonRunning = await dockerService.CheckIfDockerDaemonIsRunningAsync();
-                if (isDockerDaemonRunning.IsFailure)
                 {
-                    MessageBox.ErrorQuery(50, 7, "Error", "Docker daemon is not running", "Ok");
-                }
-            });
+                    var isDockerDaemonRunning = await dockerService.CheckIfDockerDaemonIsRunningAsync();
+                    if (isDockerDaemonRunning.IsFailure)
+                    {
+                        MessageBox.ErrorQuery(50, 7, "Error", "Docker daemon is not running", "Ok");
+                    }
+                });
 
         }
 
         public string GetSelectedTab()
         {
-            // return name of curtrenct active tab
             return (string)tabView.SelectedTab.Text;
         }
 
@@ -116,7 +122,7 @@ namespace Whale.Windows
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key == (Key.m))
+                if (e.KeyEvent.Key == (Key.j))
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
                     e.Handled = true;

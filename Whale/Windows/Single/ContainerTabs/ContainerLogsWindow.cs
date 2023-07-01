@@ -18,6 +18,7 @@ namespace Whale.Windows.Single.ContainerTabs
                 BorderStyle = BorderStyle.None,
             };
             InitView();
+            ColorScheme = Colors.Base;
         }
 
         public void InitView()
@@ -31,7 +32,7 @@ namespace Whale.Windows.Single.ContainerTabs
                 BottomOffset = 1,
                 RightOffset = 1,
                 DesiredCursorVisibility = CursorVisibility.Vertical,
-                ReadOnly = true
+                ReadOnly = true,
             };
             Add(textField);
 
