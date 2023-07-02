@@ -1,6 +1,7 @@
 ﻿using CliWrap;
 using CliWrap.EventStream;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Whale.Utils;
 
@@ -21,6 +22,47 @@ namespace Whale.Services
                     .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOut))
                     .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErr))
                 //.ExecuteBufferedAsync(token);
+                    .ExecuteAsync(token);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<(string, string)>(e.Message);
+            }
+
+            return stdErr.Length > 0
+                ? Result.Fail<(string, string)>(stdErr.ToString())
+                : Result.Ok((stdOut.ToString(), stdErr.ToString()));
+        }
+
+        // Handle windows, linux and mac
+        public async Task<Result<(string std, string error)>> RunCommandAsync(string arguments, CancellationToken token = default)
+        {
+            string command;
+            var stdOut = new StringBuilder();
+            var stdErr = new StringBuilder();
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                //command = "cmd.exe";
+                command = "powershell.exe";
+                arguments = $"-c {arguments}";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                command = "/bin/bash";
+                arguments = $"-c {arguments}";
+            }
+            else
+            {
+                return Result.Fail<(string, string)>("Unsupported OS");
+            }
+
+            try
+            {
+                await Cli.Wrap(command)
+                    .WithArguments(arguments)
+                    .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOut))
+                    .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErr))
                     .ExecuteAsync(token);
             }
             catch (Exception e)

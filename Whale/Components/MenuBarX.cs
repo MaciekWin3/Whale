@@ -39,7 +39,6 @@ namespace Whale.Components
             };
             menuItems.Add(fileMenu);
             return menuItems;
-
         }
 
         static void OpenUrl(string url)
@@ -49,7 +48,10 @@ namespace Whale.Components
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}")
+                    {
+                        CreateNoWindow = true
+                    });
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {

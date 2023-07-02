@@ -98,9 +98,11 @@ namespace Whale.Windows.Lists
             var table = new DataTable();
             table.Columns.Add("Name", typeof(string));
             table.Columns.Add("Driver", typeof(string));
+            table.Columns.Add("Status", typeof(string));
+            table.Columns.Add("Size", typeof(string));
             foreach (var item in list)
             {
-                table.Rows.Add(item.Name, item.Driver);
+                table.Rows.Add(item.Name, item.Driver, item.Status, item.Size);
             }
             return table;
         }
