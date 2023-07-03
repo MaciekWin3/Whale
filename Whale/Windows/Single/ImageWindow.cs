@@ -26,10 +26,28 @@ namespace Whale.Windows.Single
             var label = new Label("Image ID: " + ImageId)
             {
                 X = 1,
-                Y = 1,
+                Y = 0,
+                Width = Dim.Percent(50),
+                Height = 1
             };
             Add(label);
 
+            var frameView = new FrameView()
+            {
+                X = Pos.Right(label),
+                Y = 0,
+                Width = Dim.Percent(50) - 1,
+                Height = Dim.Fill(),
+                Border = new Border
+                {
+                    BorderStyle = BorderStyle.Rounded,
+                    Title = "Config"
+                }
+            };
+
+            Add(frameView);
+
+            // Dialog
             var showDialog = new Button("Create container")
             {
                 X = 1,
@@ -37,75 +55,74 @@ namespace Whale.Windows.Single
             };
 
             showDialog.Clicked += () =>
-            {
-                Dialog dialog = null!;
-                dialog = new Dialog("Image: " + ImageId, 60, 20);
+                {
+                    Dialog dialog = null!;
+                    dialog = new Dialog("Image: " + ImageId, 60, 20);
 
-                var exit = new Button("Exit");
-                exit.Clicked += () => Application.RequestStop();
+                    var exit = new Button("Exit");
+                    exit.Clicked += () => Application.RequestStop();
 
-                var label = new Label("Container Name:")
-                {
-                    X = 0,
-                    Y = 1,
-                };
-                var textField = new TextField("")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(label),
-                    Width = Dim.Fill()
-                };
-                var portsLabel = new Label("Ports:")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(textField)
-                };
-                var portsField = new TextField("")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(portsLabel),
-                    Width = Dim.Fill(),
-                };
-                var envLabel = new Label("Environment variables:")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(portsField)
-                };
-                var envField = new TextField("")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(envLabel),
-                    Width = Dim.Fill(),
-                };
-                var volumesLabel = new Label("Volumes:")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(envField)
-                };
-                var volumesField = new TextField("")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(volumesLabel),
-                    Width = Dim.Fill(),
-                };
+                    var label = new Label("Container Name:")
+                    {
+                        X = 0,
+                        Y = 1,
+                    };
+                    var textField = new TextField("")
+                    {
+                        X = 0,
+                        Y = Pos.Bottom(label),
+                        Width = Dim.Fill()
+                    };
+                    var portsLabel = new Label("Ports:")
+                    {
+                        X = 0,
+                        Y = Pos.Bottom(textField)
+                    };
+                    var portsField = new TextField("")
+                    {
+                        X = 0,
+                        Y = Pos.Bottom(portsLabel),
+                        Width = Dim.Fill(),
+                    };
+                    var envLabel = new Label("Environment variables:")
+                    {
+                        X = 0,
+                        Y = Pos.Bottom(portsField)
+                    };
+                    var envField = new TextField("")
+                    {
+                        X = 0,
+                        Y = Pos.Bottom(envLabel),
+                        Width = Dim.Fill(),
+                    };
+                    var volumesLabel = new Label("Volumes:")
+                    {
+                        X = 0,
+                        Y = Pos.Bottom(envField)
+                    };
+                    var volumesField = new TextField("")
+                    {
+                        X = 0,
+                        Y = Pos.Bottom(volumesLabel),
+                        Width = Dim.Fill(),
+                    };
 
-                var create = new Button("Create");
+                    var create = new Button("Create");
 
-                create.Clicked += async () =>
-                {
-                    var containerName = textField.Text.ToString();
-                    var ports = portsField.Text.ToString();
-                    var env = envField.Text.ToString();
-                    var volumes = volumesField.Text.ToString();
+                    create.Clicked += async () =>
+                        {
+                            var containerName = textField.Text.ToString();
+                            var ports = portsField.Text.ToString();
+                            var env = envField.Text.ToString();
+                            var volumes = volumesField.Text.ToString();
+                            await dockerService.CreateContainerAsync(new List<string> { "--name", "hello" });
+                        };
 
-                    await dockerService.CreateContainerAsync(new List<string> { "--name", "hello" });
+                    dialog.Add(label, textField, portsLabel, portsLabel, portsField);
+                    dialog.AddButton(create);
+                    dialog.AddButton(exit);
+                    Application.Run(dialog);
                 };
-
-                dialog.Add(label, textField, portsLabel, portsLabel, portsField);
-                dialog.AddButton(create);
-                dialog.AddButton(exit);
-                Application.Run(dialog);
-            };
             Add(showDialog);
         }
 

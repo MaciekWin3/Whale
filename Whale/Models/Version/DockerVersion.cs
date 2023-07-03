@@ -4,7 +4,7 @@ namespace Whale.Models.Version
 {
     public record DockerVersion
     {
-        public Client Client { get; set; }
-        public Server Server { get; set; }
+        public Client? Client { get; set; }
+        public Server? Server { get; set; }
     }
 }
