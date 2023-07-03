@@ -142,11 +142,18 @@ namespace Whale.Windows.Single.ContainerTabs
             {
                 while (true)
                 {
-                    var stats = await dockerService.GetContainerStatsAsync(ContainerId);
-                    cpuLabel.Text = stats.Value.CPUPerc.ToString();
-                    memLabel.Text = stats.Value.MemPerc.ToString();
-                    diskLabel.Text = stats.Value.BlockIO.ToString();
-                    netLabel.Text = stats.Value.NetIO.ToString();
+                    try
+                    {
+                        var stats = await dockerService.GetContainerStatsAsync(ContainerId);
+                        cpuLabel.Text = stats.Value.CPUPerc.ToString();
+                        memLabel.Text = stats.Value.MemPerc.ToString();
+                        diskLabel.Text = stats.Value.BlockIO.ToString();
+                        netLabel.Text = stats.Value.NetIO.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        break;
+                    }
                 }
             });
 

@@ -10,7 +10,7 @@ namespace Whale.Components
             var numlock = new StatusItem(Key.CharMask, "Num", null);
             var scrolllock = new StatusItem(Key.CharMask, "Scroll", null);
             var appVersion = new StatusItem(Key.CharMask, "App Version: 0.1.0", null);
-            var dockerVersion = new StatusItem(Key.CharMask, $"Docker Version {version}", null);
+            var dockerVersion = new StatusItem(Key.CharMask, $"Docker Version: {version}", null);
 
             var statusBar = new StatusBar
             {

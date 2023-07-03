@@ -9,7 +9,8 @@ namespace Whale.Windows.Single.ContainerTabs
         private readonly IDockerService dockerService;
         public string ContainerId { get; set; }
         TextView terminal = null!;
-        public ContainerTerminalWindow(string containerId) : base()
+        TextField prompt = null!;
+        public ContainerTerminalWindow(string containerId)
         {
             ContainerId = containerId;
             shellCommandRunner = new ShellCommandRunner();
@@ -49,7 +50,7 @@ namespace Whale.Windows.Single.ContainerTabs
             };
             Add(line);
 
-            var prompt = new TextField()
+            prompt = new TextField()
             {
                 X = 0,
                 Y = Pos.Bottom(line),
@@ -58,20 +59,24 @@ namespace Whale.Windows.Single.ContainerTabs
             };
 
             Add(prompt);
-
-            KeyPress += (e) =>
-            {
-                if (e.KeyEvent.Key == Key.Enter)
-                {
-                    terminal.Text += prompt.Text + "\n";
-                    HandleInput(prompt.Text.ToString());
-                    prompt.Text = "";
-                }
-            };
         }
 
-        private void HandleInput(string command)
+        public void HandleKeyPress(KeyEvent keyEvent)
         {
+            switch (keyEvent.Key)
+            {
+                case Key.Enter:
+                    HandleInput();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void HandleInput()
+        {
+            var command = prompt.Text.ToString();
+            terminal.Text += prompt.Text + "\n";
             Application.MainLoop.Invoke(async () =>
             {
                 var result = await dockerService.RunCommandInsideDockerContainerAsync(ContainerId, command);
@@ -82,6 +87,7 @@ namespace Whale.Windows.Single.ContainerTabs
                 int idx = terminal.Lines;
                 terminal.ScrollTo(idx - terminal.Bounds.Height - 1);
             });
+            prompt.Text = "";
         }
     }
 }

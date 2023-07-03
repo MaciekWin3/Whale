@@ -45,7 +45,7 @@ namespace Whale.Services
             {
                 command = "cmd.exe";
                 //command = "powershell.exe";
-                arguments = $"-c {arguments}";
+                arguments = $"/c {arguments}";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
