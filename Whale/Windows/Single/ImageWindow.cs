@@ -165,29 +165,37 @@ namespace Whale.Windows.Single
 
         public void ShowContextMenu(int x, int y)
         {
-            contextMenu = new ContextMenu(x, y,
-                new MenuBarItem(new MenuItem[]
-                {
-                    new MenuItem ("_Configuration", "Show configuration", () => MessageBox.Query (50, 5, "Info", "This would open settings dialog", "Ok")),
-                    new MenuBarItem ("More options", new MenuItem []
+            contextMenu =
+                new ContextMenu(x, y,
+                    new MenuBarItem(new MenuItem[]
                     {
-                        new MenuItem ("_Setup", "Change settings", () => MessageBox.Query (50, 5, "Info", "This would open setup dialog", "Ok")),
-                        new MenuItem ("_Maintenance", "Maintenance mode", () => MessageBox.Query (50, 5, "Info", "This would open maintenance dialog", "Ok")),
-                    }),
-                    new MenuItem ("_Quit", "", () => Application.RequestStop ()),
-                    new MenuItem ("_Go back", "", () =>
-                    {
-                        Application.Top.RemoveAll();
-                        var mainWindow = MainWindow.CreateAsync();
-                        Application.Top.Add(mainWindow);
-                        Application.Top.Add(MenuBarX.CreateMenuBar());
-                        Application.Refresh();
+                        new MenuItem ("Run", "Create container", async () =>
+                        {
+                            await dockerService.CreateContainerAsync(new List<string> { ImageId });
+                        }),
+                        new MenuBarItem("Navigation", new MenuItem[]
+                        {
+                            new MenuItem ("Go back", "", () =>
+                            {
+                                ReturnToMainWindow();
+                            }),
+                            new MenuItem ("Quit", "", () => Application.RequestStop ()),
+                        }),
                     })
-                })
-            )
-            { ForceMinimumPosToZero = true };
+                )
+                { ForceMinimumPosToZero = true };
 
             contextMenu.Show();
+        }
+
+        public void ReturnToMainWindow()
+        {
+            Application.Top.RemoveAll();
+            var mainWindow = MainWindow.CreateAsync();
+            Dispose();
+            Application.Top.Add(mainWindow);
+            Application.Top.Add(MenuBarX.CreateMenuBar());
+            Application.Refresh();
         }
     }
 }

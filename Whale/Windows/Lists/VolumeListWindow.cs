@@ -49,6 +49,7 @@ namespace Whale.Windows.Lists
                 {
                     Application.Top.RemoveAll();
                     var volumeWindow = new VolumeWindow(name);
+                    mainWindow.Dispose();
                     Application.Top.Add(volumeWindow);
                     Application.Top.Add(MenuBarX.CreateMenuBar());
                     Application.Refresh();

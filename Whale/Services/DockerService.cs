@@ -110,7 +110,7 @@ namespace Whale.Services
 
         public async Task<Result> CreateContainerAsync(List<string> arguments)
         {
-            var commandParameters = arguments.Prepend("create").ToArray();
+            var commandParameters = arguments.Prepend("run").ToArray();
             var result = await shellCommandRunner.RunCommandAsync("docker", commandParameters, default);
             if (result.IsSuccess)
             {

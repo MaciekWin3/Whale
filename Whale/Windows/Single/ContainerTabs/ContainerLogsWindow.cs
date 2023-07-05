@@ -34,6 +34,8 @@ namespace Whale.Windows.Single.ContainerTabs
                 DesiredCursorVisibility = CursorVisibility.Vertical,
                 ReadOnly = true,
             };
+            int idx = textField.Lines;
+            textField.ScrollTo(idx - textField.Bounds.Height - 1);
             Add(textField);
 
             Application.MainLoop.Invoke(async () =>

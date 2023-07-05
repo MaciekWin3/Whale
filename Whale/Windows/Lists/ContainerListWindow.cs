@@ -46,7 +46,6 @@ namespace Whale.Windows.Lists
 
             alternatingColorScheme = new ColorScheme()
             {
-
                 Disabled = ColorScheme.Disabled,
                 HotFocus = ColorScheme.HotFocus,
                 Focus = ColorScheme.Focus,
@@ -72,6 +71,7 @@ namespace Whale.Windows.Lists
                 {
                     Application.Top.RemoveAll();
                     var containerWindow = new ContainerWindow(name);
+                    mainWindow.Dispose();
                     Application.Top.Add(containerWindow);
                     Application.Top.Add(MenuBarX.CreateMenuBar());
                     Application.Refresh();
@@ -105,14 +105,6 @@ namespace Whale.Windows.Lists
                     }
                 }
             });
-
-            KeyDown += (e) =>
-            {
-                if (e.KeyEvent.Key == Key.m)
-                {
-                    events["ShowContextMenu"].DynamicInvoke(1, 1);
-                }
-            };
 
             Add(tableView);
         }

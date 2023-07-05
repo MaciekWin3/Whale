@@ -50,6 +50,7 @@ namespace Whale.Windows.Lists
                 {
                     Application.Top.RemoveAll();
                     var imageWindow = new ImageWindow(name);
+                    mainWindow.Dispose();
                     Application.Top.Add(imageWindow);
                     Application.Top.Add(MenuBarX.CreateMenuBar());
                     Application.Refresh();

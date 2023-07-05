@@ -52,7 +52,7 @@ namespace Whale.Windows.Single
             {
                 switch (e.KeyEvent.Key)
                 {
-                    case (Key.Tab):
+                    case Key.Tab:
                         var tabs = tabView.Tabs.Count;
                         if (tabView.SelectedTab == tabView.Tabs.ToArray()[tabs - 1])
                         {
@@ -64,7 +64,7 @@ namespace Whale.Windows.Single
                         }
                         e.Handled = true;
                         break;
-                    case (Key.t):
+                    case Key.t:
                         OpenTerminalDialog();
                         e.Handled = true;
                         break;
@@ -73,29 +73,30 @@ namespace Whale.Windows.Single
                         break;
                 }
 
-                if (tabView.SelectedTab.Text.ToString() == "Terminal")
+                switch (tabView.SelectedTab.Text.ToString())
                 {
-                    containerTerminalWindow.HandleKeyPress(e.KeyEvent);
+                    case "Terminal":
+                        containerTerminalWindow.HandleKeyPress(e.KeyEvent);
+                        break;
+                    case "Logs":
+                        e.Handled = true;
+                        break;
+                    case "Inspect":
+                        e.Handled = true;
+                        break;
+                    case "Files":
+                        e.Handled = true;
+                        break;
+                    case "Stats":
+                        e.Handled = true;
+                        break;
+                    default:
+                        e.Handled = true;
+                        break;
                 }
             };
 
             Add(tabView);
-
-
-            //var goBack = new Button("Go back")
-            //{
-            //    X = 2,
-            //    Y = 2,
-            //};
-            //goBack.Clicked += () =>
-            //{
-            //    Application.Top.RemoveAll();
-            //    var mainWindow = MainWindow.CreateAsync();
-            //    Application.Top.Add(mainWindow);
-            //    Application.Top.Add(MenuBarX.CreateMenuBar());
-            //    Application.Refresh();
-            //};
-            //Add(goBack);
         }
 
         public void OpenTerminalDialog()
@@ -185,36 +186,39 @@ namespace Whale.Windows.Single
 
         public void ShowContextMenu(int x, int y)
         {
-            contextMenu = new ContextMenu(x, y,
-                new MenuBarItem(new MenuItem[]
-                {
-                    new MenuItem ("Run", "Run container", async () =>
+            contextMenu =
+                new ContextMenu(x, y,
+                    new MenuBarItem(new MenuItem[]
                     {
-                        await shellCommandRunner.RunCommandAsync($"docker start {ContainerId}");
-
-                    }),
-                    new MenuItem ("Pause", "Pause container", async () =>
-                    {
-                        await shellCommandRunner.RunCommandAsync($"docker pause {ContainerId}");
-                    }),
-                    new MenuItem("Delete", "Delete container", async () =>
-                    {
-                        await shellCommandRunner.RunCommandAsync($"docker rm {ContainerId}");
-                        ReturnToMainWindow();
-                    }),
-                    null!,
-                    new MenuBarItem("Navigation", new MenuItem[]
-                    {
-                        new MenuItem ("Go back", "", () =>
+                        new MenuItem ("Run", "Run container", async () =>
                         {
+                            await shellCommandRunner.RunCommandAsync($"docker start {ContainerId}");
+
+                        }),
+                        new MenuItem ("Pause", "Pause container", async () =>
+                        {
+                            await shellCommandRunner.RunCommandAsync($"docker pause {ContainerId}");
+                        }),
+                        new MenuItem("Delete", "Delete container", async () =>
+                        {
+                            await shellCommandRunner.RunCommandAsync($"docker rm {ContainerId}");
                             ReturnToMainWindow();
                         }),
-                        new MenuItem ("Quit", "", () => Application.RequestStop ()),
+                        null!,
+                        new MenuBarItem("Navigation", new MenuItem[]
+                        {
+                            new MenuItem ("Go back", "", () =>
+                            {
+                                ReturnToMainWindow();
+                            }),
+                            new MenuItem ("Quit", "", () => Application.RequestStop ()),
 
-                    }),
-                })
-            )
-            { ForceMinimumPosToZero = true };
+                        }),
+                    })
+                )
+                {
+                    ForceMinimumPosToZero = true
+                };
 
             contextMenu.Show();
         }
@@ -223,10 +227,10 @@ namespace Whale.Windows.Single
         {
             Application.Top.RemoveAll();
             var mainWindow = MainWindow.CreateAsync();
+            Dispose();
             Application.Top.Add(mainWindow);
             Application.Top.Add(MenuBarX.CreateMenuBar());
             Application.Refresh();
         }
-
     }
 }
