@@ -132,7 +132,7 @@ namespace Whale.Services
         public async Task<Result<T>> GetDockerObjectInfoAsync<T>(string id, CancellationToken token = default)
         {
             var result = await shellCommandRunner
-                .RunCommandAsync("docker", new[] { "inspect", id }, token);
+                .RunCommandAsync("docker", new[] { "inspect", id, "--format", "json" }, token);
 
             if (result.IsFailure)
             {

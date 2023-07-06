@@ -22,6 +22,7 @@ namespace Whale.Windows.Single
         public void InitView()
         {
             ConfigureContextMenu();
+            Application.Top.LayoutSubviews();
 
             var label = new Label("Image ID: " + ImageId)
             {
@@ -31,23 +32,27 @@ namespace Whale.Windows.Single
                 Height = 1
             };
 
-            var frameView = new FrameView()
+            var frameView = new FrameView("Config")
             {
                 X = Pos.Right(label),
                 Y = 0,
                 Width = Dim.Percent(50) - 1,
                 Height = Dim.Fill(),
-                Border = new Border
-                {
-                    BorderStyle = BorderStyle.Rounded,
-                    Title = "Config"
-                },
             };
+
+            var textView = new TextView()
+            {
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                ReadOnly = true,
+            };
+
+            frameView.Add(textView);
 
             Application.MainLoop.Invoke(async () =>
             {
                 var result = await shellCommandRunner.RunCommandAsync("docker image inspect " + ImageId);
-                frameView.Text = result.Value.std;
+                textView.Text = result.Value.std;
             });
 
             // Dialog

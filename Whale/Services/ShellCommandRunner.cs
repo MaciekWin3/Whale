@@ -77,8 +77,24 @@ namespace Whale.Services
 
         // i want to try out observe from cliwrap
         public async Task<Result<(int processId, string std, string error, int exitCode)>> ObserveCommandAsync
-            (string command, string[] arguments, Action<string> lambda = null!, CancellationToken token = default)
+            (string arguments, Action<string> lambda = null!, CancellationToken token = default)
         {
+            string command;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                command = "powershell.exe";
+                arguments = $"/c {arguments}";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                command = "/bin/bash";
+                arguments = $"-c {arguments}";
+            }
+            else
+            {
+                return Result.Fail<(int, string, string, int)>("Unsupported OS");
+            }
+
             int processId = 0;
             int exitCode = 0;
             var stdOutSb = new StringBuilder();

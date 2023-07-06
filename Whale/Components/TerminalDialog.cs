@@ -13,8 +13,8 @@ namespace Whale.Components
             dockerService = new DockerService(shellCommandRunner);
             X = Pos.Center();
             Y = Pos.Center();
-            Width = Dim.Percent(40);
-            Height = Dim.Percent(40);
+            Width = Dim.Percent(70);
+            Height = Dim.Percent(70);
             Border = new Border
             {
                 BorderStyle = BorderStyle.Rounded,
@@ -27,52 +27,61 @@ namespace Whale.Components
 
         private void InitView()
         {
-            var label = new Label("Run command:")
+            var terminal = new TextView()
             {
                 X = 0,
-                Y = 1,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill() - 2,
+                ReadOnly = true,
+                ColorScheme = new ColorScheme()
+                {
+                    Disabled = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+                    HotFocus = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+                    Focus = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+                    Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black)
+                },
             };
-            var terminal = new TextField("")
+
+            var line = new LineView()
             {
                 X = 0,
-                Y = Pos.Bottom(label),
-                Width = Dim.Fill()
+                Y = Pos.Bottom(terminal),
+                Width = Dim.Fill(),
+                Height = 1,
+            };
+
+            var prompt = new TextField()
+            {
+                X = 0,
+                Y = Pos.Bottom(line),
+                Width = Dim.Fill() - 1,
+                Height = 1,
             };
 
             Action<string> lambda = (s) =>
             {
-                Application.MainLoop.Invoke(() =>
-                {
-                    terminal.Text = s;
-                });
+                terminal.Text += s + '\n';
             };
 
-
-            var runButton = new Button("Run");
-            runButton.Clicked += async () =>
+            KeyPress += async (e) =>
             {
-                var command = terminal.Text.ToString();
-                //var result = await shellCommandRunner.RunCommandAsync(command);
-                var result = await shellCommandRunner.ObserveCommandAsync("ping", new[] { "wp.pl" }, lambda);
-                if (result.IsFailure)
+                if (e.KeyEvent.Key == Key.Enter)
                 {
-                    MessageBox.ErrorQuery(50, 7, "Error", result.Error, "Ok");
-                }
-                else
-                {
-                    MessageBox.Query(50, 7, "Info", result.Value.std, "Ok");
+                    var args = prompt.Text.ToString();
+                    e.Handled = true;
+                    prompt.Text = "";
+                    if (string.IsNullOrEmpty(args))
+                    {
+                        return;
+                    }
+                    var result = await shellCommandRunner.ObserveCommandAsync(args, lambda);
+                    int idx = terminal.Lines;
+                    terminal.ScrollTo(idx - terminal.Bounds.Height - 1);
                 }
             };
 
-            var exitButton = new Button("Exit");
-            exitButton.Clicked += () =>
-            {
-                Application.RequestStop();
-            };
-
-            Add(label, terminal);
-            AddButton(runButton);
-            AddButton(exitButton);
+            Add(terminal, line, prompt);
         }
 
         public void ShowDialog()

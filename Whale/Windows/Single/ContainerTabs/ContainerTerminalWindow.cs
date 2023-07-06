@@ -39,7 +39,6 @@ namespace Whale.Windows.Single.ContainerTabs
                     Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black)
                 }
             };
-            Add(terminal);
 
             var line = new LineView()
             {
@@ -48,7 +47,6 @@ namespace Whale.Windows.Single.ContainerTabs
                 Width = Dim.Fill(),
                 Height = 1,
             };
-            Add(line);
 
             prompt = new TextField()
             {
@@ -58,7 +56,7 @@ namespace Whale.Windows.Single.ContainerTabs
                 Height = 1,
             };
 
-            Add(prompt);
+            Add(terminal, line, prompt);
         }
 
         public void HandleKeyPress(KeyEvent keyEvent)

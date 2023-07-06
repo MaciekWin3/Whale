@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
 using Terminal.Gui;
 using Whale.Components;
+using Whale.Models;
+using Whale.Objects.Container;
 using Whale.Services;
 using Whale.Windows.Single.ContainerTabs;
 
@@ -11,10 +13,12 @@ namespace Whale.Windows.Single
         public string ContainerId { get; init; }
         private ContextMenu contextMenu = new();
         private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerService dockerService;
         public ContainerWindow(string containerId)
         {
             ContainerId = containerId;
             shellCommandRunner = new ShellCommandRunner();
+            dockerService = new DockerService(shellCommandRunner);
             InitView();
             var color = Color.Green;
             Border = new Border
@@ -96,7 +100,50 @@ namespace Whale.Windows.Single
                 }
             };
 
+
+            // TODO: Fix this (performance)
+            //Application.MainLoop.Invoke(async () =>
+            //{
+            //    while (true)
+            //    {
+            //        var containerState = await GetContainerState();
+            //        Border.BorderBrush = containerState switch
+            //        {
+            //            ContainerState.Running => Color.Green,
+            //            ContainerState.Paused => Color.BrightYellow,
+            //            ContainerState.Created => Color.Blue,
+            //            ContainerState.Restarting => Color.BrightBlue,
+            //            ContainerState.Removing => Color.DarkGray,
+            //            ContainerState.Exited => Color.Red,
+            //            ContainerState.Dead => Color.Black,
+            //            _ => Color.Gray
+            //        };
+            //    }
+            //});
+
             Add(tabView);
+        }
+
+        public async Task<ContainerState> GetContainerState()
+        {
+            var result = await dockerService.GetDockerObjectInfoAsync<ContainerDTO>(ContainerId);
+            if (result.GetValue() is not null && result?.Value?.State is not null)
+            {
+                var state = result.Value.State.Status;
+
+                return state switch
+                {
+                    var s when s.Contains("running") => ContainerState.Running,
+                    var s when s.Contains("paused") => ContainerState.Paused,
+                    var s when s.Contains("created") => ContainerState.Created,
+                    var s when s.Contains("restarting") => ContainerState.Restarting,
+                    var s when s.Contains("removing") => ContainerState.Removing,
+                    var s when s.Contains("exited") => ContainerState.Exited,
+                    var s when s.Contains("dead") => ContainerState.Dead,
+                    _ => ContainerState.Unknown
+                };
+            }
+            return ContainerState.Unknown;
         }
 
         public void OpenTerminalDialog()
