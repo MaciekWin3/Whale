@@ -66,11 +66,11 @@ namespace Whale.Windows.Lists
             tableView.CellActivated += (e) =>
             {
                 int row = e.Row;
-                var name = (string)e.Table.Rows[row][0];
-                if (name is not null)
+                var id = (string)e.Table.Rows[row][0];
+                if (id is not null)
                 {
                     Application.Top.RemoveAll();
-                    var containerWindow = new ContainerWindow(name);
+                    var containerWindow = new ContainerWindow(id);
                     mainWindow.Dispose();
                     Application.Top.Add(containerWindow);
                     Application.Top.Add(MenuBarX.CreateMenuBar());

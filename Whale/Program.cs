@@ -17,7 +17,8 @@ var dockerService = new DockerService(shellCommandRunner);
 string version = "Unkown";
 try
 {
-    version = dockerService.GetDockerVersionObjectAsync().Result.Value.Client.Version;
+    var dockerInfo = await dockerService.GetDockerVersionObjectAsync();
+    version = dockerInfo.Value.Client.Version;
 }
 catch
 {

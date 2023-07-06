@@ -19,28 +19,36 @@ namespace Whale.Windows.Single
         public void InitView()
         {
             ConfigureContextMenu();
-            var label = new Label("Volume ID: " + VolumeId)
-            {
-                X = 5,
-                Y = 5,
-            };
-            Add(label);
 
-            var goBack = new Button("Go back")
+            var label = new Label("Volume ID: " + "Here should be name")
             {
-                X = 6,
-                Y = Pos.Bottom(label),
+                X = 1,
+                Y = 0,
+                Width = Dim.Percent(40),
+                Height = 2
             };
-            goBack.Clicked += () =>
+
+            var frameView = new FrameView()
             {
-                Application.Top.RemoveAll();
-                var mainWindow = MainWindow.CreateAsync();
-                Application.Top.Add(mainWindow);
-                Application.Top.Add(MenuBarX.CreateMenuBar());
-                Application.Top.Add(AppInfoBar.Create("0.2.0"));
-                Application.Refresh();
+                X = Pos.Right(label),
+                Y = 0,
+                Width = Dim.Percent(60) - 1,
+                Height = Dim.Fill(),
+                Border = new Border
+                {
+                    BorderStyle = BorderStyle.Rounded,
+                    Title = "Config"
+                },
+                Text = "Here should be config"
             };
-            Add(goBack);
+
+            Application.MainLoop.Invoke(async () =>
+            {
+                var result = await shellCommandRunner.RunCommandAsync("docker volume inspect " + VolumeId);
+                frameView.Text = result.Value.std;
+            });
+
+            Add(label, frameView);
         }
 
         public void ConfigureContextMenu()
@@ -49,7 +57,7 @@ namespace Whale.Windows.Single
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key == (Key.m))
+                if (e.KeyEvent.Key == Key.m)
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
                     e.Handled = true;
