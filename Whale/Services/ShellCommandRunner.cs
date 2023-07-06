@@ -76,8 +76,11 @@ namespace Whale.Services
         }
 
         // i want to try out observe from cliwrap
-        public async Task<Result<(string std, string error)>> ObserveCommandAsync(string command, string[] arguments, CancellationToken token = default)
+        public async Task<Result<(int processId, string std, string error, int exitCode)>> ObserveCommandAsync
+            (string command, string[] arguments, Action<string> lambda = null!, CancellationToken token = default)
         {
+            int processId = 0;
+            int exitCode = 0;
             var stdOutSb = new StringBuilder();
             var stdErrSb = new StringBuilder();
             var joinedArguments = string.Join(" ", arguments).Trim();
@@ -89,40 +92,39 @@ namespace Whale.Services
                             .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOutSb))
                             .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErrSb));
 
-                await cmd.Observe().ForEachAsync(cmdEvent =>
+                await cmd.Observe(cancellationToken: token).ForEachAsync(cmdEvent =>
                 {
                     switch (cmdEvent)
                     {
                         case StartedCommandEvent started:
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Process started; ID: {started.ProcessId}");
-                            Console.ResetColor();
+                            processId = started.ProcessId;
                             break;
                         case StandardOutputCommandEvent stdOut:
-                            stdOutSb.AppendLine($"Out> {stdOut.Text}");
+                            if (lambda is not null)
+                            {
+                                lambda(stdOut.Text);
+                            }
+                            stdOutSb.AppendLine(stdOut.Text);
                             break;
                         case StandardErrorCommandEvent stdErr:
-                            stdErrSb.AppendLine($"Out> {stdErr.Text}");
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Err> {stdErr.Text}");
-                            Console.ResetColor();
+                            stdErrSb.AppendLine(stdErr.Text);
+                            if (lambda is not null)
+                            {
+                                lambda(stdErr.Text);
+                            }
                             break;
                         case ExitedCommandEvent exited:
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"Process exited; Code: {exited.ExitCode}");
-                            Console.ResetColor();
+                            exitCode = exited.ExitCode;
                             break;
                     }
                 });
             }
             catch (Exception e)
             {
-                return Result.Fail<(string, string)>(e.Message);
+                return Result.Fail<(int, string, string, int)>(e.Message);
             }
 
-            return stdErrSb.Length > 0
-                ? Result.Fail<(string, string)>(stdErrSb.ToString())
-                : Result.Ok((stdOutSb.ToString(), stdErrSb.ToString()));
+            return Result.Ok((processId, stdOutSb.ToString(), stdErrSb.ToString(), exitCode));
         }
     }
 }

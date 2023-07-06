@@ -101,50 +101,8 @@ namespace Whale.Windows.Single
 
         public void OpenTerminalDialog()
         {
-            var dialog = new Dialog("Terminal")
-            {
-                X = Pos.Center(),
-                Y = Pos.Center(),
-                Width = Dim.Percent(40),
-                Height = Dim.Percent(40),
-            };
-            var label = new Label("Run command:")
-            {
-                X = 0,
-                Y = 1,
-            };
-            var terminal = new TextField("")
-            {
-                X = 0,
-                Y = Pos.Bottom(label),
-                Width = Dim.Fill()
-            };
-
-            var runButton = new Button("Run");
-            runButton.Clicked += async () =>
-            {
-                var command = terminal.Text.ToString();
-                var result = await shellCommandRunner.RunCommandAsync(command);
-                if (result.IsFailure)
-                {
-                    MessageBox.ErrorQuery(50, 7, "Error", result.Error, "Ok");
-                }
-                else
-                {
-                    MessageBox.Query(50, 7, "Info", result.Value.std, "Ok");
-                }
-            };
-
-            var exitButton = new Button("Exit");
-            exitButton.Clicked += () =>
-            {
-                Application.RequestStop();
-            };
-
-            dialog.Add(label, terminal);
-            dialog.AddButton(runButton);
-            dialog.AddButton(exitButton);
-            Application.Run(dialog);
+            var terminal = new TerminalDialog();
+            terminal.ShowDialog();
         }
 
         public void ConfigureContextMenu()
