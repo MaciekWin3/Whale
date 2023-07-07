@@ -21,19 +21,39 @@ namespace Whale.Windows.Single
         {
             ConfigureContextMenu();
 
-            var label = new Label("Volume ID: " + "Here should be name")
+            var files = new FrameView()
             {
                 X = 1,
                 Y = 0,
-                Width = Dim.Percent(40),
-                Height = 2
+                Width = Dim.Percent(50),
+                Height = Dim.Percent(50),
+                Border = new Border
+                {
+                    BorderStyle = BorderStyle.Rounded,
+                    Title = "Files"
+                },
+                Text = "Here should be files"
             };
 
-            var frameView = new FrameView()
+            var used = new FrameView()
             {
-                X = Pos.Right(label),
+                X = 1,
+                Y = Pos.Bottom(files),
+                Width = Dim.Percent(50),
+                Height = Dim.Fill(),
+                Border = new Border
+                {
+                    BorderStyle = BorderStyle.Rounded,
+                    Title = "Files"
+                },
+                Text = "Here should be contaienrs"
+            };
+
+            var configView = new FrameView()
+            {
+                X = Pos.Right(files),
                 Y = 0,
-                Width = Dim.Percent(60) - 1,
+                Width = Dim.Percent(50) - 1,
                 Height = Dim.Fill(),
                 Border = new Border
                 {
@@ -46,10 +66,10 @@ namespace Whale.Windows.Single
             Application.MainLoop.Invoke(async () =>
             {
                 var result = await shellCommandRunner.RunCommandAsync("docker volume inspect " + VolumeId);
-                frameView.Text = result.Value.std;
+                configView.Text = result.Value.std;
             });
 
-            Add(label, frameView);
+            Add(files, used, configView);
         }
 
         public void ConfigureContextMenu()
@@ -58,7 +78,7 @@ namespace Whale.Windows.Single
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key == Key.m)
+                if (e.KeyEvent.Key is (Key.M | Key.CtrlMask) || e.KeyEvent.Key is (Key.m))
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
                     e.Handled = true;
