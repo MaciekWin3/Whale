@@ -22,21 +22,65 @@ namespace Whale.Windows.Single
         public void InitView()
         {
             ConfigureContextMenu();
-            Application.Top.LayoutSubviews();
 
-            var label = new Label("Image ID: " + ImageId)
+            var statusFrameView = new FrameView("Stats")
             {
-                X = 1,
+                X = 0,
                 Y = 0,
-                Width = Dim.Percent(50),
-                Height = 1
+                Width = Dim.Fill(),
+                Height = 3,
             };
 
-            var frameView = new FrameView("Config")
+            var numbers = new[] { 10, 20, 30, 40, 50 };
+
+
+            var listView = new ListView(numbers)
             {
-                X = Pos.Right(label),
-                Y = 0,
-                Width = Dim.Percent(50) - 1,
+                Height = Dim.Fill(),
+                Width = Dim.Fill(),
+                //ColorScheme = Colors.TopLevel,
+                AllowsMarking = false,
+                AllowsMultipleSelection = false
+            };
+
+            var numbers2 = new[] { 10, 20, 30, 40, 50 };
+
+
+            var listView2 = new ListView(numbers2)
+            {
+                Height = Dim.Fill(),
+                Width = Dim.Fill(),
+                //ColorScheme = Colors.TopLevel,
+                AllowsMarking = false,
+                AllowsMultipleSelection = false
+            };
+
+            var hierarchyFrameView = new FrameView("Image hierarchy")
+            {
+                X = 0,
+                Y = Pos.Bottom(statusFrameView),
+                Width = Dim.Percent(40),
+                Height = Dim.Percent(50),
+            };
+
+            hierarchyFrameView.Add(listView);
+
+
+            var layersFrameView = new FrameView("Layers")
+            {
+                X = 0,
+                Y = Pos.Bottom(hierarchyFrameView),
+                Width = Dim.Percent(40),
+                Height = Dim.Fill()
+            };
+
+            layersFrameView.Add(listView2);
+
+            var infoFrameView = new FrameView("Info")
+            {
+                X = Pos.Right(hierarchyFrameView),
+                Y = Pos.Bottom(statusFrameView),
+                Width = Dim.Fill(),
                 Height = Dim.Fill(),
             };
 
@@ -45,9 +89,13 @@ namespace Whale.Windows.Single
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
                 ReadOnly = true,
+                ColorScheme = new ColorScheme()
+                {
+                    Normal = Colors.Base.Normal,
+                },
             };
 
-            frameView.Add(textView);
+            infoFrameView.Add(textView);
 
             Application.MainLoop.Invoke(async () =>
             {
@@ -55,83 +103,8 @@ namespace Whale.Windows.Single
                 textView.Text = result.Value.std;
             });
 
-            // Dialog
-            var showDialog = new Button("Create container")
-            {
-                X = 1,
-                Y = Pos.Bottom(label),
-            };
 
-            showDialog.Clicked += () =>
-            {
-                Dialog dialog = null!;
-                dialog = new Dialog("Image: " + ImageId, 60, 20);
-
-                var exit = new Button("Exit");
-                exit.Clicked += () => Application.RequestStop();
-
-                var label = new Label("Container Name:")
-                {
-                    X = 0,
-                    Y = 1,
-                };
-                var textField = new TextField("")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(label),
-                    Width = Dim.Fill()
-                };
-                var portsLabel = new Label("Ports:")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(textField)
-                };
-                var portsField = new TextField("")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(portsLabel),
-                    Width = Dim.Fill(),
-                };
-                var envLabel = new Label("Environment variables:")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(portsField)
-                };
-                var envField = new TextField("")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(envLabel),
-                    Width = Dim.Fill(),
-                };
-                var volumesLabel = new Label("Volumes:")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(envField)
-                };
-                var volumesField = new TextField("")
-                {
-                    X = 0,
-                    Y = Pos.Bottom(volumesLabel),
-                    Width = Dim.Fill(),
-                };
-
-                var create = new Button("Create");
-
-                create.Clicked += async () =>
-                    {
-                        var containerName = textField.Text.ToString();
-                        var ports = portsField.Text.ToString();
-                        var env = envField.Text.ToString();
-                        var volumes = volumesField.Text.ToString();
-                        await dockerService.CreateContainerAsync(new List<string> { "--name", "hello" });
-                    };
-
-                dialog.Add(label, textField, portsLabel, portsLabel, portsField);
-                dialog.AddButton(create);
-                dialog.AddButton(exit);
-                Application.Run(dialog);
-            };
-            Add(label, frameView, showDialog);
+            Add(statusFrameView, hierarchyFrameView, layersFrameView, infoFrameView);
         }
 
         public void ConfigureContextMenu()
@@ -179,7 +152,8 @@ namespace Whale.Windows.Single
                     {
                         new MenuItem ("Run", "Create container", async () =>
                         {
-                            await dockerService.CreateContainerAsync(new List<string> { ImageId });
+                            var createContainerDialog = new CreateContainerDialog(ImageId);
+                            createContainerDialog.ShowDialog();
                         }),
                         new MenuBarItem("Navigation", new MenuItem[]
                         {
