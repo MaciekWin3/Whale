@@ -1,17 +1,18 @@
 ﻿using Terminal.Gui;
 using Whale.Services;
+using Whale.Services.Interfaces;
 
 namespace Whale.Components
 {
     class CreateContainerDialog : Dialog
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IDockerContainerService dockerContainerService;
         public string ImageId { get; init; }
         public CreateContainerDialog(string imageId)
         {
             shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
+            dockerContainerService = new DockerContainerService(shellCommandRunner);
             X = Pos.Center();
             Y = Pos.Center();
             Width = Dim.Percent(70);
@@ -85,7 +86,7 @@ namespace Whale.Components
                 var ports = portsField.Text.ToString();
                 var env = envField.Text.ToString();
                 var volumes = volumesField.Text.ToString();
-                await dockerService.CreateContainerAsync(new List<string> { "--name", "hello" });
+                await dockerContainerService.CreateContainerAsync(new List<string> { "--name", "hello" });
             };
 
             Add(label, textField, portsLabel, portsLabel, portsField);

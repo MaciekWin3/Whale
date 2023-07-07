@@ -1,6 +1,6 @@
 ﻿using Whale.Utils;
 
-namespace Whale.Services
+namespace Whale.Services.Interfaces
 {
     public interface IShellCommandRunner
     {

@@ -1,16 +1,17 @@
 ﻿using Terminal.Gui;
 using Whale.Services;
+using Whale.Services.Interfaces;
 
 namespace Whale.Components
 {
     public class TerminalDialog : Dialog
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IDockerUtilityService dockerUtilityService;
         public TerminalDialog()
         {
             shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
+            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
             X = Pos.Center();
             Y = Pos.Center();
             Width = Dim.Percent(70);

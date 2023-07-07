@@ -2,6 +2,7 @@
 using Terminal.Gui.Graphs;
 using Whale.Components;
 using Whale.Services;
+using Whale.Services.Interfaces;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
@@ -13,13 +14,13 @@ namespace Whale.Windows.Single.ContainerTabs
         GraphView graphView3 = null!;
         GraphView graphView4 = null!;
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IDockerContainerService dockerContainerService;
         public string ContainerId { get; set; }
-        public ContainerStatsWindow(string containerId) : base()
+        public ContainerStatsWindow(string containerId)
         {
             ContainerId = containerId;
             shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
+            dockerContainerService = new DockerContainerService(shellCommandRunner);
             Border = new Border
             {
                 BorderStyle = BorderStyle.None,
@@ -144,7 +145,7 @@ namespace Whale.Windows.Single.ContainerTabs
                 {
                     try
                     {
-                        var stats = await dockerService.GetContainerStatsAsync(ContainerId);
+                        var stats = await dockerContainerService.GetContainerStatsAsync(ContainerId);
                         cpuLabel.Text = stats.Value.CPUPerc.ToString();
                         memLabel.Text = stats.Value.MemPerc.ToString();
                         diskLabel.Text = stats.Value.BlockIO.ToString();

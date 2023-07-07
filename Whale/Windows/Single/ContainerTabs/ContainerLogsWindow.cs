@@ -1,18 +1,19 @@
 ﻿using Terminal.Gui;
 using Whale.Services;
+using Whale.Services.Interfaces;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
     public sealed class ContainerLogsWindow : Toplevel
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IDockerContainerService dockerContainerService;
         public string ContainerId { get; set; }
         public ContainerLogsWindow(string containerId) : base()
         {
             ContainerId = containerId;
             shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
+            dockerContainerService = new DockerContainerService(shellCommandRunner);
             Border = new Border
             {
                 BorderStyle = BorderStyle.None,
@@ -43,7 +44,7 @@ namespace Whale.Windows.Single.ContainerTabs
                 string? cache = string.Empty;
                 while (true)
                 {
-                    var logs = await dockerService.GetContainerLogsAsync(ContainerId);
+                    var logs = await dockerContainerService.GetContainerLogsAsync(ContainerId);
                     if (logs.Value.std == cache)
                     {
                         continue;

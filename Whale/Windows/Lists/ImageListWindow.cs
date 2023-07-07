@@ -3,6 +3,7 @@ using Terminal.Gui;
 using Whale.Components;
 using Whale.Models;
 using Whale.Services;
+using Whale.Services.Interfaces;
 using Whale.Utils;
 using Whale.Windows.Single;
 
@@ -11,11 +12,13 @@ namespace Whale.Windows.Lists
     public sealed class ImageListWindow : Toplevel
     {
         readonly Action<int, int> showContextMenu;
-        private readonly IDockerService dockerService =
-            new DockerService(new ShellCommandRunner());
+        private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerImageService dockerImageService;
         private readonly MainWindow mainWindow;
         public ImageListWindow(Action<int, int> showContextMenu, MainWindow mainWindow) : base()
         {
+            shellCommandRunner = new ShellCommandRunner();
+            dockerImageService = new DockerImageService(shellCommandRunner);
             X = 0;
             Y = 0;
             Width = Dim.Fill();
@@ -63,7 +66,7 @@ namespace Whale.Windows.Lists
                 Result<List<Image>> cache = Result.Fail<List<Image>>("Initial cache value");
                 while (true)
                 {
-                    Result<List<Image>> result = await dockerService.GetImageListAsync();
+                    Result<List<Image>> result = await dockerImageService.GetImageListAsync();
                     if (mainWindow.GetSelectedTab() is "Images" && result.IsSuccess)
                     {
                         bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());

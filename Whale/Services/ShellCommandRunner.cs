@@ -3,6 +3,7 @@ using CliWrap.EventStream;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using Whale.Services.Interfaces;
 using Whale.Utils;
 
 namespace Whale.Services

@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using Whale.Services;
+using Whale.Services.Interfaces;
 using Whale.Utils;
 
 namespace Whale.Tests.Services
@@ -57,9 +58,9 @@ namespace Whale.Tests.Services
             result.Error.Should().Be(std);
         }
 
-        private DockerService CreateDockerService()
+        private DockerContainerService CreateDockerService()
         {
-            return new DockerService(shellCommandRunnerMock.Object);
+            return new DockerContainerService(shellCommandRunnerMock.Object);
         }
     }
 }

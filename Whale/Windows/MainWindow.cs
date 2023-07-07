@@ -2,6 +2,7 @@
 using Terminal.Gui;
 using Whale.Components;
 using Whale.Services;
+using Whale.Services.Interfaces;
 using Whale.Windows.Lists;
 
 namespace Whale.Windows
@@ -11,8 +12,8 @@ namespace Whale.Windows
         private ContextMenu contextMenu = new();
         private MenuItem miUseSubMenusSingleFrame = null!;
         private bool useSubMenusSingleFrame;
-        private readonly ShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerUtilityService dockerUtilityService;
         private readonly Dictionary<string, Delegate> events;
         private readonly ContainerListWindow containerWindow;
         private readonly ImageListWindow imageWindow;
@@ -33,7 +34,7 @@ namespace Whale.Windows
                 Padding = new Thickness(1, 0, 1, 0),
             };
             shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
+            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
 
             events = new Dictionary<string, Delegate>
             {
@@ -107,7 +108,7 @@ namespace Whale.Windows
 
             Application.MainLoop.Invoke(async () =>
                 {
-                    var isDockerDaemonRunning = await dockerService.CheckIfDockerDaemonIsRunningAsync();
+                    var isDockerDaemonRunning = await dockerUtilityService.CheckIfDockerDaemonIsRunningAsync();
                     if (isDockerDaemonRunning.IsFailure)
                     {
                         MessageBox.ErrorQuery(50, 7, "Error", "Docker daemon is not running", "Ok");

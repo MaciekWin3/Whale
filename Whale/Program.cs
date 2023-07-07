@@ -12,7 +12,7 @@ var cellHighlight = new ColorScheme()
 };
 
 var shellCommandRunner = new ShellCommandRunner();
-var dockerService = new DockerService(shellCommandRunner);
+var dockerService = new DockerUtilityService(shellCommandRunner);
 
 string version = "Unkown";
 try

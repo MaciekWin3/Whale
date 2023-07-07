@@ -3,6 +3,7 @@ using Terminal.Gui;
 using Whale.Components;
 using Whale.Models;
 using Whale.Services;
+using Whale.Services.Interfaces;
 using Whale.Utils;
 using Whale.Windows.Single;
 
@@ -12,10 +13,12 @@ namespace Whale.Windows.Lists
     {
         readonly Action<int, int> showContextMenu;
         private readonly MainWindow mainWindow;
-        private readonly IDockerService dockerService =
-            new DockerService(new ShellCommandRunner());
+        private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerVolumeService dockerVolumeService;
         public VolumeListWindow(Action<int, int> showContextMenu, MainWindow mainWindow) : base()
         {
+            shellCommandRunner = new ShellCommandRunner();
+            dockerVolumeService = new DockerVolumeService(shellCommandRunner);
             Width = Dim.Fill();
             Height = Dim.Fill();
             Border = new Border()
@@ -62,7 +65,7 @@ namespace Whale.Windows.Lists
                 Result<List<Volume>> cache = Result.Fail<List<Volume>>("Inital cache value");
                 while (true)
                 {
-                    Result<List<Volume>> result = await dockerService.GetVolumeListAsync();
+                    Result<List<Volume>> result = await dockerVolumeService.GetVolumeListAsync();
                     if (mainWindow.GetSelectedTab() is "Volumes" && result.IsSuccess)
                     {
                         bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());

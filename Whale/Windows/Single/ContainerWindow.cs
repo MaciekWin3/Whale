@@ -4,6 +4,7 @@ using Whale.Components;
 using Whale.Models;
 using Whale.Objects.Container;
 using Whale.Services;
+using Whale.Services.Interfaces;
 using Whale.Windows.Single.ContainerTabs;
 
 namespace Whale.Windows.Single
@@ -13,12 +14,12 @@ namespace Whale.Windows.Single
         public string ContainerId { get; init; }
         private ContextMenu contextMenu = new();
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IDockerUtilityService dockerUtilityService;
         public ContainerWindow(string containerId)
         {
             ContainerId = containerId;
             shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
+            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
             InitView();
             var color = Color.Green;
             Border = new Border
@@ -126,7 +127,7 @@ namespace Whale.Windows.Single
 
         public async Task<ContainerState> GetContainerState()
         {
-            var result = await dockerService.GetDockerObjectInfoAsync<ContainerDTO>(ContainerId);
+            var result = await dockerUtilityService.GetDockerObjectInfoAsync<ContainerDTO>(ContainerId);
             if (result.GetValue() is not null && result?.Value?.State is not null)
             {
                 var state = result.Value.State.Status;

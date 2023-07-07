@@ -1,12 +1,13 @@
 ﻿using Terminal.Gui;
 using Whale.Services;
+using Whale.Services.Interfaces;
 
 namespace Whale.Windows.Single.ContainerTabs
 {
     public sealed class ContainerTerminalWindow : Toplevel
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IDockerContainerService dockerContainerService;
         public string ContainerId { get; set; }
         TextView terminal = null!;
         TextField prompt = null!;
@@ -14,7 +15,7 @@ namespace Whale.Windows.Single.ContainerTabs
         {
             ContainerId = containerId;
             shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
+            dockerContainerService = new DockerContainerService(shellCommandRunner);
             Border = new Border
             {
                 BorderStyle = BorderStyle.None,
@@ -77,7 +78,7 @@ namespace Whale.Windows.Single.ContainerTabs
             terminal.Text += prompt.Text + "\n";
             Application.MainLoop.Invoke(async () =>
             {
-                var result = await dockerService.RunCommandInsideDockerContainerAsync(ContainerId, command);
+                var result = await dockerContainerService.RunCommandInsideDockerContainerAsync(ContainerId, command);
                 if (result.IsSuccess)
                 {
                     terminal.Text += result.Value;

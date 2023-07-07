@@ -2,19 +2,20 @@
 using Terminal.Gui;
 using Whale.Components;
 using Whale.Services;
+using Whale.Services.Interfaces;
 
 namespace Whale.Windows.Single
 {
     public sealed class ImageWindow : Window
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IDockerUtilityService dockerUtilityService;
         private ContextMenu contextMenu = new();
         public string ImageId { get; init; }
         public ImageWindow(string imageId) : base("Image: " + imageId)
         {
             shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
+            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
             ImageId = imageId;
             InitView();
         }

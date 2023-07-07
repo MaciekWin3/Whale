@@ -3,6 +3,7 @@ using Terminal.Gui;
 using Whale.Components;
 using Whale.Models;
 using Whale.Services;
+using Whale.Services.Interfaces;
 using Whale.Utils;
 using Whale.Windows.Single;
 
@@ -11,7 +12,8 @@ namespace Whale.Windows.Lists
     public sealed class ContainerListWindow : Toplevel
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerService dockerService;
+        private readonly IDockerUtilityService dockerUtilityService;
+        private readonly IDockerContainerService dockerContainerService;
         public List<string> ContainerList { get; set; } = new();
 
         private readonly Dictionary<string, Delegate> events = new();
@@ -19,6 +21,10 @@ namespace Whale.Windows.Lists
         ColorScheme alternatingColorScheme = null!;
         public ContainerListWindow(Dictionary<string, Delegate> events, MainWindow mainWindow)
         {
+            shellCommandRunner = new ShellCommandRunner();
+            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
+            dockerContainerService = new DockerContainerService(shellCommandRunner);
+
             Width = Dim.Fill();
             Height = Dim.Fill();
             Border = new Border
@@ -26,8 +32,6 @@ namespace Whale.Windows.Lists
                 BorderStyle = BorderStyle.None,
             };
             InitView();
-            shellCommandRunner = new ShellCommandRunner();
-            dockerService = new DockerService(shellCommandRunner);
             this.events = events;
             this.mainWindow = mainWindow;
             ColorScheme = Colors.Base;
@@ -84,7 +88,7 @@ namespace Whale.Windows.Lists
                 Result<List<Container>> cache = Result.Fail<List<Container>>("Initial cache value");
                 while (true)
                 {
-                    Result<List<Container>> result = await dockerService.GetContainerListAsync();
+                    Result<List<Container>> result = await dockerContainerService.GetContainerListAsync();
                     if (mainWindow.GetSelectedTab() is "Containers" && result.IsSuccess)
                     {
                         bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());
