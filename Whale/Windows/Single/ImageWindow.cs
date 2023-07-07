@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Terminal.Gui;
 using Whale.Components;
+using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
 
@@ -10,12 +11,14 @@ namespace Whale.Windows.Single
     {
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerUtilityService dockerUtilityService;
+        private readonly IDockerImageService dockerImageService;
         private ContextMenu contextMenu = new();
         public string ImageId { get; init; }
         public ImageWindow(string imageId) : base("Image: " + imageId)
         {
             shellCommandRunner = new ShellCommandRunner();
             dockerUtilityService = new DockerUtilityService(shellCommandRunner);
+            dockerImageService = new DockerImageService(shellCommandRunner);
             ImageId = imageId;
             InitView();
         }
@@ -33,9 +36,10 @@ namespace Whale.Windows.Single
             };
 
             var numbers = new[] { 10, 20, 30, 40, 50 };
+            var layers = new List<ImageLayer>();
 
 
-            var listView = new ListView(numbers)
+            var listView = new ListView(layers)
             {
                 Height = Dim.Fill(),
                 Width = Dim.Fill(),
@@ -47,7 +51,7 @@ namespace Whale.Windows.Single
             var numbers2 = new[] { 10, 20, 30, 40, 50 };
 
 
-            var listView2 = new ListView(numbers2)
+            var layerslistView = new ListView(layers)
             {
                 Height = Dim.Fill(),
                 Width = Dim.Fill(),
@@ -75,7 +79,7 @@ namespace Whale.Windows.Single
                 Height = Dim.Fill()
             };
 
-            layersFrameView.Add(listView2);
+            layersFrameView.Add(layerslistView);
 
             var infoFrameView = new FrameView("Info")
             {
@@ -104,6 +108,12 @@ namespace Whale.Windows.Single
                 textView.Text = result.Value.std;
             });
 
+
+            Application.MainLoop.Invoke(async () =>
+            {
+                var imageLayers = await dockerImageService.GetImageLayersAsync(ImageId);
+                layerslistView.SetSource(imageLayers?.Value?.Select((layer, i) => $"{i + 1} {layer.CreatedBy} {layer.Size}").ToList());
+            });
 
             Add(statusFrameView, hierarchyFrameView, layersFrameView, infoFrameView);
         }

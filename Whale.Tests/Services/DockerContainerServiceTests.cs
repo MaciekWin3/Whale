@@ -8,7 +8,7 @@ using Whale.Utils;
 namespace Whale.Tests.Services
 {
     [TestFixture]
-    public class DockerServiceTests
+    public class DockerContainerServiceTests
     {
         private Mock<IShellCommandRunner> shellCommandRunnerMock;
 
