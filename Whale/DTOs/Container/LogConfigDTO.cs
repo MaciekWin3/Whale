@@ -2,7 +2,7 @@
 {
     public class LogConfigDTO
     {
-        public string Type { get; set; }
-        public ConfigDTO Config { get; set; }
+        public string? Type { get; set; }
+        public ConfigDTO? Config { get; set; }
     }
 }

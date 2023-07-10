@@ -79,10 +79,11 @@ namespace Whale.Windows.Single
             // When user selects a container, show its details
             list.OpenSelectedItem += (e) =>
             {
-                if (e is not null)
+                var containerId = e.Value as string;
+                if (containerId is not null)
                 {
                     Application.Top.RemoveAll();
-                    var containerWindow = new ContainerWindow(e.Value.ToString());
+                    var containerWindow = new ContainerWindow(containerId);
                     Application.Top.Add(containerWindow);
                     Application.Top.Add(MenuBarX.CreateMenuBar());
                     Application.Refresh();

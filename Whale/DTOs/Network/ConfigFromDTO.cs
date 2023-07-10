@@ -2,6 +2,6 @@
 {
     public class ConfigFromDTO
     {
-        public string Network { get; set; }
+        public string? Network { get; set; }
     }
 }

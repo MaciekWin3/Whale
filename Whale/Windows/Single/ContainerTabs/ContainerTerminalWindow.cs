@@ -75,6 +75,10 @@ namespace Whale.Windows.Single.ContainerTabs
         public void HandleInput()
         {
             var command = prompt.Text.ToString();
+            if (string.IsNullOrEmpty(command))
+            {
+                return;
+            }
             terminal.Text += prompt.Text + "\n";
             Application.MainLoop.Invoke(async () =>
             {

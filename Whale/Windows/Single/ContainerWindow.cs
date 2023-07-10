@@ -132,6 +132,11 @@ namespace Whale.Windows.Single
             {
                 var state = result.Value.State.Status;
 
+                if (state is null)
+                {
+                    return ContainerState.Unknown;
+                }
+
                 return state switch
                 {
                     var s when s.Contains("running") => ContainerState.Running,
@@ -147,7 +152,7 @@ namespace Whale.Windows.Single
             return ContainerState.Unknown;
         }
 
-        public void OpenTerminalDialog()
+        public static void OpenTerminalDialog()
         {
             var terminal = new TerminalDialog();
             terminal.ShowDialog();

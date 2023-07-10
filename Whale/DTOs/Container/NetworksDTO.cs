@@ -2,6 +2,6 @@
 {
     public class NetworksDTO
     {
-        public BridgeDTO bridge { get; set; }
+        public BridgeDTO? Bridge { get; set; }
     }
 }

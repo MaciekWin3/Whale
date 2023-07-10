@@ -2,23 +2,23 @@
 {
     public class NetworksettingsDTO
     {
-        public string Bridge { get; set; }
-        public string SandboxID { get; set; }
+        public string? Bridge { get; set; }
+        public string? SandboxID { get; set; }
         public bool HairpinMode { get; set; }
-        public string LinkLocalIPv6Address { get; set; }
+        public string? LinkLocalIPv6Address { get; set; }
         public int LinkLocalIPv6PrefixLen { get; set; }
-        public PortsDTO Ports { get; set; }
-        public string SandboxKey { get; set; }
-        public object SecondaryIPAddresses { get; set; }
-        public object SecondaryIPv6Addresses { get; set; }
-        public string EndpointID { get; set; }
-        public string Gateway { get; set; }
-        public string GlobalIPv6Address { get; set; }
+        public PortsDTO? Ports { get; set; }
+        public string? SandboxKey { get; set; }
+        public object? SecondaryIPAddresses { get; set; }
+        public object? SecondaryIPv6Addresses { get; set; }
+        public string? EndpointID { get; set; }
+        public string? Gateway { get; set; }
+        public string? GlobalIPv6Address { get; set; }
         public int GlobalIPv6PrefixLen { get; set; }
-        public string IPAddress { get; set; }
+        public string? IPAddress { get; set; }
         public int IPPrefixLen { get; set; }
-        public string IPv6Gateway { get; set; }
-        public string MacAddress { get; set; }
-        public NetworksDTO Networks { get; set; }
+        public string? IPv6Gateway { get; set; }
+        public string? MacAddress { get; set; }
+        public NetworksDTO? Networks { get; set; }
     }
 }

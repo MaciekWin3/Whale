@@ -18,7 +18,8 @@ namespace Whale.Windows.Lists
 
         private readonly Dictionary<string, Delegate> events = new();
         private readonly MainWindow mainWindow;
-        ColorScheme alternatingColorScheme = null!;
+        private ColorScheme alternatingColorScheme = null!;
+
         public ContainerListWindow(Dictionary<string, Delegate> events, MainWindow mainWindow)
         {
             shellCommandRunner = new ShellCommandRunner();
@@ -58,9 +59,16 @@ namespace Whale.Windows.Lists
 
             tableView.Style.SmoothHorizontalScrolling = true;
             tableView.Style.ExpandLastColumn = true;
-            tableView.Style.RowColorGetter = (a) =>
+            tableView.Style.RowColorGetter = (colorGetter) =>
             {
-                if (a.Table.Rows[a.RowIndex][3].ToString().Contains("Up"))
+                var rowIndex = colorGetter.RowIndex;
+                int containerStatusColumnNumber = 3;
+                DataRowCollection rows = colorGetter.Table.Rows;
+                var containerStatus = rows[rowIndex][containerStatusColumnNumber].ToString();
+
+                bool isContainerUp = containerStatus?.Contains("Up") ?? false;
+
+                if (isContainerUp)
                 {
                     return alternatingColorScheme;
                 }
@@ -131,7 +139,5 @@ namespace Whale.Windows.Lists
             }
             return table;
         }
-
-
     }
 }

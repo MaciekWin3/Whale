@@ -158,7 +158,7 @@ namespace Whale.Windows.Single
                 new ContextMenu(x, y,
                     new MenuBarItem(new MenuItem[]
                     {
-                        new MenuItem ("Run", "Create container", async () =>
+                        new MenuItem ("Run", "Create container", () =>
                         {
                             var createContainerDialog = new CreateContainerDialog(ImageId);
                             createContainerDialog.ShowDialog();

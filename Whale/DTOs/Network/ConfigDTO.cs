@@ -2,7 +2,7 @@
 {
     public class ConfigDTO
     {
-        public string Subnet { get; set; }
-        public string Gateway { get; set; }
+        public string? Subnet { get; set; }
+        public string? Gateway { get; set; }
     }
 }
