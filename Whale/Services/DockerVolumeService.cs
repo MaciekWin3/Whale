@@ -23,7 +23,7 @@ namespace Whale.Services
                     var volumes = Mapper.MapCommandToDockerObjectList<Volume>(result.Value.std);
                     return volumes;
                 }
-                return Result.Fail<List<Volume>>("No containers found");
+                return Result.Fail<List<Volume>>("Container not found");
             }
             return Result.Fail<List<Volume>>("Command failed");
         }

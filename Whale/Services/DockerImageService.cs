@@ -40,7 +40,7 @@ namespace Whale.Services
                     var imagesLayers = Mapper.MapCommandToDockerObjectList<ImageLayer>(result.Value.std);
                     return imagesLayers;
                 }
-                return Result.Fail<List<ImageLayer>>("No images found");
+                return Result.Fail<List<ImageLayer>>("Image not found");
             }
             return Result.Fail<List<ImageLayer>>("Command failed");
 

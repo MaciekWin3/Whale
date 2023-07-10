@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackAsTool>true</PackAsTool>
-    <ToolCommandLine>whale</ToolCommandLine>
+    <ToolCommandName>whale</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
   </PropertyGroup>
 

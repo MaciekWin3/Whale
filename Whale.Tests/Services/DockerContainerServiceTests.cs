@@ -19,7 +19,7 @@ namespace Whale.Tests.Services
         }
 
         [Test]
-        public async Task GetContainerListAsyncWhenCalledReturnsListOfContainers()
+        public async Task ShouldReturnListOfContainersWhenGetContainerListAsyncIsCalled()
         {
             // Arrange
             var std =
@@ -41,7 +41,7 @@ namespace Whale.Tests.Services
         }
 
         [Test]
-        public async Task GetContainerListAsyncWhenCalledReturnsError()
+        public async Task ShouldReturnErrorWhenGetContainerListAsyncIsCalled()
         {
             // Arrange
             var std = "Command failed";
