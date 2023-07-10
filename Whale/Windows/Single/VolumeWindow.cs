@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Terminal.Gui;
 using Whale.Components;
+using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
 
@@ -11,9 +12,11 @@ namespace Whale.Windows.Single
         public string VolumeId { get; init; }
         private ContextMenu contextMenu = new();
         private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerVolumeService dockerVolumeService;
         public VolumeWindow(string volumeId) : base("Image")
         {
             shellCommandRunner = new ShellCommandRunner();
+            dockerVolumeService = new DockerVolumeService(shellCommandRunner);
             VolumeId = volumeId;
             InitView();
         }
@@ -44,9 +47,8 @@ namespace Whale.Windows.Single
                 Border = new Border
                 {
                     BorderStyle = BorderStyle.Rounded,
-                    Title = "Files"
+                    Title = "Containers"
                 },
-                Text = "Here should be contaienrs"
             };
 
             var configView = new FrameView()
@@ -63,10 +65,42 @@ namespace Whale.Windows.Single
                 Text = "Here should be config"
             };
 
+            List<Container> containers = new();
+
+            var list = new ListView(containers)
+            {
+                Height = Dim.Fill(),
+                Width = Dim.Fill(),
+                //ColorScheme = Colors.TopLevel,
+                AllowsMarking = false,
+                AllowsMultipleSelection = false
+            };
+
+            // When user selects a container, show its details
+            list.OpenSelectedItem += (e) =>
+            {
+                if (e is not null)
+                {
+                    Application.Top.RemoveAll();
+                    var containerWindow = new ContainerWindow(e.Value.ToString());
+                    Application.Top.Add(containerWindow);
+                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Refresh();
+                }
+            };
+
+            used.Add(list);
+
             Application.MainLoop.Invoke(async () =>
             {
                 var result = await shellCommandRunner.RunCommandAsync("docker volume inspect " + VolumeId);
                 configView.Text = result.Value.std;
+            });
+
+            Application.MainLoop.Invoke(async () =>
+            {
+                var result = await dockerVolumeService.GetVolumesContainersListAsync(VolumeId);
+                list.SetSource(result?.Value?.Select(c => $"{c.Names}").ToList());
             });
 
             Add(files, used, configView);

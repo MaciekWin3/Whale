@@ -38,7 +38,6 @@ namespace Whale.Windows.Single
             var numbers = new[] { 10, 20, 30, 40, 50 };
             var layers = new List<ImageLayer>();
 
-
             var listView = new ListView(layers)
             {
                 Height = Dim.Fill(),
@@ -49,7 +48,6 @@ namespace Whale.Windows.Single
             };
 
             var numbers2 = new[] { 10, 20, 30, 40, 50 };
-
 
             var layerslistView = new ListView(layers)
             {
@@ -69,7 +67,6 @@ namespace Whale.Windows.Single
             };
 
             hierarchyFrameView.Add(listView);
-
 
             var layersFrameView = new FrameView("Layers")
             {

@@ -3,8 +3,9 @@ using Whale.Utils;
 
 namespace Whale.Services.Interfaces
 {
-    internal interface IDockerVolumeService
+    public interface IDockerVolumeService
     {
         Task<Result<List<Volume>>> GetVolumeListAsync(CancellationToken token = default);
+        Task<Result<List<Container>>> GetVolumesContainersListAsync(string containerId, CancellationToken token = default);
     }
 }

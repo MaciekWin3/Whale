@@ -27,5 +27,22 @@ namespace Whale.Services
             }
             return Result.Fail<List<Volume>>("Command failed");
         }
+
+        public async Task<Result<List<Container>>> GetVolumesContainersListAsync(string containerId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync("docker",
+                new[] { "ps", "-a", "--format", "json", "--filter", $"volume={containerId}" }, token);
+
+            if (result.IsSuccess)
+            {
+                if (result.Value.std.Length > 0)
+                {
+                    var containers = Mapper.MapCommandToDockerObjectList<Container>(result.Value.std);
+                    return containers;
+                }
+                return Result.Fail<List<Container>>("Container not found");
+            }
+            return Result.Fail<List<Container>>("Command failed");
+        }
     }
 }
