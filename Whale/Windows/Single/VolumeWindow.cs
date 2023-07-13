@@ -175,7 +175,6 @@ namespace Whale.Windows.Single
         {
             Application.Top.RemoveAll();
             var mainWindow = MainWindow.CreateAsync();
-            Dispose();
             Application.Top.Add(mainWindow);
             Application.Top.Add(MenuBarX.CreateMenuBar());
             Application.Refresh();

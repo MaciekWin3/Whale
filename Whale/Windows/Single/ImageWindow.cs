@@ -10,14 +10,12 @@ namespace Whale.Windows.Single
     public sealed class ImageWindow : Window
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerUtilityService dockerUtilityService;
         private readonly IDockerImageService dockerImageService;
         private ContextMenu contextMenu = new();
         public string ImageId { get; init; }
         public ImageWindow(string imageId) : base("Image: " + imageId)
         {
             shellCommandRunner = new ShellCommandRunner();
-            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
             dockerImageService = new DockerImageService(shellCommandRunner);
             ImageId = imageId;
             InitView();
@@ -58,20 +56,21 @@ namespace Whale.Windows.Single
                 AllowsMultipleSelection = false
             };
 
-            var hierarchyFrameView = new FrameView("Image hierarchy")
-            {
-                X = 0,
-                Y = Pos.Bottom(statusFrameView),
-                Width = Dim.Percent(40),
-                Height = Dim.Percent(50),
-            };
+            //var hierarchyFrameView = new FrameView("Image hierarchy")
+            //{
+            //    X = 0,
+            //    Y = Pos.Bottom(statusFrameView),
+            //    Width = Dim.Percent(40),
+            //    Height = Dim.Percent(50),
+            //};
 
-            hierarchyFrameView.Add(listView);
+            //hierarchyFrameView.Add(listView);
 
             var layersFrameView = new FrameView("Layers")
             {
                 X = 0,
-                Y = Pos.Bottom(hierarchyFrameView),
+                //Y = Pos.Bottom(hierarchyFrameView),
+                Y = Pos.Bottom(statusFrameView),
                 Width = Dim.Percent(40),
                 Height = Dim.Fill()
             };
@@ -80,7 +79,7 @@ namespace Whale.Windows.Single
 
             var infoFrameView = new FrameView("Info")
             {
-                X = Pos.Right(hierarchyFrameView),
+                X = Pos.Right(layersFrameView),
                 Y = Pos.Bottom(statusFrameView),
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
@@ -112,7 +111,7 @@ namespace Whale.Windows.Single
                 layerslistView.SetSource(imageLayers?.Value?.Select((layer, i) => $"{i + 1} {layer.CreatedBy} {layer.Size}").ToList());
             });
 
-            Add(statusFrameView, hierarchyFrameView, layersFrameView, infoFrameView);
+            Add(statusFrameView, layersFrameView, infoFrameView);
         }
 
         public void ConfigureContextMenu()
