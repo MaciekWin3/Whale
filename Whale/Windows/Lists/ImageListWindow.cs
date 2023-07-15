@@ -11,11 +11,10 @@ namespace Whale.Windows.Lists
 {
     public sealed class ImageListWindow : Toplevel
     {
-        readonly Action<int, int> showContextMenu;
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerImageService dockerImageService;
         private readonly MainWindow mainWindow;
-        public ImageListWindow(Action<int, int> showContextMenu, MainWindow mainWindow) : base()
+        public ImageListWindow(MainWindow mainWindow)
         {
             shellCommandRunner = new ShellCommandRunner();
             dockerImageService = new DockerImageService(shellCommandRunner);
@@ -27,7 +26,6 @@ namespace Whale.Windows.Lists
             {
                 BorderStyle = BorderStyle.None,
             };
-            this.showContextMenu = showContextMenu;
             InitView();
             this.mainWindow = mainWindow;
             ColorScheme = Colors.Base;
@@ -92,7 +90,7 @@ namespace Whale.Windows.Lists
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
-                    showContextMenu.Invoke(1, 1);
+                    // TODO
                 }
             };
         }

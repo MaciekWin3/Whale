@@ -11,11 +11,10 @@ namespace Whale.Windows.Lists
 {
     public sealed class VolumeListWindow : Toplevel
     {
-        readonly Action<int, int> showContextMenu;
         private readonly MainWindow mainWindow;
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerVolumeService dockerVolumeService;
-        public VolumeListWindow(Action<int, int> showContextMenu, MainWindow mainWindow) : base()
+        public VolumeListWindow(MainWindow mainWindow)
         {
             shellCommandRunner = new ShellCommandRunner();
             dockerVolumeService = new DockerVolumeService(shellCommandRunner);
@@ -25,7 +24,6 @@ namespace Whale.Windows.Lists
             {
                 BorderStyle = BorderStyle.None,
             };
-            this.showContextMenu = showContextMenu;
             InitView();
             this.mainWindow = mainWindow;
             ColorScheme = Colors.Base;
@@ -91,7 +89,7 @@ namespace Whale.Windows.Lists
             {
                 if (e.KeyEvent.Key == Key.m)
                 {
-                    showContextMenu.Invoke(1, 1);
+                    // TODO
                 }
             };
         }

@@ -12,18 +12,15 @@ namespace Whale.Windows.Lists
     public sealed class ContainerListWindow : Toplevel
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerUtilityService dockerUtilityService;
         private readonly IDockerContainerService dockerContainerService;
         public List<string> ContainerList { get; set; } = new();
 
-        private readonly Dictionary<string, Delegate> events = new();
         private readonly MainWindow mainWindow;
         private ColorScheme alternatingColorScheme = null!;
 
-        public ContainerListWindow(Dictionary<string, Delegate> events, MainWindow mainWindow)
+        public ContainerListWindow(MainWindow mainWindow)
         {
             shellCommandRunner = new ShellCommandRunner();
-            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
             dockerContainerService = new DockerContainerService(shellCommandRunner);
 
             Width = Dim.Fill();
@@ -33,7 +30,6 @@ namespace Whale.Windows.Lists
                 BorderStyle = BorderStyle.None,
             };
             InitView();
-            this.events = events;
             this.mainWindow = mainWindow;
             ColorScheme = Colors.Base;
         }

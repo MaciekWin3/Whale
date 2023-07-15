@@ -14,7 +14,6 @@ namespace Whale.Windows
         private bool useSubMenusSingleFrame;
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerUtilityService dockerUtilityService;
-        private readonly Dictionary<string, Delegate> events;
         private readonly ContainerListWindow containerWindow;
         private readonly ImageListWindow imageWindow;
         private readonly VolumeListWindow volumeWindow;
@@ -35,16 +34,9 @@ namespace Whale.Windows
             };
             shellCommandRunner = new ShellCommandRunner();
             dockerUtilityService = new DockerUtilityService(shellCommandRunner);
-
-            events = new Dictionary<string, Delegate>
-            {
-                { "Update", new Action(() => Application.RequestStop()) },
-                { "Quit", new Action(() => Application.RequestStop()) },
-                { nameof(ShowContextMenu), new Action<int, int>(ShowContextMenu) },
-            };
-            containerWindow = new ContainerListWindow(events, this);
-            imageWindow = new ImageListWindow(ShowContextMenu, this);
-            volumeWindow = new VolumeListWindow(ShowContextMenu, this);
+            containerWindow = new ContainerListWindow(this);
+            imageWindow = new ImageListWindow(this);
+            volumeWindow = new VolumeListWindow(this);
         }
 
         //public static async Task<Window> CreateAsync()
