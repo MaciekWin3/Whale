@@ -11,6 +11,7 @@ namespace Whale.Components
             var menuBar = new MenuBar(new MenuBarItem[]
             {
                 new MenuBarItem("Whale", CreateMainMenuBar()),
+                new MenuBarItem("Compose", CreateComposeMenuBar()),
                 new MenuBarItem("Help", CreateMenuItems()),
             });
 
@@ -29,6 +30,17 @@ namespace Whale.Components
             return menuItems;
         }
 
+        private static List<MenuItem[]> CreateComposeMenuBar()
+        {
+            var menuItems = new List<MenuItem[]>();
+            var fileMenu = new MenuItem[]
+            {
+                new MenuItem("Open", "", () => OpenFileDialog()),
+            };
+            menuItems.Add(fileMenu);
+            return menuItems;
+        }
+
         private static List<MenuItem[]> CreateMenuItems()
         {
             var menuItems = new List<MenuItem[]>();
@@ -39,6 +51,27 @@ namespace Whale.Components
             };
             menuItems.Add(fileMenu);
             return menuItems;
+        }
+
+        static void OpenFileDialog()
+        {
+            var fileDialog = new OpenDialog("Open", "Open a file")
+            {
+                AllowsMultipleSelection = false,
+            };
+
+            Application.Run(fileDialog);
+
+
+            if (!fileDialog.Canceled && !string.IsNullOrWhiteSpace(fileDialog.FilePath?.ToString()))
+            {
+                Open(fileDialog?.FilePath?.ToString());
+            }
+        }
+
+        private static void Open(string filename)
+        {
+            throw new NotImplementedException();
         }
 
         static void OpenUrl(string url)

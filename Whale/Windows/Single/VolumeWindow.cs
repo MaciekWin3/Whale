@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using System.Runtime.InteropServices;
 using Terminal.Gui;
+using Terminal.Gui.Trees;
 using Whale.Components;
 using Whale.Models;
 using Whale.Services;
@@ -10,10 +12,12 @@ namespace Whale.Windows.Single
     public sealed class VolumeWindow : Window
     {
         public string VolumeId { get; init; }
+        List<Container> Containers { get; set; } = new();
         private ContextMenu contextMenu = new();
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerVolumeService dockerVolumeService;
-        public VolumeWindow(string volumeId) : base("Image")
+        TreeView<FileSystemInfo> treeViewFiles = new();
+        public VolumeWindow(string volumeId) : base("Volume")
         {
             shellCommandRunner = new ShellCommandRunner();
             dockerVolumeService = new DockerVolumeService(shellCommandRunner);
@@ -23,6 +27,14 @@ namespace Whale.Windows.Single
         public void InitView()
         {
             ConfigureContextMenu();
+
+            treeViewFiles = new TreeView<FileSystemInfo>()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Percent(50),
+                Height = Dim.Fill(),
+            };
 
             var files = new FrameView()
             {
@@ -35,8 +47,8 @@ namespace Whale.Windows.Single
                     BorderStyle = BorderStyle.Rounded,
                     Title = "Files"
                 },
-                Text = "Here should be files"
             };
+            files.Add(treeViewFiles);
 
             var used = new FrameView()
             {
@@ -65,9 +77,7 @@ namespace Whale.Windows.Single
                 Text = "Here should be config"
             };
 
-            List<Container> containers = new();
-
-            var list = new ListView(containers)
+            var list = new ListView(Containers)
             {
                 Height = Dim.Fill(),
                 Width = Dim.Fill(),
@@ -104,7 +114,69 @@ namespace Whale.Windows.Single
                 list.SetSource(result?.Value?.Select(c => $"{c.Names}").ToList());
             });
 
+            SetupFileTree();
+
             Add(files, used, configView);
+        }
+
+        private void SetupFileTree()
+        {
+            treeViewFiles.TreeBuilder = new DelegateTreeBuilder<FileSystemInfo>(GetChildren, (o) => o is DirectoryInfo);
+            treeViewFiles.AspectGetter = FileSystemAspectGetter;
+            treeViewFiles.AddObject(GetDockerVolumeDirectoryInfo(VolumeId));
+        }
+
+        private DirectoryInfo GetDockerVolumeDirectoryInfo(string volumeName)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return new DirectoryInfo($@"\\wsl$\docker-desktop-data\data\docker\volumes\{volumeName}\_data\");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return new DirectoryInfo($"/var/lib/docker/volumes/{volumeName}/_data/");
+            }
+            else
+            {
+                throw new NotSupportedException("Unsupported operating system.");
+            }
+        }
+
+        private string FileSystemAspectGetter(FileSystemInfo model)
+        {
+            if (model is DirectoryInfo d)
+            {
+                return d.Name;
+            }
+            if (model is FileInfo f)
+            {
+                return f.Name;
+            }
+
+            return model.ToString();
+        }
+
+        private IEnumerable<FileSystemInfo> GetChildren(FileSystemInfo model)
+        {
+            // If it is a directory it's children are all contained files and dirs
+            if (model is DirectoryInfo d)
+            {
+                try
+                {
+                    return d.GetFileSystemInfos()
+                        //show directories first
+                        .OrderBy(a => a is DirectoryInfo ? 0 : 1)
+                        .ThenBy(b => b.Name);
+                }
+                catch (SystemException)
+                {
+
+                    // Access violation or other error getting the file list for directory
+                    return Enumerable.Empty<FileSystemInfo>();
+                }
+            }
+
+            return Enumerable.Empty<FileSystemInfo>(); ;
         }
 
         public void ConfigureContextMenu()
