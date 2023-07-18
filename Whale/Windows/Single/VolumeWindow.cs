@@ -158,20 +158,16 @@ namespace Whale.Windows.Single
 
         private IEnumerable<FileSystemInfo> GetChildren(FileSystemInfo model)
         {
-            // If it is a directory it's children are all contained files and dirs
             if (model is DirectoryInfo d)
             {
                 try
                 {
                     return d.GetFileSystemInfos()
-                        //show directories first
                         .OrderBy(a => a is DirectoryInfo ? 0 : 1)
                         .ThenBy(b => b.Name);
                 }
                 catch (SystemException)
                 {
-
-                    // Access violation or other error getting the file list for directory
                     return Enumerable.Empty<FileSystemInfo>();
                 }
             }

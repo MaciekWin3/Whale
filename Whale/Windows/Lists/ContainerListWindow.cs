@@ -17,6 +17,8 @@ namespace Whale.Windows.Lists
 
         private readonly MainWindow mainWindow;
         private ColorScheme alternatingColorScheme = null!;
+        private ContextMenu contextMenu = new();
+        TableView tableView = null!;
 
         public ContainerListWindow(MainWindow mainWindow)
         {
@@ -36,7 +38,7 @@ namespace Whale.Windows.Lists
 
         public void InitView()
         {
-            var tableView = new TableView()
+            tableView = new TableView()
             {
                 X = 0,
                 Y = 0,
@@ -70,6 +72,8 @@ namespace Whale.Windows.Lists
                 }
                 return null;
             };
+
+            tableView.KeyPress += TableKeyPress;
 
             tableView.CellActivated += (e) =>
             {
@@ -117,6 +121,9 @@ namespace Whale.Windows.Lists
             Add(tableView);
         }
 
+
+
+
         public static DataTable ConvertListToDataTable(List<Container> list)
         {
             var table = new DataTable();
@@ -135,5 +142,49 @@ namespace Whale.Windows.Lists
             }
             return table;
         }
+
+        private void TableKeyPress(KeyEventEventArgs obj)
+        {
+            if (obj.KeyEvent.Key == (Key.R | Key.CtrlMask))
+            {
+                var selected = tableView.SelectedRow;
+                var id = (string)tableView.Table.Rows[selected][0];
+                obj.Handled = true;
+
+                ShowContextMenu(new Point(
+                    1,
+                    tableView.SelectedRow + 5),
+                    id);
+            }
+        }
+
+        public void ShowContextMenu(Point screenPoint, string containerName)
+        {
+            contextMenu =
+                new ContextMenu(screenPoint.X, screenPoint.Y,
+                    new MenuBarItem(new MenuItem[]
+                    {
+                        new MenuItem ("Run", "Run container", async () =>
+                        {
+                            await shellCommandRunner.RunCommandAsync($"docker start {containerName}");
+
+                        }),
+                        new MenuItem ("Pause", "Pause container", async () =>
+                        {
+                            await shellCommandRunner.RunCommandAsync($"docker pause {containerName}");
+                        }),
+                        new MenuItem("Delete", "Delete container", async () =>
+                        {
+                            await shellCommandRunner.RunCommandAsync($"docker rm {containerName}");
+                        }),
+                    })
+                )
+                {
+                    ForceMinimumPosToZero = true
+                };
+
+            contextMenu.Show();
+        }
+
     }
 }

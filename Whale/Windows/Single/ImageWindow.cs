@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Terminal.Gui;
+﻿using Terminal.Gui;
 using Whale.Components;
 using Whale.Models;
 using Whale.Services;
@@ -33,7 +32,6 @@ namespace Whale.Windows.Single
                 Height = 3,
             };
 
-            var numbers = new[] { 10, 20, 30, 40, 50 };
             var layers = new List<ImageLayer>();
 
             var listView = new ListView(layers)
@@ -45,8 +43,6 @@ namespace Whale.Windows.Single
                 AllowsMultipleSelection = false
             };
 
-            var numbers2 = new[] { 10, 20, 30, 40, 50 };
-
             var layerslistView = new ListView(layers)
             {
                 Height = Dim.Fill(),
@@ -55,16 +51,6 @@ namespace Whale.Windows.Single
                 AllowsMarking = false,
                 AllowsMultipleSelection = false
             };
-
-            //var hierarchyFrameView = new FrameView("Image hierarchy")
-            //{
-            //    X = 0,
-            //    Y = Pos.Bottom(statusFrameView),
-            //    Width = Dim.Percent(40),
-            //    Height = Dim.Percent(50),
-            //};
-
-            //hierarchyFrameView.Add(listView);
 
             var layersFrameView = new FrameView("Layers")
             {
@@ -77,7 +63,7 @@ namespace Whale.Windows.Single
 
             layersFrameView.Add(layerslistView);
 
-            var infoFrameView = new FrameView("Info")
+            var infoFrameView = new FrameView("Config")
             {
                 X = Pos.Right(layersFrameView),
                 Y = Pos.Bottom(statusFrameView),
@@ -85,22 +71,31 @@ namespace Whale.Windows.Single
                 Height = Dim.Fill(),
             };
 
+            var scroll = new ScrollView()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+            };
+
             var textView = new TextView()
             {
+                X = 0,
+                Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
                 ReadOnly = true,
-                ColorScheme = new ColorScheme()
-                {
-                    Normal = Colors.Base.Normal,
-                },
+                ColorScheme = Colors.Menu,
             };
 
-            infoFrameView.Add(textView);
+            infoFrameView.Add(scroll);
+            scroll.Add(textView);
 
             Application.MainLoop.Invoke(async () =>
             {
                 var result = await shellCommandRunner.RunCommandAsync("docker image inspect " + ImageId);
+                infoFrameView.Text = result.Value.std;
                 textView.Text = result.Value.std;
             });
 
@@ -143,12 +138,6 @@ namespace Whale.Windows.Single
             }
 
             WantMousePositionReports = true;
-
-            Application.Top.Closed += (_) =>
-            {
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
-                Application.RootMouseEvent -= Application_RootMouseEvent;
-            };
         }
 
         public void ShowContextMenu(int x, int y)
@@ -181,7 +170,6 @@ namespace Whale.Windows.Single
         {
             Application.Top.RemoveAll();
             var mainWindow = MainWindow.CreateAsync();
-            Dispose();
             Application.Top.Add(mainWindow);
             Application.Top.Add(MenuBarX.CreateMenuBar());
             Application.Refresh();
