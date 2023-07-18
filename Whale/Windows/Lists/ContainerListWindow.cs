@@ -74,6 +74,7 @@ namespace Whale.Windows.Lists
             };
 
             tableView.KeyPress += TableKeyPress;
+            tableView.MouseClick += TableViewMouseClick;
 
             tableView.CellActivated += (e) =>
             {
@@ -122,8 +123,6 @@ namespace Whale.Windows.Lists
         }
 
 
-
-
         public static DataTable ConvertListToDataTable(List<Container> list)
         {
             var table = new DataTable();
@@ -141,6 +140,21 @@ namespace Whale.Windows.Lists
                 table.Rows.Add(item.ID, item.Image, item.Command, item.Status, item.Ports, item.Names);
             }
             return table;
+        }
+
+        private void TableViewMouseClick(MouseEventArgs obj)
+        {
+            if (obj.MouseEvent.Flags.HasFlag(MouseFlags.Button3Clicked))
+            {
+                //var selected = tableView.SelectedRow;
+                tableView.SetSelection(1, obj.MouseEvent.Y - 3, false);
+                var id = (string)tableView.Table.Rows[obj.MouseEvent.Y - 3][0];
+
+                ShowContextMenu(new Point(
+                    obj.MouseEvent.X + tableView.Frame.X + 5,
+                    obj.MouseEvent.Y + tableView.Frame.Y + 5),
+                    id);
+            }
         }
 
         private void TableKeyPress(KeyEventEventArgs obj)

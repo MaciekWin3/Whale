@@ -63,39 +63,82 @@ namespace Whale.Windows.Single
 
             layersFrameView.Add(layerslistView);
 
-            var infoFrameView = new FrameView("Config")
+            var textView = new TextView()
             {
                 X = Pos.Right(layersFrameView),
                 Y = Pos.Bottom(statusFrameView),
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
+                BottomOffset = 1,
+                RightOffset = 1,
             };
 
-            var scroll = new ScrollView()
+            Add(textView);
+
+            var scrollBar = new ScrollBarView(textView, true, true);
+
+
+            scrollBar.ChangedPosition += () =>
             {
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = Dim.Fill(),
+                textView.TopRow = scrollBar.Position;
+                if (textView.TopRow != scrollBar.Position)
+                {
+                    scrollBar.Position = textView.TopRow;
+                }
+                textView.SetNeedsDisplay();
             };
 
-            var textView = new TextView()
+            scrollBar.OtherScrollBarView.ChangedPosition += () =>
             {
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = Dim.Fill(),
-                ReadOnly = true,
-                ColorScheme = Colors.Menu,
+                textView.LeftColumn = scrollBar.OtherScrollBarView.Position;
+                if (textView.LeftColumn != scrollBar.OtherScrollBarView.Position)
+                {
+                    scrollBar.OtherScrollBarView.Position = textView.LeftColumn;
+                }
+                textView.SetNeedsDisplay();
             };
 
-            infoFrameView.Add(scroll);
-            scroll.Add(textView);
+            scrollBar.VisibleChanged += () =>
+            {
+                if (scrollBar.Visible && textView.RightOffset == 0)
+                {
+                    textView.RightOffset = 1;
+                }
+                else if (!scrollBar.Visible && textView.RightOffset == 1)
+                {
+                    textView.RightOffset = 0;
+                }
+            };
+
+            scrollBar.OtherScrollBarView.VisibleChanged += () =>
+            {
+                if (scrollBar.OtherScrollBarView.Visible && textView.BottomOffset == 0)
+                {
+                    textView.BottomOffset = 1;
+                }
+                else if (!scrollBar.OtherScrollBarView.Visible && textView.BottomOffset == 1)
+                {
+                    textView.BottomOffset = 0;
+                }
+            };
+
+            textView.DrawContent += (e) =>
+            {
+                scrollBar.Size = textView.Lines;
+                scrollBar.Position = textView.TopRow;
+                if (scrollBar.OtherScrollBarView != null)
+                {
+                    scrollBar.OtherScrollBarView.Size = textView.Maxlength;
+                    scrollBar.OtherScrollBarView.Position = textView.LeftColumn;
+                }
+                scrollBar.LayoutSubviews();
+                scrollBar.Refresh();
+            };
+
 
             Application.MainLoop.Invoke(async () =>
             {
                 var result = await shellCommandRunner.RunCommandAsync("docker image inspect " + ImageId);
-                infoFrameView.Text = result.Value.std;
                 textView.Text = result.Value.std;
             });
 
@@ -106,7 +149,7 @@ namespace Whale.Windows.Single
                 layerslistView.SetSource(imageLayers?.Value?.Select((layer, i) => $"{i + 1} {layer.CreatedBy} {layer.Size}").ToList());
             });
 
-            Add(statusFrameView, layersFrameView, infoFrameView);
+            Add(statusFrameView, layersFrameView);
         }
 
         public void ConfigureContextMenu()
