@@ -13,10 +13,12 @@ namespace Whale.Windows.Single
     {
         public string VolumeId { get; init; }
         List<Container> Containers { get; set; } = new();
+        ListView list = new();
         private ContextMenu contextMenu = new();
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerVolumeService dockerVolumeService;
         TreeView<FileSystemInfo> treeViewFiles = new();
+        FrameView configView = new();
         public VolumeWindow(string volumeId) : base("Volume")
         {
             shellCommandRunner = new ShellCommandRunner();
@@ -61,9 +63,10 @@ namespace Whale.Windows.Single
                     BorderStyle = BorderStyle.Rounded,
                     Title = "Containers"
                 },
+                CanFocus = false
             };
 
-            var configView = new FrameView()
+            configView = new FrameView()
             {
                 X = Pos.Right(files),
                 Y = 0,
@@ -74,19 +77,15 @@ namespace Whale.Windows.Single
                     BorderStyle = BorderStyle.Rounded,
                     Title = "Config"
                 },
-                Text = "Here should be config"
             };
 
-            var list = new ListView(Containers)
+            list = new ListView(Containers)
             {
                 Height = Dim.Fill(),
                 Width = Dim.Fill(),
-                //ColorScheme = Colors.TopLevel,
-                AllowsMarking = false,
-                AllowsMultipleSelection = false
+                CanFocus = false
             };
 
-            // When user selects a container, show its details
             list.OpenSelectedItem += (e) =>
             {
                 var containerId = e.Value as string;
@@ -112,11 +111,39 @@ namespace Whale.Windows.Single
             {
                 var result = await dockerVolumeService.GetVolumesContainersListAsync(VolumeId);
                 list.SetSource(result?.Value?.Select(c => $"{c.Names}").ToList());
+                if (result?.Value?.Count > 0)
+                {
+                    used.CanFocus = true;
+                    list.CanFocus = true;
+                }
             });
 
             SetupFileTree();
+            treeViewFiles.MouseClick += TreeViewFilesMouseClick;
+            treeViewFiles.KeyPress += TreeViewFilesKeyPress;
+            treeViewFiles.SelectionChanged += TreeViewFilesSelectionChanged;
 
             Add(files, used, configView);
+        }
+
+        public async Task GetVolumesContainersListAsync()
+        {
+            var result = await dockerVolumeService.GetVolumesContainersListAsync(VolumeId);
+            list.SetSource(result?.Value?.Select(c => $"{c.Names}").ToList());
+        }
+
+        private void TreeViewFilesSelectionChanged(object? sender, SelectionChangedEventArgs<FileSystemInfo> e)
+        {
+            configView.Text = e.NewValue.FullName;
+        }
+
+        private void TreeViewFilesKeyPress(KeyEventEventArgs args)
+        {
+            return;
+        }
+        private void TreeViewFilesMouseClick(MouseEventArgs args)
+        {
+            return;
         }
 
         private void SetupFileTree()

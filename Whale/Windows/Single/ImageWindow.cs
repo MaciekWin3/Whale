@@ -77,7 +77,6 @@ namespace Whale.Windows.Single
 
             var scrollBar = new ScrollBarView(textView, true, true);
 
-
             scrollBar.ChangedPosition += () =>
             {
                 textView.TopRow = scrollBar.Position;
