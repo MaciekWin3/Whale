@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Terminal.Gui;
 using Terminal.Gui.Trees;
 using Whale.Components;
@@ -14,11 +13,13 @@ namespace Whale.Windows.Single
         public string VolumeId { get; init; }
         List<Container> Containers { get; set; } = new();
         ListView list = new();
+        public string VolumeInfo { get; set; } = string.Empty;
         private ContextMenu contextMenu = new();
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerVolumeService dockerVolumeService;
         TreeView<FileSystemInfo> treeViewFiles = new();
         FrameView configView = new();
+        TextView textView = new();
         public VolumeWindow(string volumeId) : base("Volume")
         {
             shellCommandRunner = new ShellCommandRunner();
@@ -79,6 +80,22 @@ namespace Whale.Windows.Single
                 },
             };
 
+            textView = new TextView()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                WordWrap = true,
+                ReadOnly = true,
+                ColorScheme = new ColorScheme()
+                {
+                    Focus = new Terminal.Gui.Attribute(Color.White, Color.Blue),
+                },
+            };
+
+            configView.Add(textView);
+
             list = new ListView(Containers)
             {
                 Height = Dim.Fill(),
@@ -104,7 +121,8 @@ namespace Whale.Windows.Single
             Application.MainLoop.Invoke(async () =>
             {
                 var result = await shellCommandRunner.RunCommandAsync("docker volume inspect " + VolumeId);
-                configView.Text = result.Value.std;
+                textView.Text = result.Value.std;
+                VolumeInfo = result.Value.std;
             });
 
             Application.MainLoop.Invoke(async () =>
@@ -134,7 +152,11 @@ namespace Whale.Windows.Single
 
         private void TreeViewFilesSelectionChanged(object? sender, SelectionChangedEventArgs<FileSystemInfo> e)
         {
-            configView.Text = e.NewValue.FullName;
+            if (File.Exists(e.NewValue.FullName))
+            {
+                configView.Title = e.NewValue.Name;
+                textView.Text = File.ReadAllText(e.NewValue.FullName);
+            }
         }
 
         private void TreeViewFilesKeyPress(KeyEventEventArgs args)
@@ -223,20 +245,6 @@ namespace Whale.Windows.Single
                     e.Handled = true;
                 }
             };
-            Application.RootMouseEvent += Application_RootMouseEvent;
-
-            void Application_RootMouseEvent(MouseEvent me)
-            {
-                mousePos = new Point(me.X, me.Y);
-            }
-
-            WantMousePositionReports = true;
-
-            Application.Top.Closed += (_) =>
-            {
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
-                Application.RootMouseEvent -= Application_RootMouseEvent;
-            };
         }
 
         public void ShowContextMenu(int x, int y)
@@ -245,12 +253,17 @@ namespace Whale.Windows.Single
                 new ContextMenu(x, y,
                     new MenuBarItem(new MenuItem[]
                     {
+                        new MenuItem ("Inspect", "Volume info", () =>
+                        {
+                            configView.Text = VolumeInfo;
+                            configView.Title = "Details";
+                        }),
                         new MenuItem ("Delete", "Delete volume", async () =>
                         {
                             await shellCommandRunner.RunCommandAsync("docker volume rm " + VolumeId);
                             ReturnToMainWindow();
                         }),
-
+                        null!,
                         new MenuBarItem("Navigation", new MenuItem[]
                         {
                             new MenuItem ("Go back", "", () =>

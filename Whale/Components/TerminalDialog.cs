@@ -34,6 +34,7 @@ namespace Whale.Components
                 Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill() - 2,
+                WordWrap = true,
                 ReadOnly = true,
                 ColorScheme = new ColorScheme()
                 {
