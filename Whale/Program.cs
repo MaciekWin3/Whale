@@ -30,7 +30,7 @@ InitApp(Application.Top);
 void InitApp(Toplevel top)
 {
     top.Add(MenuBarX.CreateMenuBar());
-    top.Add(AppInfoBar.Create(version ?? "Unknown"));
+    top.Add(new AppInfoBar(version ?? "Unknown"));
     //top.Add(await MainWindow.CreateAsync());
     top.Add(MainWindow.CreateAsync());
     //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black);
