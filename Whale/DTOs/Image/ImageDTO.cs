@@ -1,4 +1,6 @@
-﻿namespace Whale.Objects.Image
+﻿using Whale.DTOs;
+
+namespace Whale.DTOs.Image
 {
     public class ImageDTO : DockerObjectDTO
     {

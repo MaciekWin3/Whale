@@ -1,13 +1,13 @@
 ﻿using System.Globalization;
 using Terminal.Gui;
 using Whale.Components;
+using Whale.DTOs.Container;
 using Whale.Models;
-using Whale.Objects.Container;
 using Whale.Services;
 using Whale.Services.Interfaces;
-using Whale.Windows.Single.ContainerTabs;
+using Whale.Windows.Containers.Tabs;
 
-namespace Whale.Windows.Single
+namespace Whale.Windows.Containers
 {
     public sealed class ContainerWindow : Window
     {
@@ -164,7 +164,7 @@ namespace Whale.Windows.Single
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key is (Key.M | Key.CtrlMask) || e.KeyEvent.Key is (Key.m))
+                if (e.KeyEvent.Key is (Key.M | Key.CtrlMask) || e.KeyEvent.Key is Key.m)
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
                 }

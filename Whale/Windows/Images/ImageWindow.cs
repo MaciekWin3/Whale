@@ -4,7 +4,7 @@ using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
 
-namespace Whale.Windows.Single
+namespace Whale.Windows.Images
 {
     public sealed class ImageWindow : Window
     {
@@ -157,7 +157,7 @@ namespace Whale.Windows.Single
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key == (Key.m))
+                if (e.KeyEvent.Key == Key.m)
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
                     e.Handled = true;

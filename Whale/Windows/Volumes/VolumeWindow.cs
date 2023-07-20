@@ -5,8 +5,9 @@ using Whale.Components;
 using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
+using Whale.Windows.Containers;
 
-namespace Whale.Windows.Single
+namespace Whale.Windows.Volumes
 {
     public sealed class VolumeWindow : Window
     {
@@ -230,7 +231,7 @@ namespace Whale.Windows.Single
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key is (Key.M | Key.CtrlMask) || e.KeyEvent.Key is (Key.m))
+                if (e.KeyEvent.Key is (Key.M | Key.CtrlMask) || e.KeyEvent.Key is Key.m)
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
                     e.Handled = true;

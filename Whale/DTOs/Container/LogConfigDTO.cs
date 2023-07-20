@@ -1,4 +1,6 @@
-﻿namespace Whale.Objects.Container
+﻿using Whale.DTOs;
+
+namespace Whale.DTOs.Container
 {
     public class LogConfigDTO
     {

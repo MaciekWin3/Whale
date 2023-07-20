@@ -1,4 +1,4 @@
-﻿namespace Whale.Models.DockerVersion.DockerVersion
+﻿namespace Whale.Models.Version
 {
     public record Client
     {

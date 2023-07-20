@@ -1,7 +1,7 @@
 ﻿using Terminal.Gui;
 using Whale.Components;
 
-namespace Whale.Windows.Single.ContainerTabs
+namespace Whale.Windows.Containers.Tabs
 {
     public sealed class ContainerInspectWindow : Toplevel
     {

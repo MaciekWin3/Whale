@@ -1,4 +1,4 @@
-﻿namespace Whale.Objects.Volume
+﻿namespace Whale.DTOs.Volume
 {
     public class VolumeDTO : DockerObjectDTO
     {

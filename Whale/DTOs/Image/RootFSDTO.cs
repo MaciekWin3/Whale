@@ -1,4 +1,4 @@
-﻿namespace Whale.Objects.Image
+﻿namespace Whale.DTOs.Image
 {
     public class RootFSDTO
     {

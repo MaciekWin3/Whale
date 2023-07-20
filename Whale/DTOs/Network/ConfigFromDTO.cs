@@ -1,4 +1,4 @@
-﻿namespace Whale.Objects.Network
+﻿namespace Whale.DTOs.Network
 {
     public class ConfigFromDTO
     {

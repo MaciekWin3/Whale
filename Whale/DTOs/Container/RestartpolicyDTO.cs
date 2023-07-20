@@ -1,4 +1,4 @@
-﻿namespace Whale.Objects.Container
+﻿namespace Whale.DTOs.Container
 {
     public class RestartpolicyDTO
     {

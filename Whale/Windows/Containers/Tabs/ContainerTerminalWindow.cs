@@ -2,7 +2,7 @@
 using Whale.Services;
 using Whale.Services.Interfaces;
 
-namespace Whale.Windows.Single.ContainerTabs
+namespace Whale.Windows.Containers.Tabs
 {
     public sealed class ContainerTerminalWindow : Toplevel
     {

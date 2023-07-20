@@ -1,6 +1,4 @@
-﻿using Whale.Models.DockerVersion.DockerVersion;
-
-namespace Whale.Models.Version
+﻿namespace Whale.Models.Version
 {
     public record DockerVersion
     {

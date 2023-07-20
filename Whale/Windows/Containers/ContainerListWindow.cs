@@ -5,9 +5,8 @@ using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
 using Whale.Utils;
-using Whale.Windows.Single;
 
-namespace Whale.Windows.Lists
+namespace Whale.Windows.Containers
 {
     public sealed class ContainerListWindow : Toplevel
     {

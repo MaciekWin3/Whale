@@ -1,6 +1,6 @@
 ﻿using Terminal.Gui;
 
-namespace Whale.Windows.Single.ContainerTabs
+namespace Whale.Windows.Containers.Tabs
 {
     public sealed class ContainerFilesWindow : Toplevel
     {

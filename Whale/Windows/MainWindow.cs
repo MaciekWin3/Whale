@@ -3,7 +3,9 @@ using Terminal.Gui;
 using Whale.Components;
 using Whale.Services;
 using Whale.Services.Interfaces;
-using Whale.Windows.Lists;
+using Whale.Windows.Containers;
+using Whale.Windows.Images;
+using Whale.Windows.Volumes;
 
 namespace Whale.Windows
 {

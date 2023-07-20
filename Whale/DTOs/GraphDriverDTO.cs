@@ -1,6 +1,6 @@
-﻿using Whale.Objects.Container;
+﻿using Whale.DTOs.Container;
 
-namespace Whale.Objects
+namespace Whale.DTOs
 {
     public class GraphDriverDTO
     {

@@ -1,4 +1,4 @@
-﻿namespace Whale.Objects
+﻿namespace Whale.DTOs
 {
     public class ConfigDTO
     {
