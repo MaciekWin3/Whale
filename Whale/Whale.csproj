@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -30,7 +30,7 @@
 		<PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
 		<PackageReference Include="System.Reactive" Version="6.0.0" />
 		<PackageReference Include="System.Runtime.Caching" Version="7.0.0" />
-		<PackageReference Include="Terminal.Gui" Version="1.12.1" />
+		<PackageReference Include="Terminal.Gui" Version="1.13.4" />
 	</ItemGroup>
 
 </Project>
