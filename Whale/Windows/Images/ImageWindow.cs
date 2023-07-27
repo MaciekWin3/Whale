@@ -24,14 +24,6 @@ namespace Whale.Windows.Images
         {
             ConfigureContextMenu();
 
-            var statusFrameView = new FrameView("Stats")
-            {
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = 3,
-            };
-
             var layers = new List<ImageLayer>();
 
             var listView = new ListView(layers)
@@ -56,84 +48,36 @@ namespace Whale.Windows.Images
             {
                 X = 0,
                 //Y = Pos.Bottom(hierarchyFrameView),
-                Y = Pos.Bottom(statusFrameView),
+                Y = 0,
                 Width = Dim.Percent(40),
                 Height = Dim.Fill()
             };
 
             layersFrameView.Add(layerslistView);
 
-            var textView = new TextView()
+            var frameView = new FrameView("Config")
             {
                 X = Pos.Right(layersFrameView),
-                Y = Pos.Bottom(statusFrameView),
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill()
+            };
+
+            var textView = new TextView()
+            {
+                X = 0,
+                Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
-                BottomOffset = 1,
-                RightOffset = 1,
+                WordWrap = true,
+                ReadOnly = true,
+                ColorScheme = new ColorScheme()
+                {
+                    Focus = new Terminal.Gui.Attribute(Color.White, Color.Blue),
+                },
             };
 
-            Add(textView);
-
-            var scrollBar = new ScrollBarView(textView, true, true);
-
-            scrollBar.ChangedPosition += () =>
-            {
-                textView.TopRow = scrollBar.Position;
-                if (textView.TopRow != scrollBar.Position)
-                {
-                    scrollBar.Position = textView.TopRow;
-                }
-                textView.SetNeedsDisplay();
-            };
-
-            scrollBar.OtherScrollBarView.ChangedPosition += () =>
-            {
-                textView.LeftColumn = scrollBar.OtherScrollBarView.Position;
-                if (textView.LeftColumn != scrollBar.OtherScrollBarView.Position)
-                {
-                    scrollBar.OtherScrollBarView.Position = textView.LeftColumn;
-                }
-                textView.SetNeedsDisplay();
-            };
-
-            scrollBar.VisibleChanged += () =>
-            {
-                if (scrollBar.Visible && textView.RightOffset == 0)
-                {
-                    textView.RightOffset = 1;
-                }
-                else if (!scrollBar.Visible && textView.RightOffset == 1)
-                {
-                    textView.RightOffset = 0;
-                }
-            };
-
-            scrollBar.OtherScrollBarView.VisibleChanged += () =>
-            {
-                if (scrollBar.OtherScrollBarView.Visible && textView.BottomOffset == 0)
-                {
-                    textView.BottomOffset = 1;
-                }
-                else if (!scrollBar.OtherScrollBarView.Visible && textView.BottomOffset == 1)
-                {
-                    textView.BottomOffset = 0;
-                }
-            };
-
-            textView.DrawContent += (e) =>
-            {
-                scrollBar.Size = textView.Lines;
-                scrollBar.Position = textView.TopRow;
-                if (scrollBar.OtherScrollBarView != null)
-                {
-                    scrollBar.OtherScrollBarView.Size = textView.Maxlength;
-                    scrollBar.OtherScrollBarView.Position = textView.LeftColumn;
-                }
-                scrollBar.LayoutSubviews();
-                scrollBar.Refresh();
-            };
-
+            frameView.Add(textView);
 
             Application.MainLoop.Invoke(async () =>
             {
@@ -148,7 +92,7 @@ namespace Whale.Windows.Images
                 layerslistView.SetSource(imageLayers?.Value?.Select((layer, i) => $"{i + 1} {layer.CreatedBy} {layer.Size}").ToList());
             });
 
-            Add(statusFrameView, layersFrameView);
+            Add(frameView, layersFrameView);
         }
 
         public void ConfigureContextMenu()

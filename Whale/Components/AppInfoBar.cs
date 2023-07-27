@@ -1,17 +1,22 @@
 ﻿using Terminal.Gui;
+using Whale.Services;
+using Whale.Services.Interfaces;
 
 namespace Whale.Components
 {
     public class AppInfoBar : StatusBar
     {
+        private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerContainerService dockerContainerService;
         public AppInfoBar(string version)
         {
-            var scrolllock = new StatusItem(Key.CharMask, "Scroll", null);
+            shellCommandRunner = new ShellCommandRunner();
+            dockerContainerService = new DockerContainerService(shellCommandRunner);
+
             var appVersion = new StatusItem(Key.CharMask, "App Version: 0.0.1", null);
             var dockerVersion = new StatusItem(Key.CharMask, $"Docker Version: {version}", null);
             var containerCpuUsage = new StatusItem(Key.CharMask, "CPU: 0%", null);
-            var containerMemoryUsage = new StatusItem(Key.CharMask, "Memory: 0%", null);
-            var vmMemoryUsage = new StatusItem(Key.CharMask, "VM Memory: 0%", null);
+            var containerMemoryUsage = new StatusItem(Key.CharMask, "Mem: 0%", null);
 
             Visible = true;
             Items = new StatusItem[]
@@ -24,8 +29,17 @@ namespace Whale.Components
                 dockerVersion,
                 containerCpuUsage,
                 containerMemoryUsage,
-                vmMemoryUsage,
             };
+
+            Application.MainLoop.Invoke(async () =>
+            {
+                while (true)
+                {
+                    var result = await dockerContainerService.GetContainersStatsAsync();
+                    containerCpuUsage.Title = $"CPU: {result.Value.CPUPerc}%";
+                    containerMemoryUsage.Title = $"Mem: {result.Value.MemUsage}%";
+                }
+            });
         }
     }
 }

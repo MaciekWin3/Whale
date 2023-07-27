@@ -49,7 +49,7 @@ namespace Whale.Windows.Containers
             alternatingColorScheme = new ColorScheme()
             {
                 Disabled = ColorScheme.Disabled,
-                HotFocus = ColorScheme.HotFocus,
+                HotFocus = Application.Driver.MakeAttribute(Color.Green, Color.White),
                 Focus = ColorScheme.Focus,
                 Normal = Application.Driver.MakeAttribute(Color.BrightGreen, Color.Blue)
             };

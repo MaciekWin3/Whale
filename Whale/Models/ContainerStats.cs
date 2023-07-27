@@ -1,6 +1,6 @@
 ﻿namespace Whale.Models
 {
-    public class ContainerStats
+    public record ContainerStats
     {
         public string? ID { get; set; }
         public string? Container { get; set; }

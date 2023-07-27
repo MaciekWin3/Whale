@@ -10,5 +10,6 @@ namespace Whale.Services.Interfaces
         Task<Result<ContainerStats>> GetContainerStatsAsync(string containerId, CancellationToken token = default);
         Task<Result<string>> RunCommandInsideDockerContainerAsync(string containerId, string command, CancellationToken token = default);
         Task<Result> CreateContainerAsync(List<string> arguments);
+        Task<Result<DockerStats>> GetContainersStatsAsync(CancellationToken token = default);
     }
 }
