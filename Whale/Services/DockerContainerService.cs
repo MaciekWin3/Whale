@@ -35,50 +35,44 @@ namespace Whale.Services
 
             if (result.IsSuccess)
             {
-                if (result.Value.std.Length > 0)
+                var containersStats = Mapper.MapCommandToDockerObjectList<ContainerStats>(result.Value.std);
+                var dockerStats = new DockerStats();
+
+                foreach (var containerStats in containersStats.Value!)
                 {
-                    var containersStats = Mapper.MapCommandToDockerObjectList<ContainerStats>(result.Value.std);
-                    var dockerStats = new DockerStats();
-
-                    foreach (var containerStats in containersStats.Value!)
+                    dockerStats.PIDs += int.Parse(containerStats.PIDs);
+                    if (float.TryParse(containerStats.CPUPerc.Replace("%", ""), out var cpuPerc))
                     {
-                        dockerStats.PIDs += int.Parse(containerStats.PIDs);
-                        if (float.TryParse(containerStats.CPUPerc.Replace("%", ""), out var cpuPerc))
-                        {
-                            dockerStats.CPUPerc += cpuPerc;
-                        }
-
-                        if (float.TryParse(containerStats.MemPerc.Replace("%", ""), out var memPerc))
-                        {
-                            dockerStats.MemPerc += memPerc;
-                        }
-
-                        // Parse and add MemUsage and MemLimit
-                        var (memUsageValue, memUsageUnit) = ParseMemoryValue(containerStats.MemUsage);
-                        dockerStats.MemUsage += memUsageValue;
-                        dockerStats.MemLimit += ParseMemoryValue(containerStats.MemUsage).Value;
-
-                        // Parse and add NetIO
-                        var (netInputValue, netInputUnit, netOutputValue, netOutputUnit) = ParseNetworkValue(containerStats.NetIO);
-                        dockerStats.NetInput += netInputValue;
-                        dockerStats.NetOutput += netOutputValue;
-
-                        // Parse and add BlockIO
-                        var (blockInputValue, blockInputUnit, blockOutputValue, blockOutputUnit) = ParseBlockValue(containerStats.BlockIO);
-                        dockerStats.BlockInput += blockInputValue;
-                        dockerStats.BlockOutput += blockOutputValue;
+                        dockerStats.CPUPerc += cpuPerc;
                     }
 
-                    return Result.Ok(dockerStats);
+                    if (float.TryParse(containerStats.MemPerc.Replace("%", ""), out var memPerc))
+                    {
+                        dockerStats.MemPerc += memPerc;
+                    }
+
+                    // Parse and add MemUsage and MemLimit
+                    var (memUsageValue, memUsageUnit) = ParseMemoryValue(containerStats.MemUsage);
+                    dockerStats.MemUsage += memUsageValue;
+                    dockerStats.MemLimit += ParseMemoryValue(containerStats.MemUsage).Value;
+
+                    // Parse and add NetIO
+                    var (netInputValue, netInputUnit, netOutputValue, netOutputUnit) = ParseNetworkValue(containerStats.NetIO);
+                    dockerStats.NetInput += netInputValue;
+                    dockerStats.NetOutput += netOutputValue;
+
+                    // Parse and add BlockIO
+                    var (blockInputValue, blockInputUnit, blockOutputValue, blockOutputUnit) = ParseBlockValue(containerStats.BlockIO);
+                    dockerStats.BlockInput += blockInputValue;
+                    dockerStats.BlockOutput += blockOutputValue;
                 }
-                return Result.Fail<DockerStats>("No containers found");
+                return Result.Ok(dockerStats);
             }
             return Result.Fail<DockerStats>("Command failed");
         }
 
         public async Task<Result<(string std, string err)>> GetContainerLogsAsync(string containerId, CancellationToken token = default)
         {
-            // docker logs -f ???
             var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "logs", containerId }, default);
             if (result.IsSuccess)
             {

@@ -4,8 +4,10 @@ namespace Whale.Windows.Containers.Tabs
 {
     public sealed class ContainerFilesWindow : Toplevel
     {
-        public ContainerFilesWindow()
+        public string ContainerId { get; set; }
+        public ContainerFilesWindow(string containerId)
         {
+            ContainerId = containerId;
             Border = new Border
             {
                 BorderStyle = BorderStyle.None,

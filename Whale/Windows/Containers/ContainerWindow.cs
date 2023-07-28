@@ -42,9 +42,9 @@ namespace Whale.Windows.Containers
             };
 
             var containerLogsWindow = new ContainerLogsWindow(ContainerId);
-            var containerInspectWindow = new ContainerInspectWindow();
+            var containerInspectWindow = new ContainerInspectWindow(ContainerId);
             var containerTerminalWindow = new ContainerTerminalWindow(ContainerId);
-            var containerFilesWindow = new ContainerFilesWindow();
+            var containerFilesWindow = new ContainerFilesWindow(ContainerId);
             var containerStatsWindow = new ContainerStatsWindow(ContainerId);
 
             tabView.AddTab(new TabView.Tab("Logs", containerLogsWindow), false);

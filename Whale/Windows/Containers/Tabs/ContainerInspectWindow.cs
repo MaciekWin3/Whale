@@ -1,12 +1,21 @@
 ﻿using Terminal.Gui;
-using Whale.Components;
+using Whale.Services;
+using Whale.Services.Interfaces;
 
 namespace Whale.Windows.Containers.Tabs
 {
     public sealed class ContainerInspectWindow : Toplevel
     {
-        public ContainerInspectWindow() : base()
+        private readonly IShellCommandRunner shellCommandRunner;
+        private readonly IDockerUtilityService dockerUtilityService;
+
+        public string ContainerId { get; set; }
+        public ContainerInspectWindow(string containerId)
         {
+            shellCommandRunner = new ShellCommandRunner();
+            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
+
+            ContainerId = containerId;
             Border = new Border
             {
                 BorderStyle = BorderStyle.None,
@@ -16,27 +25,23 @@ namespace Whale.Windows.Containers.Tabs
         }
         public void InitView()
         {
-            var label = new Label("Test Window")
+            var textView = new TextView()
             {
-                X = 5,
-                Y = 5,
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                BottomOffset = 1,
+                RightOffset = 1
             };
-            Add(label);
 
-            var goBack = new Button("Go back")
-            {
-                X = 6,
-                Y = Pos.Bottom(label),
-            };
-            goBack.Clicked += () =>
-            {
-                Application.Top.RemoveAll();
-                var mainWindow = MainWindow.CreateAsync();
-                Application.Top.Add(mainWindow);
-                Application.Top.Add(MenuBarX.CreateMenuBar());
-                Application.Refresh();
-            };
-            Add(goBack);
+            Add(textView);
+
+            //Application.MainLoop.Invoke(async () =>
+            //{
+            //    var result = await shellCommandRunner.RunCommandAsync("docker container inspect " + ContainerId);
+            //    textView.Text = result.Value.std;
+            //});
         }
     }
 }
