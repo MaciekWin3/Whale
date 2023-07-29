@@ -158,6 +158,7 @@ namespace Whale.Windows.Images
             var mainWindow = MainWindow.CreateAsync();
             Application.Top.Add(mainWindow);
             Application.Top.Add(MenuBarX.CreateMenuBar());
+            Application.Top.Add(new AppInfoBar(""));
             Application.Refresh();
         }
     }

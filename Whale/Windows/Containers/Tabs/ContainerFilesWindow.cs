@@ -2,7 +2,7 @@
 
 namespace Whale.Windows.Containers.Tabs
 {
-    public sealed class ContainerFilesWindow : Toplevel
+    public sealed class ContainerFilesWindow : Window
     {
         public string ContainerId { get; set; }
         public ContainerFilesWindow(string containerId)

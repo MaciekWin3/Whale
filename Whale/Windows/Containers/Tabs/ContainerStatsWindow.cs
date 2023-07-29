@@ -6,8 +6,7 @@ using Whale.Services.Interfaces;
 
 namespace Whale.Windows.Containers.Tabs
 {
-
-    public sealed class ContainerStatsWindow : Toplevel
+    public sealed class ContainerStatsWindow : Window
     {
         GraphView graphView = null!;
         GraphView graphView2 = null!;
@@ -26,7 +25,6 @@ namespace Whale.Windows.Containers.Tabs
                 BorderStyle = BorderStyle.None,
             };
             InitView();
-            ColorScheme = Colors.Base;
         }
         public void InitView()
         {

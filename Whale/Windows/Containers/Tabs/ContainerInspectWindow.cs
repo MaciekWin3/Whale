@@ -4,7 +4,7 @@ using Whale.Services.Interfaces;
 
 namespace Whale.Windows.Containers.Tabs
 {
-    public sealed class ContainerInspectWindow : Toplevel
+    public sealed class ContainerInspectWindow : Window
     {
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerUtilityService dockerUtilityService;
@@ -32,16 +32,17 @@ namespace Whale.Windows.Containers.Tabs
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
                 BottomOffset = 1,
-                RightOffset = 1
+                RightOffset = 1,
+                ReadOnly = true
             };
 
             Add(textView);
 
-            //Application.MainLoop.Invoke(async () =>
-            //{
-            //    var result = await shellCommandRunner.RunCommandAsync("docker container inspect " + ContainerId);
-            //    textView.Text = result.Value.std;
-            //});
+            Application.MainLoop.Invoke(async () =>
+            {
+                var result = await shellCommandRunner.RunCommandAsync("docker container inspect " + ContainerId);
+                textView.Text = result.Value.std;
+            });
         }
     }
 }

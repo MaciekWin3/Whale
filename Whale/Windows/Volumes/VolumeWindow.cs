@@ -286,6 +286,7 @@ namespace Whale.Windows.Volumes
             var mainWindow = MainWindow.CreateAsync();
             Application.Top.Add(mainWindow);
             Application.Top.Add(MenuBarX.CreateMenuBar());
+            Application.Top.Add(new AppInfoBar(""));
             Application.Refresh();
         }
     }

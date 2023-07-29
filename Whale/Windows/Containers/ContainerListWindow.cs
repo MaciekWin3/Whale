@@ -83,9 +83,9 @@ namespace Whale.Windows.Containers
                 {
                     Application.Top.RemoveAll();
                     var containerWindow = new ContainerWindow(id);
-                    mainWindow.Dispose();
                     Application.Top.Add(containerWindow);
                     Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Top.Add(new AppInfoBar(""));
                     Application.Refresh();
                 }
             };
@@ -120,7 +120,6 @@ namespace Whale.Windows.Containers
 
             Add(tableView);
         }
-
 
         public static DataTable ConvertListToDataTable(List<Container> list)
         {

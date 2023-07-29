@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Terminal.Gui;
+﻿using Terminal.Gui;
 using Whale.Components;
 using Whale.DTOs.Container;
 using Whale.Models;
@@ -187,12 +186,6 @@ namespace Whale.Windows.Containers
             }
 
             WantMousePositionReports = true;
-
-            Application.Top.Closed += (_) =>
-            {
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
-                Application.RootMouseEvent -= Application_RootMouseEvent;
-            };
         }
 
         public void ShowContextMenu(int x, int y)
@@ -238,9 +231,9 @@ namespace Whale.Windows.Containers
         {
             Application.Top.RemoveAll();
             var mainWindow = MainWindow.CreateAsync();
-            Dispose();
             Application.Top.Add(mainWindow);
             Application.Top.Add(MenuBarX.CreateMenuBar());
+            Application.Top.Add(new AppInfoBar(""));
             Application.Refresh();
         }
     }

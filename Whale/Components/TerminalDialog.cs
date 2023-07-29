@@ -14,8 +14,8 @@ namespace Whale.Components
             dockerUtilityService = new DockerUtilityService(shellCommandRunner);
             X = Pos.Center();
             Y = Pos.Center();
-            Width = Dim.Percent(70);
-            Height = Dim.Percent(70);
+            Width = Dim.Percent(80);
+            Height = Dim.Percent(80);
             Border = new Border
             {
                 BorderStyle = BorderStyle.Rounded,
@@ -86,6 +86,7 @@ namespace Whale.Components
             };
 
             Add(terminal, line, prompt);
+            FocusNext();
         }
 
         public void ShowDialog()

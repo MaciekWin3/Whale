@@ -36,8 +36,16 @@ namespace Whale.Components
                 while (true)
                 {
                     var result = await dockerContainerService.GetContainersStatsAsync();
-                    containerCpuUsage.Title = $"CPU: {result.Value.CPUPerc}%";
-                    containerMemoryUsage.Title = $"Mem: {result.Value.MemUsage}%";
+                    try
+                    {
+                        containerCpuUsage.Title = $"CPU: {result.Value.CPUPerc}%";
+                        containerMemoryUsage.Title = $"Mem: {result.Value.MemUsage}%";
+                    }
+                    catch
+                    {
+                        containerCpuUsage.Title = $"CPU: 0%";
+                        containerMemoryUsage.Title = $"Mem: 0%";
+                    }
                 }
             });
         }

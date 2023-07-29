@@ -4,7 +4,7 @@ using Whale.Services.Interfaces;
 
 namespace Whale.Windows.Containers.Tabs
 {
-    public sealed class ContainerTerminalWindow : Toplevel
+    public sealed class ContainerTerminalWindow : Window
     {
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerContainerService dockerContainerService;
