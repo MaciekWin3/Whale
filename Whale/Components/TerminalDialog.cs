@@ -7,11 +7,9 @@ namespace Whale.Components
     public class TerminalDialog : Dialog
     {
         private readonly IShellCommandRunner shellCommandRunner;
-        private readonly IDockerUtilityService dockerUtilityService;
         public TerminalDialog()
         {
             shellCommandRunner = new ShellCommandRunner();
-            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
             X = Pos.Center();
             Y = Pos.Center();
             Width = Dim.Percent(80);

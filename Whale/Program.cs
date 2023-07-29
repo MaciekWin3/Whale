@@ -14,15 +14,6 @@ var cellHighlight = new ColorScheme()
 var shellCommandRunner = new ShellCommandRunner();
 var dockerService = new DockerUtilityService(shellCommandRunner);
 
-string? version = "Unkown";
-try
-{
-    var dockerInfo = await dockerService.GetDockerVersionObjectAsync();
-    version = dockerInfo?.Value?.Client?.Version;
-}
-catch
-{
-}
 
 Application.Init();
 InitApp(Application.Top);
@@ -30,7 +21,7 @@ InitApp(Application.Top);
 void InitApp(Toplevel top)
 {
     top.Add(new Navbar());
-    top.Add(new AppInfoBar(version ?? "Unknown"));
+    top.Add(new AppInfoBar());
     //top.Add(await MainWindow.CreateAsync());
     top.Add(MainWindow.CreateAsync());
     //Colors.Base.Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black);

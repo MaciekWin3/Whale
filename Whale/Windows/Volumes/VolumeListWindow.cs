@@ -51,7 +51,7 @@ namespace Whale.Windows.Volumes
                     var volumeWindow = new VolumeWindow(name);
                     Application.Top.Add(volumeWindow);
                     Application.Top.Add(new Navbar());
-                    Application.Top.Add(new AppInfoBar(""));
+                    Application.Top.Add(new AppInfoBar());
                     Application.Refresh();
                 }
             };

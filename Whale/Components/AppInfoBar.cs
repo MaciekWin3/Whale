@@ -8,12 +8,14 @@ namespace Whale.Components
     {
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerContainerService dockerContainerService;
-        public AppInfoBar(string version)
+        private readonly IDockerUtilityService dockerUtilityService;
+        public AppInfoBar()
         {
             shellCommandRunner = new ShellCommandRunner();
             dockerContainerService = new DockerContainerService(shellCommandRunner);
+            dockerUtilityService = new DockerUtilityService(shellCommandRunner);
 
-            var dockerVersion = new StatusItem(Key.CharMask, $"Docker Version: {version}", null);
+            var dockerVersion = new StatusItem(Key.CharMask, $"Docker Version: Unknown", null);
             var containerCpuUsage = new StatusItem(Key.CharMask, "CPU: 0%", null);
             var containerMemoryUsage = new StatusItem(Key.CharMask, "Mem: 0%", null);
 
@@ -33,11 +35,13 @@ namespace Whale.Components
             {
                 while (true)
                 {
-                    var result = await dockerContainerService.GetContainersStatsAsync();
+                    var containersStats = await dockerContainerService.GetContainersStatsAsync();
+                    var dockerVersionInfo = await dockerUtilityService.GetDockerVersionObjectAsync();
                     try
                     {
-                        containerCpuUsage.Title = $"CPU: {result.Value.CPUPerc}%";
-                        containerMemoryUsage.Title = $"Mem: {result.Value.MemUsage}%";
+                        containerCpuUsage.Title = $"CPU: {containersStats.Value.CPUPerc}%";
+                        containerMemoryUsage.Title = $"Mem: {containersStats.Value.MemUsage}%";
+                        dockerVersion.Title = $"Docker Version: {dockerVersionInfo.Value?.Client?.Version}";
                     }
                     catch
                     {

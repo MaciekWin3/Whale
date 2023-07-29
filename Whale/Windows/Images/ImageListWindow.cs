@@ -52,7 +52,7 @@ namespace Whale.Windows.Images
                     var imageWindow = new ImageWindow(name);
                     Application.Top.Add(imageWindow);
                     Application.Top.Add(new Navbar());
-                    Application.Top.Add(new AppInfoBar(""));
+                    Application.Top.Add(new AppInfoBar());
                     Application.Refresh();
                 }
             };

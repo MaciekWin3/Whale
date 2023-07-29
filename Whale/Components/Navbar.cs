@@ -44,7 +44,17 @@ namespace Whale.Components
             var menuItems = new List<MenuItem[]>();
             var fileMenu = new MenuItem[]
             {
-                new MenuItem("About", "", () => MessageBox.Query("Hello", "This is something")),
+                new MenuItem("About", "App info", () => MessageBox.Query(
+                                       "About",
+                                        """
+                                        Whale is a terminal 
+                                        """, "Close")),
+                new MenuItem("Shortcuts", "List of shortcuts", () => MessageBox.Query(
+                                       "Shortcuts",
+                                       """
+                                        Ctrl + b - Back
+                                        Ctrl + t - Open terminal dialog 
+                                        """, "Close")),
                 new MenuItem("Readme.md", "", () => OpenUrl("https://github.com/MaciekWin3/Whale"))
             };
             menuItems.Add(fileMenu);
@@ -63,7 +73,7 @@ namespace Whale.Components
 
             if (!fileDialog.Canceled && !string.IsNullOrWhiteSpace(fileDialog.FilePath?.ToString()))
             {
-                Open(fileDialog?.FilePath?.ToString());
+                Open(fileDialog?.FilePath?.ToString()!);
             }
         }
 

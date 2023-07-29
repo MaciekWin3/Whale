@@ -85,7 +85,7 @@ namespace Whale.Windows.Containers
                     var containerWindow = new ContainerWindow(id);
                     Application.Top.Add(containerWindow);
                     Application.Top.Add(new Navbar());
-                    Application.Top.Add(new AppInfoBar(""));
+                    Application.Top.Add(new AppInfoBar());
                     Application.Refresh();
                 }
             };
