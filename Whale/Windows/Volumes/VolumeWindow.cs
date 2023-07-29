@@ -112,7 +112,7 @@ namespace Whale.Windows.Volumes
                     Application.Top.RemoveAll();
                     var containerWindow = new ContainerWindow(containerId);
                     Application.Top.Add(containerWindow);
-                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Top.Add(new Navbar());
                     Application.Refresh();
                 }
             };
@@ -285,7 +285,7 @@ namespace Whale.Windows.Volumes
             Application.Top.RemoveAll();
             var mainWindow = MainWindow.CreateAsync();
             Application.Top.Add(mainWindow);
-            Application.Top.Add(MenuBarX.CreateMenuBar());
+            Application.Top.Add(new Navbar());
             Application.Top.Add(new AppInfoBar(""));
             Application.Refresh();
         }

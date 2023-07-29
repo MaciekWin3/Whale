@@ -50,7 +50,7 @@ namespace Whale.Windows.Volumes
                     Application.Top.RemoveAll();
                     var volumeWindow = new VolumeWindow(name);
                     Application.Top.Add(volumeWindow);
-                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Top.Add(new Navbar());
                     Application.Top.Add(new AppInfoBar(""));
                     Application.Refresh();
                 }

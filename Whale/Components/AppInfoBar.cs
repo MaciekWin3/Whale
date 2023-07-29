@@ -13,7 +13,6 @@ namespace Whale.Components
             shellCommandRunner = new ShellCommandRunner();
             dockerContainerService = new DockerContainerService(shellCommandRunner);
 
-            var appVersion = new StatusItem(Key.CharMask, "App Version: 0.0.1", null);
             var dockerVersion = new StatusItem(Key.CharMask, $"Docker Version: {version}", null);
             var containerCpuUsage = new StatusItem(Key.CharMask, "CPU: 0%", null);
             var containerMemoryUsage = new StatusItem(Key.CharMask, "Mem: 0%", null);
@@ -25,7 +24,6 @@ namespace Whale.Components
                 {
                     Application.RequestStop();
                 }),
-                appVersion,
                 dockerVersion,
                 containerCpuUsage,
                 containerMemoryUsage,

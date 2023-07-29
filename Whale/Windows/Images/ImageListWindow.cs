@@ -51,7 +51,7 @@ namespace Whale.Windows.Images
                     Application.Top.RemoveAll();
                     var imageWindow = new ImageWindow(name);
                     Application.Top.Add(imageWindow);
-                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Top.Add(new Navbar());
                     Application.Top.Add(new AppInfoBar(""));
                     Application.Refresh();
                 }

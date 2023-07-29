@@ -84,7 +84,7 @@ namespace Whale.Windows.Containers
                     Application.Top.RemoveAll();
                     var containerWindow = new ContainerWindow(id);
                     Application.Top.Add(containerWindow);
-                    Application.Top.Add(MenuBarX.CreateMenuBar());
+                    Application.Top.Add(new Navbar());
                     Application.Top.Add(new AppInfoBar(""));
                     Application.Refresh();
                 }

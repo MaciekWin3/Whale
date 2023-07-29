@@ -29,7 +29,7 @@ InitApp(Application.Top);
 
 void InitApp(Toplevel top)
 {
-    top.Add(MenuBarX.CreateMenuBar());
+    top.Add(new Navbar());
     top.Add(new AppInfoBar(version ?? "Unknown"));
     //top.Add(await MainWindow.CreateAsync());
     top.Add(MainWindow.CreateAsync());

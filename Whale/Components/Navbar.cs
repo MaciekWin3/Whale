@@ -4,18 +4,16 @@ using Terminal.Gui;
 
 namespace Whale.Components
 {
-    public class MenuBarX
+    public class Navbar : MenuBar
     {
-        public static MenuBar CreateMenuBar()
+        public Navbar()
         {
-            var menuBar = new MenuBar(new MenuBarItem[]
+            Menus = new MenuBarItem[]
             {
                 new MenuBarItem("Whale", CreateMainMenuBar()),
                 new MenuBarItem("Compose", CreateComposeMenuBar()),
                 new MenuBarItem("Help", CreateMenuItems()),
-            });
-
-            return menuBar;
+            };
         }
 
         private static List<MenuItem[]> CreateMainMenuBar()
