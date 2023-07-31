@@ -58,6 +58,7 @@ namespace Whale.Windows.Containers.Tabs
             };
 
             Add(terminal, line, prompt);
+            FocusNext();
         }
 
         public void HandleKeyPress(KeyEvent keyEvent)

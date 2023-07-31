@@ -105,16 +105,17 @@ namespace Whale.Services
             return Result.Fail<string>("Command failed");
         }
 
-        public async Task<Result> CreateContainerAsync(List<string> arguments)
+        public async Task<Result> CreateContainerAsync(string parameters, bool shouldRun = true, CancellationToken token = default)
         {
-            var commandParameters = arguments.Prepend("run").ToArray();
-            var result = await shellCommandRunner.RunCommandAsync("docker", commandParameters, default);
+            string command = $"docker {(shouldRun ? "run -d" : "create")} {parameters}";
+            var result = await shellCommandRunner.RunCommandAsync(command, default);
             if (result.IsSuccess)
             {
                 return result;
             }
             return Result.Fail<(string std, string err)>("Command failed");
         }
+
 
         // Helper methods to parse different units (KB, MB, GB, etc.)
 

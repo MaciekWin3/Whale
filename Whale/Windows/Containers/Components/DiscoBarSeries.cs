@@ -1,7 +1,7 @@
 ﻿using Terminal.Gui;
 using Terminal.Gui.Graphs;
 
-namespace Whale.Components
+namespace Whale.Windows.Containers.Components
 {
     class DiscoBarSeries : BarSeries
     {

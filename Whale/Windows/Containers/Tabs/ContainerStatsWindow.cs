@@ -1,8 +1,8 @@
 ﻿using Terminal.Gui;
 using Terminal.Gui.Graphs;
-using Whale.Components;
 using Whale.Services;
 using Whale.Services.Interfaces;
+using Whale.Windows.Containers.Components;
 
 namespace Whale.Windows.Containers.Tabs
 {

@@ -3,6 +3,7 @@ using Whale.Components;
 using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
+using Whale.Windows.Images.Components;
 
 namespace Whale.Windows.Images
 {
