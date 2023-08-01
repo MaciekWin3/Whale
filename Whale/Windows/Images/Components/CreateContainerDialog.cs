@@ -86,7 +86,7 @@ namespace Whale.Windows.Images.Components
             };
 
             // Additional options
-            var additionalOptionsLabel = new Label("These flags will be appened at end of docker create command:")
+            var additionalOptionsLabel = new Label("Additional flags:")
             {
                 X = 0,
                 Y = Pos.Bottom(volumesField)
@@ -121,11 +121,11 @@ namespace Whale.Windows.Images.Components
                 var volumes = volumesField.Text.ToString();
                 var additionalOptions = additionalOptionsField.Text.ToString();
 
-                var portMappings = SplitAndFormatOptions(ports, "-p");
-                var environmentVariables = SplitAndFormatOptions(env, "-e");
-                var volumeMappings = SplitAndFormatOptions(volumes, "-v");
+                var portMappings = SplitAndFormatOptions(ports!, "-p");
+                var environmentVariables = SplitAndFormatOptions(env!, "-e");
+                var volumeMappings = SplitAndFormatOptions(volumes!, "-v");
 
-                var parameters = $"--name {containerName} {portMappings} {environmentVariables} {volumeMappings} {additionalOptions} {ImageId}";
+                var parameters = $"--name {containerName} {portMappings} {environmentVariables} {volumeMappings} {additionalOptions} {ImageId} {entryPointField.Text}";
 
                 await dockerContainerService
                     .CreateContainerAsync(parameters);
@@ -135,7 +135,8 @@ namespace Whale.Windows.Images.Components
                 portsLabel, portsField,
                 envLabel, envField,
                 volumesLabel, volumesField,
-                additionalOptionsLabel, additionalOptionsField);
+                additionalOptionsLabel, additionalOptionsField,
+                entryPointLabel, entryPointField);
             AddButton(create);
             AddButton(exit);
         }

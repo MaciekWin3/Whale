@@ -49,7 +49,8 @@ namespace Whale.Windows.Containers
             tabView.AddTab(new TabView.Tab("Logs", containerLogsWindow), false);
             tabView.AddTab(new TabView.Tab("Inspect", containerInspectWindow), false);
             tabView.AddTab(new TabView.Tab("Terminal", containerTerminalWindow), false);
-            tabView.AddTab(new TabView.Tab("Files", containerFilesWindow), false);
+            // Still in development
+            //tabView.AddTab(new TabView.Tab("Files", containerFilesWindow), false);
             tabView.AddTab(new TabView.Tab("Stats", containerStatsWindow), false);
 
             KeyPress += (e) =>
