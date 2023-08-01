@@ -8,7 +8,7 @@ Whale is still under development and is not yet ready for use.
 
 ## Demo 🎥
 
-![Whale Demo](./docs/demo.mp4)
+![Whale Demo](./docs/demo.gif)
 
 ## Description 📝
 
