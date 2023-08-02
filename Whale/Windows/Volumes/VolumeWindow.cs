@@ -122,8 +122,11 @@ namespace Whale.Windows.Volumes
             Application.MainLoop.Invoke(async () =>
             {
                 var result = await shellCommandRunner.RunCommandAsync("docker volume inspect " + VolumeId);
-                textView.Text = result.Value.std;
-                VolumeInfo = result.Value.std;
+                if (result.IsSuccess)
+                {
+                    textView.Text = result.Value.std;
+                    VolumeInfo = result.Value.std;
+                }
             });
 
             Application.MainLoop.Invoke(async () =>

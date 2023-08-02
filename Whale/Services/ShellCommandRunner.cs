@@ -45,13 +45,13 @@ namespace Whale.Services
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 //command = "cmd.exe";
-                command = "powershell.exe";
+                command = @"cmd.exe";
                 arguments = $"/c {arguments}";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 command = "/bin/bash";
-                arguments = $"-c {arguments}";
+                arguments = $"-c \"{arguments}\"";
             }
             else
             {
@@ -83,7 +83,7 @@ namespace Whale.Services
             string command;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                command = "powershell.exe";
+                command = "cmd.exe";
                 arguments = $"/c {arguments}";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
