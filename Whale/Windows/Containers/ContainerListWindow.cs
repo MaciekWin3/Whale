@@ -144,14 +144,18 @@ namespace Whale.Windows.Containers
         {
             if (obj.MouseEvent.Flags.HasFlag(MouseFlags.Button3Clicked))
             {
-                //var selected = tableView.SelectedRow;
                 tableView.SetSelection(1, obj.MouseEvent.Y - 3, false);
-                var id = (string)tableView.Table.Rows[obj.MouseEvent.Y - 3][0];
-
-                ShowContextMenu(new Point(
-                    obj.MouseEvent.X + tableView.Frame.X + 5,
-                    obj.MouseEvent.Y + tableView.Frame.Y + 5),
-                    id);
+                try
+                {
+                    var id = (string)tableView.Table.Rows[obj.MouseEvent.Y - 3][0];
+                    ShowContextMenu(new Point(
+                        obj.MouseEvent.X + tableView.Frame.X + 5,
+                        obj.MouseEvent.Y + tableView.Frame.Y + 5),
+                        id);
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -194,7 +198,6 @@ namespace Whale.Windows.Containers
                 {
                     ForceMinimumPosToZero = true
                 };
-
             contextMenu.Show();
         }
 

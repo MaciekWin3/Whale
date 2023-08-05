@@ -39,9 +39,13 @@ namespace Whale.Components
                     var dockerVersionInfo = await dockerUtilityService.GetDockerVersionObjectAsync();
                     try
                     {
-                        containerCpuUsage.Title = $"CPU: {containersStats.Value.CPUPerc}%";
-                        containerMemoryUsage.Title = $"Mem: {containersStats.Value.MemUsage}%";
-                        dockerVersion.Title = $"Docker Version: {dockerVersionInfo.Value?.Client?.Version}";
+                        if (containersStats.IsSuccess || dockerVersionInfo.IsSuccess)
+                        {
+                            var containersStatsValue = containersStats.GetValue();
+                            containerCpuUsage.Title = $"CPU: {containersStatsValue.CPUPerc}%";
+                            containerMemoryUsage.Title = $"Mem: {containersStatsValue.MemUsage!}%";
+                            dockerVersion.Title = $"Docker Version: {dockerVersionInfo.Value?.Client?.Version!}";
+                        }
                     }
                     catch
                     {

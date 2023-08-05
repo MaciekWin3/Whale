@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Terminal.Gui;
+﻿using Terminal.Gui;
 using Whale.Components;
 using Whale.Services;
 using Whale.Services.Interfaces;
@@ -11,9 +10,6 @@ namespace Whale.Windows
 {
     public sealed class MainWindow : Window
     {
-        private ContextMenu contextMenu = new();
-        private MenuItem miUseSubMenusSingleFrame = null!;
-        private bool useSubMenusSingleFrame;
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerUtilityService dockerUtilityService;
         private readonly ContainerListWindow containerWindow;
@@ -53,8 +49,6 @@ namespace Whale.Windows
 
         public void InitWindow()
         {
-            ConfigureContextMenu();
-
             tabView = new TabView()
             {
                 X = 0,
@@ -101,14 +95,13 @@ namespace Whale.Windows
             Add(tabView);
 
             Application.MainLoop.Invoke(async () =>
+            {
+                var isDockerDaemonRunning = await dockerUtilityService.CheckIfDockerDaemonIsRunningAsync();
+                if (isDockerDaemonRunning.IsFailure)
                 {
-                    var isDockerDaemonRunning = await dockerUtilityService.CheckIfDockerDaemonIsRunningAsync();
-                    if (isDockerDaemonRunning.IsFailure)
-                    {
-                        MessageBox.ErrorQuery(50, 7, "Error", "Docker daemon is not running", "Ok");
-                    }
-                });
-
+                    MessageBox.ErrorQuery(50, 7, "Error", "Docker daemon is not running", "Ok");
+                }
+            });
         }
 
         public string GetSelectedTab()
@@ -120,67 +113,6 @@ namespace Whale.Windows
         {
             var terminal = new TerminalDialog();
             terminal.ShowDialog();
-        }
-
-        public void ConfigureContextMenu()
-        {
-            Point mousePos = default;
-
-            KeyPress += (e) =>
-            {
-                if (e.KeyEvent.Key == (Key.j))
-                {
-                    ShowContextMenu(mousePos.X, mousePos.Y);
-                    e.Handled = true;
-                }
-            };
-
-            MouseClick += (e) =>
-            {
-                if (e.MouseEvent.Flags == contextMenu.MouseFlags)
-                {
-                    ShowContextMenu(e.MouseEvent.X, e.MouseEvent.Y);
-                    e.Handled = true;
-                }
-            };
-            Application.RootMouseEvent += Application_RootMouseEvent;
-
-            void Application_RootMouseEvent(MouseEvent me)
-            {
-                mousePos = new Point(me.X, me.Y);
-            }
-
-            WantMousePositionReports = true;
-
-            Application.Top.Closed += (_) =>
-            {
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
-                Application.RootMouseEvent -= Application_RootMouseEvent;
-            };
-        }
-
-        public void ShowContextMenu(int x, int y)
-        {
-            contextMenu = new ContextMenu(x, y,
-                new MenuBarItem(new MenuItem[]
-                {
-                    new MenuItem ("_Configuration", "Show configuration", () => MessageBox.Query (50, 5, "Info", "This would open settings dialog", "Ok")),
-                    new MenuBarItem ("More options", new MenuItem []
-                    {
-                        new MenuItem ("_Setup", "Change settings", () => MessageBox.Query (50, 5, "Info", "This would open setup dialog", "Ok")),
-                        new MenuItem ("_Maintenance", "Maintenance mode", () => MessageBox.Query (50, 5, "Info", "This would open maintenance dialog", "Ok")),
-                    }),
-                        miUseSubMenusSingleFrame = new MenuItem ("Use_SubMenusSingleFrame", "",
-                        () => contextMenu.UseSubMenusSingleFrame = miUseSubMenusSingleFrame.Checked = useSubMenusSingleFrame = !useSubMenusSingleFrame) {
-                            CheckType = MenuItemCheckStyle.Checked, Checked = useSubMenusSingleFrame
-                        },
-                    null!,
-                    new MenuItem ("_Quit", "", () => Application.RequestStop ())
-                })
-            )
-            { ForceMinimumPosToZero = true, UseSubMenusSingleFrame = useSubMenusSingleFrame };
-
-            contextMenu.Show();
         }
     }
 }

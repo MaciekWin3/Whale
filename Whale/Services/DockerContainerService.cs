@@ -38,33 +38,49 @@ namespace Whale.Services
                 var containersStats = Mapper.MapCommandToDockerObjectList<ContainerStats>(result.Value.std);
                 var dockerStats = new DockerStats();
 
-                foreach (var containerStats in containersStats.Value!)
+                var containerStatsList = containersStats.GetValue();
+
+                foreach (var containerStats in containerStatsList)
                 {
-                    dockerStats.PIDs += int.Parse(containerStats.PIDs);
-                    if (float.TryParse(containerStats.CPUPerc.Replace("%", ""), out var cpuPerc))
+                    if (int.TryParse(containerStats.PIDs, out int pids))
+                    {
+                        dockerStats.PIDs += pids;
+                    }
+
+                    if (containerStats.CPUPerc is not null && float.TryParse(containerStats.CPUPerc.Replace("%", ""), out float cpuPerc))
                     {
                         dockerStats.CPUPerc += cpuPerc;
                     }
 
-                    if (float.TryParse(containerStats.MemPerc.Replace("%", ""), out var memPerc))
+                    if (containerStats.MemPerc is not null && float.TryParse(containerStats.MemPerc.Replace("%", ""), out float memPerc))
                     {
                         dockerStats.MemPerc += memPerc;
                     }
 
                     // Parse and add MemUsage and MemLimit
-                    var (memUsageValue, memUsageUnit) = ParseMemoryValue(containerStats.MemUsage);
-                    dockerStats.MemUsage += memUsageValue;
-                    dockerStats.MemLimit += ParseMemoryValue(containerStats.MemUsage).Value;
+                    if (containerStats.MemUsage is not null)
+                    {
+                        var (memUsageValue, _) = ParseMemoryValue(containerStats.MemUsage);
+                        dockerStats.MemUsage += memUsageValue;
+                        dockerStats.MemLimit += ParseMemoryValue(containerStats.MemUsage).Value;
+                    }
+
 
                     // Parse and add NetIO
-                    var (netInputValue, netInputUnit, netOutputValue, netOutputUnit) = ParseNetworkValue(containerStats.NetIO);
-                    dockerStats.NetInput += netInputValue;
-                    dockerStats.NetOutput += netOutputValue;
+                    if (containerStats.NetIO is not null)
+                    {
+                        var (netInputValue, _, netOutputValue, _) = ParseNetworkValue(containerStats.NetIO);
+                        dockerStats.NetInput += netInputValue;
+                        dockerStats.NetOutput += netOutputValue;
+                    }
 
                     // Parse and add BlockIO
-                    var (blockInputValue, blockInputUnit, blockOutputValue, blockOutputUnit) = ParseBlockValue(containerStats.BlockIO);
-                    dockerStats.BlockInput += blockInputValue;
-                    dockerStats.BlockOutput += blockOutputValue;
+                    if (containerStats.BlockIO is not null)
+                    {
+                        var (blockInputValue, _, blockOutputValue, _) = ParseBlockValue(containerStats.BlockIO);
+                        dockerStats.BlockInput += blockInputValue;
+                        dockerStats.BlockOutput += blockOutputValue;
+                    }
                 }
                 return Result.Ok(dockerStats);
             }
