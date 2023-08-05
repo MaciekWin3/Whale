@@ -15,8 +15,7 @@ namespace Whale.Windows
         private readonly ContainerListWindow containerWindow;
         private readonly ImageListWindow imageWindow;
         private readonly VolumeListWindow volumeWindow;
-        private TabView tabView = null!;
-
+        public TabView TabView { get; set; } = null!;
         public MainWindow() : base("Whale Dashboard")
         {
             X = 0;
@@ -38,7 +37,7 @@ namespace Whale.Windows
         }
 
         //public static async Task<Window> CreateAsync()
-        public static Window CreateAsync()
+        public static MainWindow CreateAsync()
         {
             var window = new MainWindow();
             //await window.InitWindow();
@@ -49,7 +48,7 @@ namespace Whale.Windows
 
         public void InitWindow()
         {
-            tabView = new TabView()
+            TabView = new TabView()
             {
                 X = 0,
                 Y = 0,
@@ -58,9 +57,9 @@ namespace Whale.Windows
             };
 
             // Tabs
-            tabView.AddTab(new TabView.Tab("Containers", containerWindow), true);
-            tabView.AddTab(new TabView.Tab("Images", imageWindow), false);
-            tabView.AddTab(new TabView.Tab("Volumes", volumeWindow), false);
+            TabView.AddTab(new TabView.Tab("Containers", containerWindow), true);
+            TabView.AddTab(new TabView.Tab("Images", imageWindow), false);
+            TabView.AddTab(new TabView.Tab("Volumes", volumeWindow), false);
 
 
             // Shortcuts
@@ -70,14 +69,14 @@ namespace Whale.Windows
                 switch (e.KeyEvent.Key)
                 {
                     case (Key.Tab):
-                        var tabs = tabView.Tabs.Count;
-                        if (tabView.SelectedTab == tabView.Tabs.ToArray()[tabs - 1])
+                        var tabs = TabView.Tabs.Count;
+                        if (TabView.SelectedTab == TabView.Tabs.ToArray()[tabs - 1])
                         {
-                            tabView.SelectedTab = tabView.Tabs.ToArray()[0];
+                            TabView.SelectedTab = TabView.Tabs.ToArray()[0];
                         }
                         else
                         {
-                            tabView.SwitchTabBy(1);
+                            TabView.SwitchTabBy(1);
                         }
                         e.Handled = true;
                         break;
@@ -90,9 +89,9 @@ namespace Whale.Windows
                 }
             };
 
-            tabView.Style.ShowBorder = true;
-            tabView.ApplyStyleChanges();
-            Add(tabView);
+            TabView.Style.ShowBorder = true;
+            TabView.ApplyStyleChanges();
+            Add(TabView);
 
             Application.MainLoop.Invoke(async () =>
             {
@@ -106,7 +105,7 @@ namespace Whale.Windows
 
         public string GetSelectedTab()
         {
-            return (string)tabView.SelectedTab.Text;
+            return (string)TabView.SelectedTab.Text;
         }
 
         public void OpenTerminalDialog()

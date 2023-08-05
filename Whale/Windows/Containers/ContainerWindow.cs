@@ -4,6 +4,7 @@ using Whale.DTOs.Container;
 using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
+using Whale.Utils.Helpers;
 using Whale.Windows.Containers.Tabs;
 
 namespace Whale.Windows.Containers
@@ -207,14 +208,14 @@ namespace Whale.Windows.Containers
                         new MenuItem("Delete", "Delete container", async () =>
                         {
                             await shellCommandRunner.RunCommandAsync($"docker rm {ContainerId}");
-                            ReturnToMainWindow();
+                            NavigationHelper.ReturnToMainWindow("Containers");
                         }),
                         null!,
                         new MenuBarItem("Navigation", new MenuItem[]
                         {
                             new MenuItem ("Go back", "", () =>
                             {
-                                ReturnToMainWindow();
+                                NavigationHelper.ReturnToMainWindow("Containers");
                             }),
                             new MenuItem ("Quit", "", () => Application.RequestStop ()),
 
@@ -226,16 +227,6 @@ namespace Whale.Windows.Containers
                 };
 
             contextMenu.Show();
-        }
-
-        public void ReturnToMainWindow()
-        {
-            Application.Top.RemoveAll();
-            var mainWindow = MainWindow.CreateAsync();
-            Application.Top.Add(mainWindow);
-            Application.Top.Add(new Navbar());
-            Application.Top.Add(new AppInfoBar());
-            Application.Refresh();
         }
     }
 }

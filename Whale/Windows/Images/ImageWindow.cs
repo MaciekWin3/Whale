@@ -3,6 +3,7 @@ using Whale.Components;
 using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
+using Whale.Utils.Helpers;
 using Whale.Windows.Images.Components;
 
 namespace Whale.Windows.Images
@@ -142,7 +143,7 @@ namespace Whale.Windows.Images
                         {
                             new MenuItem ("Go back", "", () =>
                             {
-                                ReturnToMainWindow();
+                                NavigationHelper.ReturnToMainWindow("Images");
                             }),
                             new MenuItem ("Quit", "", () => Application.RequestStop ()),
                         }),

@@ -5,6 +5,7 @@ using Whale.Components;
 using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
+using Whale.Utils.Helpers;
 using Whale.Windows.Containers;
 
 namespace Whale.Windows.Volumes
@@ -113,7 +114,6 @@ namespace Whale.Windows.Volumes
                     var containerWindow = new ContainerWindow(containerId);
                     Application.Top.Add(containerWindow);
                     Application.Top.Add(new Navbar());
-                    Application.Refresh();
                 }
             };
 
@@ -265,14 +265,14 @@ namespace Whale.Windows.Volumes
                         new MenuItem ("Delete", "Delete volume", async () =>
                         {
                             await shellCommandRunner.RunCommandAsync("docker volume rm " + VolumeId);
-                            ReturnToMainWindow();
+                            NavigationHelper.ReturnToMainWindow("Volumes");
                         }),
                         null!,
                         new MenuBarItem("Navigation", new MenuItem[]
                         {
                             new MenuItem ("Go back", "", () =>
                             {
-                                ReturnToMainWindow();
+                                NavigationHelper.ReturnToMainWindow("Volumes");
                             }),
                             new MenuItem ("Quit", "", () => Application.RequestStop ()),
                         }),
@@ -281,16 +281,6 @@ namespace Whale.Windows.Volumes
                 { ForceMinimumPosToZero = true };
 
             contextMenu.Show();
-        }
-
-        public void ReturnToMainWindow()
-        {
-            Application.Top.RemoveAll();
-            var mainWindow = MainWindow.CreateAsync();
-            Application.Top.Add(mainWindow);
-            Application.Top.Add(new Navbar());
-            Application.Top.Add(new AppInfoBar());
-            Application.Refresh();
         }
     }
 }
