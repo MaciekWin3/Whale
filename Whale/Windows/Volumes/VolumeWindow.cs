@@ -234,7 +234,7 @@ namespace Whale.Windows.Volumes
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key is (Key.M | Key.CtrlMask) || e.KeyEvent.Key is Key.m)
+                if (e.KeyEvent.Key is (Key.m | Key.CtrlMask) || e.KeyEvent.Key is Key.m)
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
                     e.Handled = true;
@@ -268,18 +268,13 @@ namespace Whale.Windows.Volumes
                             NavigationHelper.ReturnToMainWindow("Volumes");
                         }),
                         null!,
-                        new MenuBarItem("Navigation", new MenuItem[]
+                        new MenuItem ("Back", "", () =>
                         {
-                            new MenuItem ("Go back", "", () =>
-                            {
-                                NavigationHelper.ReturnToMainWindow("Volumes");
-                            }),
-                            new MenuItem ("Quit", "", () => Application.RequestStop ()),
+                            NavigationHelper.ReturnToMainWindow("Volumes");
                         }),
+                        new MenuItem ("Quit", "", () => Application.RequestStop ()),
                     })
-                )
-                { ForceMinimumPosToZero = true };
-
+                );
             contextMenu.Show();
         }
     }

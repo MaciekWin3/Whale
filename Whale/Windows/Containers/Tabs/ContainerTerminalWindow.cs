@@ -86,7 +86,11 @@ namespace Whale.Windows.Containers.Tabs
                 var result = await dockerContainerService.RunCommandInsideDockerContainerAsync(ContainerId, command);
                 if (result.IsSuccess)
                 {
-                    terminal.Text += result.Value;
+                    terminal.Text += result.Value + '\n';
+                }
+                else
+                {
+                    terminal.Text += result.Error + "\n";
                 }
                 int idx = terminal.Lines;
                 terminal.ScrollTo(idx - terminal.Bounds.Height - 1);

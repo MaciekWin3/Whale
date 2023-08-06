@@ -77,7 +77,14 @@ namespace Whale.Components
                     }
                     //var result = await shellCommandRunner.ObserveCommandAsync(args, lambda);
                     var result = await shellCommandRunner.RunCommandAsync(args);
-                    terminal.Text += result.Value.std + '\n';
+                    if (result.IsSuccess)
+                    {
+                        terminal.Text += result.Value.std + '\n';
+                    }
+                    else
+                    {
+                        terminal.Text += result.Error + '\n';
+                    }
                     int idx = terminal.Lines;
                     terminal.ScrollTo(idx - terminal.Bounds.Height - 1);
                 }

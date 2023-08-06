@@ -103,7 +103,7 @@ namespace Whale.Windows.Images
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key == Key.m)
+                if (e.KeyEvent.Key is (Key.m | Key.CtrlMask) || e.KeyEvent.Key is Key.m)
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
                     e.Handled = true;
@@ -139,14 +139,12 @@ namespace Whale.Windows.Images
                             var createContainerDialog = new CreateContainerDialog(ImageId);
                             createContainerDialog.ShowDialog();
                         }),
-                        new MenuBarItem("Navigation", new MenuItem[]
+                        null!,
+                        new MenuItem ("Back", "", () =>
                         {
-                            new MenuItem ("Go back", "", () =>
-                            {
-                                NavigationHelper.ReturnToMainWindow("Images");
-                            }),
-                            new MenuItem ("Quit", "", () => Application.RequestStop ()),
+                            NavigationHelper.ReturnToMainWindow("Images");
                         }),
+                        new MenuItem ("Quit", "", () => Application.RequestStop ()),
                     })
                 )
                 { ForceMinimumPosToZero = true };

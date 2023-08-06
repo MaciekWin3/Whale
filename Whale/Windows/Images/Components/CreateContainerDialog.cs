@@ -127,8 +127,17 @@ namespace Whale.Windows.Images.Components
 
                 var parameters = $"--name {containerName} {portMappings} {environmentVariables} {volumeMappings} {additionalOptions} {ImageId} {entryPointField.Text}";
 
-                await dockerContainerService
+                var result = await dockerContainerService
                     .CreateContainerAsync(parameters);
+
+                if (result.IsSuccess)
+                {
+                    MessageBox.Query(50, 7, "Success", "Container created successfully", "Ok");
+                }
+                else
+                {
+                    MessageBox.ErrorQuery(50, 7, "Error", result.Error, "Ok");
+                }
             };
 
             Add(nameLabel, nameField,
