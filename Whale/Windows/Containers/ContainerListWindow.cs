@@ -13,6 +13,7 @@ namespace Whale.Windows.Containers
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerContainerService dockerContainerService;
         public List<string> ContainerList { get; set; } = new();
+        private bool showAll = true;
 
         private readonly MainWindow mainWindow;
         private ColorScheme alternatingColorScheme = null!;
@@ -96,7 +97,7 @@ namespace Whale.Windows.Containers
                 Result<List<Container>> cache = Result.Fail<List<Container>>("Initial cache value");
                 while (true)
                 {
-                    Result<List<Container>> result = await dockerContainerService.GetContainerListAsync();
+                    Result<List<Container>> result = await dockerContainerService.GetContainerListAsync(showAll);
                     if (mainWindow.GetSelectedTab() is "Containers" && result.IsSuccess)
                     {
                         bool? isSame = cache?.Value?.SequenceEqual(result.GetValue());
@@ -193,6 +194,17 @@ namespace Whale.Windows.Containers
                         {
                             await shellCommandRunner.RunCommandAsync($"docker rm {containerName}");
                         }),
+                        null!,
+                        new MenuItem("Show All", "", () => showAll = !showAll)
+                        {
+                            Checked = showAll,
+                            CheckType = MenuItemCheckStyle.Checked
+                        },
+                        null!,
+                        new MenuItem("Exit", "Exit", () =>
+                        {
+                            Application.RequestStop();
+                        })
                     })
                 )
                 {

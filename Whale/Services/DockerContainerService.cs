@@ -12,10 +12,13 @@ namespace Whale.Services
             this.shellCommandRunner = shellCommandRunner;
         }
 
-        public async Task<Result<List<Container>>> GetContainerListAsync(CancellationToken token = default)
+        public async Task<Result<List<Container>>> GetContainerListAsync(bool showAll = true, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker",
-                new[] { "container", "ls", "--all", "--format", "json" }, token);
+            var result = await shellCommandRunner
+                .RunCommandAsync(showAll ?
+                "docker container ls --all --format json" : "docker container ls --format json",
+                token);
+
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)

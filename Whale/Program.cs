@@ -14,11 +14,10 @@ var cellHighlight = new ColorScheme()
 var shellCommandRunner = new ShellCommandRunner();
 var dockerService = new DockerUtilityService(shellCommandRunner);
 
-
 Application.Init();
 InitApp(Application.Top);
 
-void InitApp(Toplevel top)
+static void InitApp(Toplevel top)
 {
     top.Add(new Navbar());
     top.Add(new AppInfoBar());
