@@ -42,8 +42,8 @@ namespace Whale.Components
                         if (containersStats.IsSuccess || dockerVersionInfo.IsSuccess)
                         {
                             var containersStatsValue = containersStats.GetValue();
-                            containerCpuUsage.Title = $"CPU: {containersStatsValue.CPUPerc}%";
-                            containerMemoryUsage.Title = $"Mem: {containersStatsValue.MemUsage!}%";
+                            containerCpuUsage.Title = $"CPU: {containersStatsValue.CPUPerc:0.00}%";
+                            containerMemoryUsage.Title = $"Mem: {containersStatsValue.MemUsage:0.00}%";
                             dockerVersion.Title = $"Docker Version: {dockerVersionInfo.Value?.Client?.Version!}";
                         }
                     }

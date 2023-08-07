@@ -54,8 +54,9 @@ namespace Whale.Components
                                        """
                                         Ctrl + b - Back
                                         Ctrl + t - Open terminal dialog 
-                                        """, "Close")),
-                new MenuItem("Readme.md", "", () => OpenUrl("https://github.com/MaciekWin3/Whale"))
+                                        """,
+                                       "Close")),
+                new MenuItem("Readme.md", "Open Github repo", () => OpenUrl("https://github.com/MaciekWin3/Whale"))
             };
             menuItems.Add(fileMenu);
             return menuItems;
