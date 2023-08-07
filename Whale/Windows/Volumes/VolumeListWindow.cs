@@ -5,7 +5,6 @@ using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
 using Whale.Utils;
-using Whale.Windows.Images;
 
 namespace Whale.Windows.Volumes
 {
@@ -158,8 +157,8 @@ namespace Whale.Windows.Volumes
                             if (volumeName is not null)
                             {
                                 Application.Top.RemoveAll();
-                                var imageWindow = new ImageWindow(volumeName);
-                                Application.Top.Add(imageWindow);
+                                var volumeWindow = new VolumeWindow(volumeName);
+                                Application.Top.Add(volumeWindow);
                                 Application.Top.Add(new Navbar());
                                 Application.Top.Add(new AppInfoBar());
                             }
