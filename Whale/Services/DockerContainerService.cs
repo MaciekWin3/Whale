@@ -34,8 +34,7 @@ namespace Whale.Services
 
         public async Task<Result<DockerStats>> GetContainersStatsAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker",
-                new[] { "container", "stats", "--format", "json", "--no-stream" }, token);
+            var result = await shellCommandRunner.RunCommandAsync("docker container stats --format json --no-stream", token);
 
             if (result.IsSuccess)
             {
@@ -92,7 +91,7 @@ namespace Whale.Services
 
         public async Task<Result<(string std, string err)>> GetContainerLogsAsync(string containerId, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "logs", containerId }, default);
+            var result = await shellCommandRunner.RunCommandAsync($"docker logs ${containerId}", default);
             if (result.IsSuccess)
             {
                 return result.Value;
@@ -102,7 +101,7 @@ namespace Whale.Services
 
         public async Task<Result<ContainerStats>> GetContainerStatsAsync(string containerId, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "stats", "--no-stream", "--format", "json", containerId }, default);
+            var result = await shellCommandRunner.RunCommandAsync($"docker stats --no-stream --format json {containerId}", default);
             if (result.IsSuccess)
             {
                 var stats = Mapper.MapCommandToDockerObject<ContainerStats>(result.Value.std);
@@ -116,7 +115,7 @@ namespace Whale.Services
 
         public async Task<Result<string>> RunCommandInsideDockerContainerAsync(string containerId, string command, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "exec", containerId, command }, token);
+            var result = await shellCommandRunner.RunCommandAsync($"docker exec {containerId} {command}", token);
             if (result.IsSuccess)
             {
                 return Result.Ok(result.Value.std);
@@ -175,14 +174,14 @@ namespace Whale.Services
             return Result.Fail<(string std, string err)>("Command failed");
         }
 
-        public async Task<Result> DeleteContainerAsync(string containerId, CancellationToken token = default)
+        public async Task<Result<string>> DeleteContainerAsync(string containerId, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync($"docker rm {containerId}", token);
+            var result = await shellCommandRunner.RunCommandAsync($"docker container remove {containerId}", token);
             if (result.IsSuccess)
             {
-                return result;
+                return Result.Ok(result.Value.std);
             }
-            return Result.Fail<(string std, string err)>("Command failed");
+            return Result.Fail<string>(result.Error);
         }
     }
 }

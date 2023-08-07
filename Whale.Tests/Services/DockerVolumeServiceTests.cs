@@ -28,7 +28,7 @@ namespace Whale.Tests.Services
                 {"Availability":"N/A","Driver":"local","Group":"N/A","Labels":"com.docker.volume.anonymous=","Links":"N/A","Mountpoint":"/var/lib/docker/volumes/volume2/_data","Name":"volume2","Scope":"local","Size":"N/A","Status":"N/A"}
                 """;
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "volume", "ls", "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker volume ls --format json", default))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 
             // Act
@@ -47,7 +47,7 @@ namespace Whale.Tests.Services
             // Arrange
             var std = "";
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "volume", "ls", "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker volume ls --format json", default))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 
             // Act

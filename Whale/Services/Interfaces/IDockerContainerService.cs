@@ -15,6 +15,6 @@ namespace Whale.Services.Interfaces
         Task<Result> PauseContainerAsync(string containerId, CancellationToken token = default);
         Task<Result> UnpauseContainerAsync(string containerId, CancellationToken token = default);
         Task<Result> StopContainerAsync(string containerId, CancellationToken token = default);
-        Task<Result> DeleteContainerAsync(string containerId, CancellationToken token = default);
+        Task<Result<string>> DeleteContainerAsync(string containerId, CancellationToken token = default);
     }
 }

@@ -19,7 +19,7 @@ namespace Whale.Services
 
         public async Task<Result<DockerVersion>> GetDockerVersionObjectAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "version", "--format", "json" }, default);
+            var result = await shellCommandRunner.RunCommandAsync("docker version --format json", default);
             if (result.IsSuccess)
             {
                 var stats = Mapper.MapCommandToDockerObject<DockerVersion>(result.Value.std);
@@ -34,7 +34,7 @@ namespace Whale.Services
         public async Task<Result<T>> GetDockerObjectInfoAsync<T>(string id, CancellationToken token = default)
         {
             var result = await shellCommandRunner
-                .RunCommandAsync("docker", new[] { "inspect", id, "--format", "json" }, token);
+                .RunCommandAsync($"docker inspect {id} --format json", token);
 
             if (result.IsFailure)
             {
@@ -60,7 +60,7 @@ namespace Whale.Services
 
         public async Task<Result<bool>> CheckIfDockerDaemonIsRunningAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker", new[] { "ps" }, token);
+            var result = await shellCommandRunner.RunCommandAsync("docker ps", token);
             if (result.IsSuccess)
             {
                 return Result.Ok(true);

@@ -7,6 +7,6 @@ namespace Whale.Services.Interfaces
     {
         Task<Result<List<Image>>> GetImageListAsync(CancellationToken token = default);
         Task<Result<List<ImageLayer>>> GetImageLayersAsync(string containerId, CancellationToken token = default);
-        Task<Result> DeleteImageAsync(string imageId, CancellationToken token = default);
+        Task<Result<string>> DeleteImageAsync(string imageId, CancellationToken token = default);
     }
 }

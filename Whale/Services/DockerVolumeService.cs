@@ -14,8 +14,7 @@ namespace Whale.Services
 
         public async Task<Result<List<Volume>>> GetVolumeListAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker",
-                new[] { "volume", "ls", "--format", "json" }, token);
+            var result = await shellCommandRunner.RunCommandAsync("docker volume ls --format json", token);
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)
@@ -30,8 +29,7 @@ namespace Whale.Services
 
         public async Task<Result<List<Container>>> GetVolumesContainersListAsync(string containerId, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker",
-                new[] { "ps", "-a", "--format", "json", "--filter", $"volume={containerId}" }, token);
+            var result = await shellCommandRunner.RunCommandAsync($"docker ps -a --format json --filter volume={containerId}", token);
 
             if (result.IsSuccess)
             {

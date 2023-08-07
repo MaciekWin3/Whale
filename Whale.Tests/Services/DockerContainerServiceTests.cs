@@ -29,7 +29,7 @@ namespace Whale.Tests.Services
                 {"Command":"\"bash\"","CreatedAt":"2023-05-28 19:33:19 +0200 CEST","ID":"addd94f3ac8e","Image":"ubuntu","Labels":"org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04","LocalVolumes":"0","Mounts":"","Names":"goofy_shockley","Networks":"bridge","Ports":"","RunningFor":"4 weeks ago","Size":"0B","State":"running","Status":"Up 7 hours"}
                 """;
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "container", "ls", "--all", "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker container ls --all --format json", default))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 
             // Act
@@ -46,7 +46,7 @@ namespace Whale.Tests.Services
             // Arrange
             var std = "Command failed";
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "container", "ls", "--all", "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker container ls --all --format json", default))
                 .ReturnsAsync(Result.Fail<(string std, string err)>(std));
 
             // Act
@@ -56,6 +56,48 @@ namespace Whale.Tests.Services
             // Assert
             result.IsSuccess.Should().BeFalse();
             result.Error.Should().Be(std);
+        }
+
+        [Test]
+        public async Task ShouldDeleteContainer()
+        {
+            // Arrange
+            string containerId = "containerId";
+
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync($"docker container remove {containerId}", default))
+                .ReturnsAsync(Result.Ok((containerId, string.Empty)));
+
+            // Act
+            var service = CreateDockerService();
+            var result = await service.DeleteContainerAsync(containerId);
+
+            // Assert
+            result.IsSuccess.Should().BeTrue();
+            result.Error.Should().BeNullOrEmpty();
+            result.Value.Should().Be(containerId);
+        }
+
+        [Test]
+        public async Task ShouldFailWhenDeletingContainerIfContainerDoesNotExists()
+        {
+            // Arrange
+            string containerId = "notExistingContainerId";
+            var errorMessage =
+                """
+                Error response from daemon: No such container: sdafasdjfasdf
+                NativeCommandExitException: Program "docker.exe" ended with non-zero exit code: 1.
+                """;
+
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync($"docker container remove {containerId}", default))
+                .ReturnsAsync(Result.Fail<(string std, string err)>(errorMessage));
+
+            // Act
+            var service = CreateDockerService();
+            var result = await service.DeleteContainerAsync(containerId);
+
+            // Assert
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be(errorMessage);
         }
 
         private DockerContainerService CreateDockerService()

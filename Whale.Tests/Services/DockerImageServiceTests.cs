@@ -28,7 +28,7 @@ namespace Whale.Tests.Services
                 {"Containers":"N/A","CreatedAt":"2023-04-25 19:30:49 +0200 CEST","CreatedSince":"2 months ago","Digest":"\u003cnone\u003e","ID":"3b418d7b466a","Repository":"ubuntu","SharedSize":"N/A","Size":"77.8MB","Tag":"latest","UniqueSize":"N/A","VirtualSize":"77.81MB"}
                 """;
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "image", "ls", "--all", "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker image ls --all --format json", default))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 
             // Act
@@ -48,7 +48,7 @@ namespace Whale.Tests.Services
             // Arrange
             var std = "";
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "image", "ls", "--all", "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker image ls --all --format json", default))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 
             // Act
@@ -71,7 +71,7 @@ namespace Whale.Tests.Services
                 {"Containers":"N/A","CreatedAt":"2023-04-25 19:30:49 +0200 CEST","CreatedSince":"2 months ago","Digest":"\u003cnone\u003e","ID":"3b418d7b466a","Repository":"ubuntu","SharedSize":"N/A","Size":"77.8MB","Tag":"latest","UniqueSize":"N/A","VirtualSize":"77.81MB"}
                 """;
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "image", "history", containerId, "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync($"docker image history {containerId} --format json", default))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 
             // Act
@@ -90,7 +90,7 @@ namespace Whale.Tests.Services
             var containerId = "abc123";
             var std = "";
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "image", "history", containerId, "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync($"docker image history {containerId} --format json", default))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 
             // Act
@@ -109,7 +109,7 @@ namespace Whale.Tests.Services
             var containerId = "abc123";
             var std = "";
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker", new[] { "image", "history", containerId, "--format", "json" }, default))
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync($"docker image history {containerId} --format json", default))
                 .ReturnsAsync(Result.Ok((std, string.Empty)));
 
             // Act
@@ -119,6 +119,25 @@ namespace Whale.Tests.Services
             // Assert
             result.IsSuccess.Should().BeFalse();
             result.Error.Should().Be("Image not found");
+        }
+
+        [Test]
+        public async Task ShouldDeleteImage()
+        {
+            // Arrange
+            string volumeId = "abc123";
+
+            shellCommandRunnerMock.Setup(x => x.RunCommandAsync($"docker image remove {volumeId}", default))
+                .ReturnsAsync(Result.Ok((volumeId, string.Empty)));
+
+            // Act
+            var service = CreateDockerService();
+            var result = await service.DeleteImageAsync(volumeId);
+
+            // Assert
+            result.IsSuccess.Should().BeTrue();
+            result.Error.Should().BeNullOrEmpty();
+            result.Value.Should().Be(volumeId);
         }
 
         private DockerImageService CreateDockerService()

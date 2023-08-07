@@ -10,47 +10,48 @@ namespace Whale.Services
 {
     public class ShellCommandRunner : IShellCommandRunner
     {
-        public async Task<Result<(string std, string error)>> RunCommandAsync(string command, string[] arguments, CancellationToken token = default)
-        {
-            var stdOut = new StringBuilder();
-            var stdErr = new StringBuilder();
-            var joinedArguments = string.Join(" ", arguments).Trim();
-
-            try
-            {
-                await Cli.Wrap(command)
-                    .WithArguments(joinedArguments)
-                    .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOut))
-                    .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErr))
-                //.ExecuteBufferedAsync(token);
-                    .ExecuteAsync(token);
-            }
-            catch (Exception e)
-            {
-                return Result.Fail<(string, string)>(e.Message);
-            }
-
-            return stdErr.Length > 0
-                ? Result.Fail<(string, string)>(stdErr.ToString())
-                : Result.Ok((stdOut.ToString(), stdErr.ToString()));
-        }
-
         // Handle windows, linux and mac
         public async Task<Result<(string std, string error)>> RunCommandAsync(string arguments, CancellationToken token = default)
         {
+            if (string.IsNullOrWhiteSpace(arguments))
+            {
+                return Result.Fail<(string, string)>("Arguments cannot be empty");
+            }
+
             string command;
             var stdOut = new StringBuilder();
             var stdErr = new StringBuilder();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                //command = "cmd.exe";
-                command = @"cmd.exe";
+                if (!arguments.StartsWith("cmd"))
+                {
+                    command = "cmd.exe";
+                }
+                else
+                {
+                    command = arguments
+                        .Split(" ")
+                        .First();
+
+                    arguments = arguments.Replace(command, "");
+                }
                 arguments = $"/c {arguments}";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                command = "/bin/bash";
+                if (!arguments.StartsWith("/bin/bash"))
+                {
+                    command = "/bin/bash";
+                }
+                else
+                {
+                    command = arguments
+                        .Split(" ")
+                        .First();
+
+                    arguments = arguments.Replace(command, "");
+                }
                 arguments = $"-c \"{arguments}\"";
             }
             else

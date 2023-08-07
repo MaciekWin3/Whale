@@ -11,12 +11,12 @@ namespace Whale.Tests.Services
         public async Task ShouldReturnDotnetInfoOutput()
         {
             // Arrange
-            var command = "dotnet";
-            var arguments = new[] { "--info" };
+            var command = "dotnet --info";
+
 
             // Act
             var service = CreateShellCommandRunner();
-            var result = await service.RunCommandAsync(command, arguments);
+            var result = await service.RunCommandAsync(command);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
@@ -31,12 +31,11 @@ namespace Whale.Tests.Services
         public async Task ShouldReturnCmdSuccess()
         {
             // Arrange
-            var command = "cmd";
-            var arguments = new[] { "/C", "echo", "hello" };
+            var command = "echo hello";
 
             // Act
             var service = CreateShellCommandRunner();
-            var result = await service.RunCommandAsync(command, arguments);
+            var result = await service.RunCommandAsync(command);
 
             // Assert
             result.IsSuccess.Should().BeTrue();

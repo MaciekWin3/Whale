@@ -14,8 +14,7 @@ namespace Whale.Services
 
         public async Task<Result<List<Image>>> GetImageListAsync(CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker",
-                new[] { "image", "ls", "--all", "--format", "json" }, token);
+            var result = await shellCommandRunner.RunCommandAsync("docker image ls --all --format json", token);
             if (result.IsSuccess)
             {
                 if (result.Value.std.Length > 0)
@@ -30,8 +29,7 @@ namespace Whale.Services
 
         public async Task<Result<List<ImageLayer>>> GetImageLayersAsync(string imageId, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync("docker",
-               new[] { "image", "history", imageId, "--format", "json" }, token);
+            var result = await shellCommandRunner.RunCommandAsync($"docker image history {imageId} --format json", token);
 
             if (result.IsSuccess)
             {
@@ -45,14 +43,14 @@ namespace Whale.Services
             return Result.Fail<List<ImageLayer>>("Command failed");
         }
 
-        public async Task<Result> DeleteImageAsync(string imageId, CancellationToken token = default)
+        public async Task<Result<string>> DeleteImageAsync(string imageId, CancellationToken token = default)
         {
             var result = await shellCommandRunner.RunCommandAsync($"docker image remove {imageId}", token);
             if (result.IsSuccess)
             {
-                return Result.Ok();
+                return Result.Ok(result.Value.std);
             }
-            return Result.Fail("Command failed");
+            return Result.Fail<string>(result.Error);
         }
     }
 }
