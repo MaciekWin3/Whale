@@ -1,6 +1,7 @@
 ﻿using Whale.Models;
 using Whale.Services.Interfaces;
 using Whale.Utils;
+using Whale.Utils.Helpers;
 
 namespace Whale.Services
 {
@@ -63,16 +64,15 @@ namespace Whale.Services
                     // Parse and add MemUsage and MemLimit
                     if (containerStats.MemUsage is not null)
                     {
-                        var (memUsageValue, _) = ParseMemoryValue(containerStats.MemUsage);
+                        var (memUsageValue, _) = UnitParserHelper.ParseMemoryValue(containerStats.MemUsage);
                         dockerStats.MemUsage += memUsageValue;
-                        dockerStats.MemLimit += ParseMemoryValue(containerStats.MemUsage).Value;
+                        dockerStats.MemLimit += UnitParserHelper.ParseMemoryValue(containerStats.MemUsage).Value;
                     }
-
 
                     // Parse and add NetIO
                     if (containerStats.NetIO is not null)
                     {
-                        var (netInputValue, _, netOutputValue, _) = ParseNetworkValue(containerStats.NetIO);
+                        var (netInputValue, _, netOutputValue, _) = UnitParserHelper.ParseNetworkValue(containerStats.NetIO);
                         dockerStats.NetInput += netInputValue;
                         dockerStats.NetOutput += netOutputValue;
                     }
@@ -80,7 +80,7 @@ namespace Whale.Services
                     // Parse and add BlockIO
                     if (containerStats.BlockIO is not null)
                     {
-                        var (blockInputValue, _, blockOutputValue, _) = ParseBlockValue(containerStats.BlockIO);
+                        var (blockInputValue, _, blockOutputValue, _) = UnitParserHelper.ParseBlockValue(containerStats.BlockIO);
                         dockerStats.BlockInput += blockInputValue;
                         dockerStats.BlockOutput += blockOutputValue;
                     }
@@ -133,55 +133,6 @@ namespace Whale.Services
                 return result;
             }
             return Result.Fail<(string std, string err)>("Command failed");
-        }
-
-
-        // Helper methods to parse different units (KB, MB, GB, etc.)
-
-        // Parses memory value (e.g., 428KiB) to value and unit.
-        private (float Value, string Unit) ParseMemoryValue(string memoryValue)
-        {
-            var parts = memoryValue.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 2 && float.TryParse(parts[0], out float value))
-            {
-                return (value, parts[1].Trim());
-            }
-            else
-            {
-                return (0, "");
-            }
-        }
-
-        // Parses network value (e.g., 1.39kB / 0B) to input and output values and units.
-        private (float Input, string InputUnit, float Output, string OutputUnit) ParseNetworkValue(string networkValue)
-        {
-            var parts = networkValue.Split('/', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 2)
-            {
-                var (inputValue, inputUnit) = ParseMemoryValue(parts[0]);
-                var (outputValue, outputUnit) = ParseMemoryValue(parts[1]);
-                return (inputValue, inputUnit, outputValue, outputUnit);
-            }
-            else
-            {
-                return (0, "", 0, "");
-            }
-        }
-
-        // Parses block value (e.g., 0B / 0B) to input and output values and units.
-        private (int Input, string InputUnit, int Output, string OutputUnit) ParseBlockValue(string blockValue)
-        {
-            var parts = blockValue.Split('/', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 2)
-            {
-                var (inputValue, inputUnit) = ParseMemoryValue(parts[0]);
-                var (outputValue, outputUnit) = ParseMemoryValue(parts[1]);
-                return ((int)inputValue, inputUnit, (int)outputValue, outputUnit);
-            }
-            else
-            {
-                return (0, "", 0, "");
-            }
         }
     }
 }

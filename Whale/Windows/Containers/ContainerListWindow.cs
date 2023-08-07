@@ -128,14 +128,12 @@ namespace Whale.Windows.Containers
             table.Columns.Add("ID", typeof(string));
             table.Columns.Add("Image", typeof(string));
             table.Columns.Add("Command", typeof(string));
-            //table.Columns.Add("Created", typeof(string));
             table.Columns.Add("Status", typeof(string));
             table.Columns.Add("Ports", typeof(string));
             table.Columns.Add("Names", typeof(string));
 
             foreach (var item in list)
             {
-                //table.Rows.Add(item.ID, item.Image, item.Command, item.CreatedAt, item.Status, item.Ports, item.Names);
                 table.Rows.Add(item.ID, item.Image, item.Command, item.Status, item.Ports, item.Names);
             }
             return table;
@@ -181,12 +179,23 @@ namespace Whale.Windows.Containers
                 new ContextMenu(screenPoint.X, screenPoint.Y,
                     new MenuBarItem(new MenuItem[]
                     {
+                        new MenuItem ("Inspect", "Inspect container", () =>
+                        {
+                            if (containerName is not null)
+                            {
+                                Application.Top.RemoveAll();
+                                var containerWindow = new ContainerWindow(containerName);
+                                Application.Top.Add(containerWindow);
+                                Application.Top.Add(new Navbar());
+                                Application.Top.Add(new AppInfoBar());
+                            }
+                        }),
                         new MenuItem ("Run", "Run container", async () =>
                         {
                             await shellCommandRunner.RunCommandAsync($"docker start {containerName}");
 
                         }),
-                        new MenuItem ("Pause", "Pause container", async () =>
+                        new MenuItem ("Pause/Unpause", "Pause/Unpause container", async () =>
                         {
                             await shellCommandRunner.RunCommandAsync($"docker pause {containerName}");
                         }),
@@ -212,6 +221,5 @@ namespace Whale.Windows.Containers
                 };
             contextMenu.Show();
         }
-
     }
 }
