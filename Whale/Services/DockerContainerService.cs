@@ -134,5 +134,55 @@ namespace Whale.Services
             }
             return Result.Fail<(string std, string err)>("Command failed");
         }
+
+        public async Task<Result> StartContainerAsync(string containerId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync($"docker start {containerId}", token);
+            if (result.IsSuccess)
+            {
+                return result;
+            }
+            return Result.Fail<(string std, string err)>("Command failed");
+        }
+
+        public async Task<Result> PauseContainerAsync(string containerId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync($"docker pause {containerId}", token);
+            if (result.IsSuccess)
+            {
+                return result;
+            }
+            return Result.Fail<(string std, string err)>("Command failed");
+        }
+
+        public async Task<Result> UnpauseContainerAsync(string containerId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync($"docker unpause {containerId}", token);
+            if (result.IsSuccess)
+            {
+                return result;
+            }
+            return Result.Fail<(string std, string err)>("Command failed");
+        }
+
+        public async Task<Result> StopContainerAsync(string containerId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync($"docker stop {containerId}", token);
+            if (result.IsSuccess)
+            {
+                return result;
+            }
+            return Result.Fail<(string std, string err)>("Command failed");
+        }
+
+        public async Task<Result> DeleteContainerAsync(string containerId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync($"docker rm {containerId}", token);
+            if (result.IsSuccess)
+            {
+                return result;
+            }
+            return Result.Fail<(string std, string err)>("Command failed");
+        }
     }
 }

@@ -168,7 +168,7 @@ namespace Whale.Windows.Images
                         }),
                         new MenuItem ("Delete", "Delete image", async () =>
                         {
-                            await shellCommandRunner.RunCommandAsync($"docker image remove {imageName}");
+                            await dockerImageService.DeleteImageAsync(imageName);
                         }),
                         null!,
                         new MenuItem("Exit", "Exit", () =>

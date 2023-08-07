@@ -28,10 +28,10 @@ namespace Whale.Services
             return Result.Fail<List<Image>>("Command failed");
         }
 
-        public async Task<Result<List<ImageLayer>>> GetImageLayersAsync(string containerId, CancellationToken token = default)
+        public async Task<Result<List<ImageLayer>>> GetImageLayersAsync(string imageId, CancellationToken token = default)
         {
             var result = await shellCommandRunner.RunCommandAsync("docker",
-               new[] { "image", "history", containerId, "--format", "json" }, token);
+               new[] { "image", "history", imageId, "--format", "json" }, token);
 
             if (result.IsSuccess)
             {
@@ -43,7 +43,16 @@ namespace Whale.Services
                 return Result.Fail<List<ImageLayer>>("Image not found");
             }
             return Result.Fail<List<ImageLayer>>("Command failed");
+        }
 
+        public async Task<Result> DeleteImageAsync(string imageId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync($"docker image remove {imageId}", token);
+            if (result.IsSuccess)
+            {
+                return Result.Ok();
+            }
+            return Result.Fail("Command failed");
         }
     }
 }

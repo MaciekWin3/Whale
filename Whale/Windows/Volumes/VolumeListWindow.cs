@@ -5,6 +5,7 @@ using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
 using Whale.Utils;
+using Whale.Windows.Images;
 
 namespace Whale.Windows.Volumes
 {
@@ -13,6 +14,8 @@ namespace Whale.Windows.Volumes
         private readonly MainWindow mainWindow;
         private readonly IShellCommandRunner shellCommandRunner;
         private readonly IDockerVolumeService dockerVolumeService;
+        TableView tableView = null!;
+        private ContextMenu contextMenu = new();
         public VolumeListWindow(MainWindow mainWindow)
         {
             shellCommandRunner = new ShellCommandRunner();
@@ -30,7 +33,7 @@ namespace Whale.Windows.Volumes
 
         public void InitView()
         {
-            var tableView = new TableView()
+            tableView = new TableView()
             {
                 X = 0,
                 Y = 0,
@@ -38,6 +41,9 @@ namespace Whale.Windows.Volumes
                 Height = Dim.Fill(),
                 FullRowSelect = true,
             };
+
+            tableView.KeyPress += TableKeyPress;
+            tableView.MouseClick += TableViewMouseClick;
 
             Add(tableView);
 
@@ -93,7 +99,6 @@ namespace Whale.Windows.Volumes
             };
         }
 
-        // More info?
         public static DataTable ConvertListToDataTable(List<Volume> list)
         {
             var table = new DataTable();
@@ -106,6 +111,74 @@ namespace Whale.Windows.Volumes
                 table.Rows.Add(item.Name, item.Driver, item.Status, item.Size);
             }
             return table;
+        }
+
+        private void TableViewMouseClick(MouseEventArgs obj)
+        {
+            if (obj.MouseEvent.Flags.HasFlag(MouseFlags.Button3Clicked))
+            {
+                tableView.SetSelection(1, obj.MouseEvent.Y - 3, false);
+                try
+                {
+                    var id = (string)tableView.Table.Rows[obj.MouseEvent.Y - 3][0];
+                    ShowContextMenu(new Point(
+                        obj.MouseEvent.X + tableView.Frame.X + 5,
+                        obj.MouseEvent.Y + tableView.Frame.Y + 5),
+                        id);
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private void TableKeyPress(KeyEventEventArgs obj)
+        {
+            if (obj.KeyEvent.Key == (Key.R | Key.CtrlMask))
+            {
+                var selected = tableView.SelectedRow;
+                var id = (string)tableView.Table.Rows[selected][0];
+                obj.Handled = true;
+
+                ShowContextMenu(new Point(
+                    1,
+                    tableView.SelectedRow + 5),
+                    id);
+            }
+        }
+
+        public void ShowContextMenu(Point screenPoint, string volumeName)
+        {
+            contextMenu =
+                new ContextMenu(screenPoint.X, screenPoint.Y,
+                    new MenuBarItem(new MenuItem[]
+                    {
+                        new MenuItem ("Inspect", "Inspect volume", () =>
+                        {
+                            if (volumeName is not null)
+                            {
+                                Application.Top.RemoveAll();
+                                var imageWindow = new ImageWindow(volumeName);
+                                Application.Top.Add(imageWindow);
+                                Application.Top.Add(new Navbar());
+                                Application.Top.Add(new AppInfoBar());
+                            }
+                        }),
+                        new MenuItem ("Delete", "Delete image", async () =>
+                        {
+                            await dockerVolumeService.DeleteVolumeAsync(volumeName);
+                        }),
+                        null!,
+                        new MenuItem("Exit", "Exit", () =>
+                        {
+                            Application.RequestStop();
+                        })
+                    })
+                )
+                {
+                    ForceMinimumPosToZero = true
+                };
+            contextMenu.Show();
         }
     }
 }

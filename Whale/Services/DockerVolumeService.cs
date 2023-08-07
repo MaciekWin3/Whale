@@ -44,5 +44,15 @@ namespace Whale.Services
             }
             return Result.Fail<List<Container>>("Command failed");
         }
+
+        public async Task<Result> DeleteVolumeAsync(string volumeId, CancellationToken token = default)
+        {
+            var result = await shellCommandRunner.RunCommandAsync($"docker volume remove {volumeId}", token);
+            if (result.IsSuccess)
+            {
+                return Result.Ok();
+            }
+            return Result.Fail("Command failed");
+        }
     }
 }

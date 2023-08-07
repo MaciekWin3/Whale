@@ -190,18 +190,19 @@ namespace Whale.Windows.Containers
                                 Application.Top.Add(new AppInfoBar());
                             }
                         }),
-                        new MenuItem ("Run", "Run container", async () =>
+                        new MenuItem ("Start", "Start container", async () =>
                         {
-                            await shellCommandRunner.RunCommandAsync($"docker start {containerName}");
+                            await dockerContainerService.StartContainerAsync(containerName);
 
                         }),
                         new MenuItem ("Pause/Unpause", "Pause/Unpause container", async () =>
                         {
-                            await shellCommandRunner.RunCommandAsync($"docker pause {containerName}");
+                            // Handle pause/unpause
+                            await dockerContainerService.PauseContainerAsync(containerName);
                         }),
                         new MenuItem("Delete", "Delete container", async () =>
                         {
-                            await shellCommandRunner.RunCommandAsync($"docker rm {containerName}");
+                            await dockerContainerService.DeleteContainerAsync(containerName);
                         }),
                         null!,
                         new MenuItem("Show All", "", () => showAll = !showAll)
