@@ -1,5 +1,4 @@
 ﻿using Terminal.Gui;
-using Whale.Components;
 using Whale.Models;
 using Whale.Services;
 using Whale.Services.Interfaces;
@@ -32,7 +31,6 @@ namespace Whale.Windows.Images
             {
                 Height = Dim.Fill(),
                 Width = Dim.Fill(),
-                //ColorScheme = Colors.TopLevel,
                 AllowsMarking = false,
                 AllowsMultipleSelection = false
             };
@@ -41,7 +39,6 @@ namespace Whale.Windows.Images
             {
                 Height = Dim.Fill(),
                 Width = Dim.Fill(),
-                //ColorScheme = Colors.TopLevel,
                 AllowsMarking = false,
                 AllowsMultipleSelection = false
             };
@@ -49,7 +46,6 @@ namespace Whale.Windows.Images
             var layersFrameView = new FrameView("Layers")
             {
                 X = 0,
-                //Y = Pos.Bottom(hierarchyFrameView),
                 Y = 0,
                 Width = Dim.Percent(40),
                 Height = Dim.Fill()
@@ -144,22 +140,10 @@ namespace Whale.Windows.Images
                         {
                             NavigationHelper.ReturnToMainWindow("Images");
                         }),
-                        new MenuItem ("Quit", "", () => Application.RequestStop ()),
+                        new MenuItem ("Quit", "Quit app", () => Application.RequestStop ()),
                     })
-                )
-                { ForceMinimumPosToZero = true };
-
+                );
             contextMenu.Show();
-        }
-
-        public void ReturnToMainWindow()
-        {
-            Application.Top.RemoveAll();
-            var mainWindow = MainWindow.CreateAsync();
-            Application.Top.Add(mainWindow);
-            Application.Top.Add(new Navbar());
-            Application.Top.Add(new AppInfoBar());
-            Application.Refresh();
         }
     }
 }
