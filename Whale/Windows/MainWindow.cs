@@ -61,11 +61,9 @@ namespace Whale.Windows
             TabView.AddTab(new TabView.Tab("Images", imageWindow), false);
             TabView.AddTab(new TabView.Tab("Volumes", volumeWindow), false);
 
-
             // Shortcuts
             KeyPress += (e) =>
             {
-                // do apttern matchin on key press
                 switch (e.KeyEvent.Key)
                 {
                     case (Key.Tab):

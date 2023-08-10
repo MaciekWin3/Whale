@@ -91,7 +91,7 @@ namespace Whale.Services
 
         public async Task<Result<(string std, string err)>> GetContainerLogsAsync(string containerId, CancellationToken token = default)
         {
-            var result = await shellCommandRunner.RunCommandAsync($"docker logs ${containerId}", default);
+            var result = await shellCommandRunner.RunCommandAsync($"docker logs {containerId}", default);
             if (result.IsSuccess)
             {
                 return result.Value;

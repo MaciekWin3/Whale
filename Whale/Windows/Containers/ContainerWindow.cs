@@ -165,9 +165,13 @@ namespace Whale.Windows.Containers
 
             KeyPress += (e) =>
             {
-                if (e.KeyEvent.Key is (Key.m | Key.CtrlMask) || e.KeyEvent.Key is Key.m)
+                if (e.KeyEvent.Key is (Key.M | Key.CtrlMask) || e.KeyEvent.Key is Key.m)
                 {
                     ShowContextMenu(mousePos.X, mousePos.Y);
+                }
+                if (e.KeyEvent.Key is (Key.B | Key.CtrlMask) || e.KeyEvent.Key is Key.b)
+                {
+                    NavigationHelper.ReturnToMainWindow("Containers");
                 }
                 e.Handled = true;
             };

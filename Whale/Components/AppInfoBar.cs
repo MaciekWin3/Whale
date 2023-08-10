@@ -43,7 +43,7 @@ namespace Whale.Components
                         {
                             var containersStatsValue = containersStats.GetValue();
                             containerCpuUsage.Title = $"CPU: {containersStatsValue.CPUPerc:0.00}%";
-                            containerMemoryUsage.Title = $"Mem: {containersStatsValue.MemUsage:0.00}%";
+                            containerMemoryUsage.Title = $"Mem: {containersStatsValue.MemPerc:0.00}%";
                             dockerVersion.Title = $"Docker Version: {dockerVersionInfo.Value?.Client?.Version!}";
                         }
                     }
