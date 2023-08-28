@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Whale.Services;
 using Whale.Services.Interfaces;
@@ -10,12 +10,12 @@ namespace Whale.Tests.Services
     [TestFixture]
     public class DockerVolumeServiceTests
     {
-        private Mock<IShellCommandRunner> shellCommandRunnerMock;
+        private IShellCommandRunner shellCommandRunnerMock;
 
         [SetUp]
         public void SetUp()
         {
-            shellCommandRunnerMock = new Mock<IShellCommandRunner>();
+            shellCommandRunnerMock = Substitute.For<IShellCommandRunner>();
         }
 
         [Test]
@@ -28,8 +28,8 @@ namespace Whale.Tests.Services
                 {"Availability":"N/A","Driver":"local","Group":"N/A","Labels":"com.docker.volume.anonymous=","Links":"N/A","Mountpoint":"/var/lib/docker/volumes/volume2/_data","Name":"volume2","Scope":"local","Size":"N/A","Status":"N/A"}
                 """;
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker volume ls --format json", default))
-                .ReturnsAsync(Result.Ok((std, string.Empty)));
+            shellCommandRunnerMock.RunCommandAsync("docker volume ls --format json", default)
+                .Returns(Result.Ok((std, string.Empty)));
 
             // Act
             var service = CreateDockerVolumeService();
@@ -47,8 +47,8 @@ namespace Whale.Tests.Services
             // Arrange
             var std = "";
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker volume ls --format json", default))
-                .ReturnsAsync(Result.Ok((std, string.Empty)));
+            shellCommandRunnerMock.RunCommandAsync("docker volume ls --format json", default)
+                .Returns(Result.Ok((std, string.Empty)));
 
             // Act
             var service = CreateDockerVolumeService();
@@ -61,7 +61,7 @@ namespace Whale.Tests.Services
 
         private DockerVolumeService CreateDockerVolumeService()
         {
-            return new DockerVolumeService(shellCommandRunnerMock.Object);
+            return new DockerVolumeService(shellCommandRunnerMock);
         }
     }
 }

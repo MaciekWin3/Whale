@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Whale.Services;
 using Whale.Services.Interfaces;
@@ -10,12 +10,12 @@ namespace Whale.Tests.Services
     [TestFixture]
     public class DockerContainerServiceTests
     {
-        private Mock<IShellCommandRunner> shellCommandRunnerMock;
+        private IShellCommandRunner shellCommandRunnerMock;
 
         [SetUp]
         public void SetUp()
         {
-            shellCommandRunnerMock = new Mock<IShellCommandRunner>();
+            shellCommandRunnerMock = Substitute.For<IShellCommandRunner>();
         }
 
         [Test]
@@ -29,8 +29,8 @@ namespace Whale.Tests.Services
                 {"Command":"\"bash\"","CreatedAt":"2023-05-28 19:33:19 +0200 CEST","ID":"addd94f3ac8e","Image":"ubuntu","Labels":"org.opencontainers.image.ref.name=ubuntu,org.opencontainers.image.version=22.04","LocalVolumes":"0","Mounts":"","Names":"goofy_shockley","Networks":"bridge","Ports":"","RunningFor":"4 weeks ago","Size":"0B","State":"running","Status":"Up 7 hours"}
                 """;
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker container ls --all --format json", default))
-                .ReturnsAsync(Result.Ok((std, string.Empty)));
+            shellCommandRunnerMock.RunCommandAsync("docker container ls --all --format json", default)
+                .Returns(Result.Ok((std, string.Empty)));
 
             // Act
             var service = CreateDockerService();
@@ -46,8 +46,8 @@ namespace Whale.Tests.Services
             // Arrange
             var std = "Command failed";
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync("docker container ls --all --format json", default))
-                .ReturnsAsync(Result.Fail<(string std, string err)>(std));
+            shellCommandRunnerMock.RunCommandAsync("docker container ls --all --format json", default)
+                .Returns(Result.Fail<(string std, string err)>(std));
 
             // Act
             var service = CreateDockerService();
@@ -64,8 +64,8 @@ namespace Whale.Tests.Services
             // Arrange
             string containerId = "containerId";
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync($"docker container remove {containerId}", default))
-                .ReturnsAsync(Result.Ok((containerId, string.Empty)));
+            shellCommandRunnerMock.RunCommandAsync($"docker container remove {containerId}", default)
+                .Returns(Result.Ok((containerId, string.Empty)));
 
             // Act
             var service = CreateDockerService();
@@ -88,8 +88,8 @@ namespace Whale.Tests.Services
                 NativeCommandExitException: Program "docker.exe" ended with non-zero exit code: 1.
                 """;
 
-            shellCommandRunnerMock.Setup(x => x.RunCommandAsync($"docker container remove {containerId}", default))
-                .ReturnsAsync(Result.Fail<(string std, string err)>(errorMessage));
+            shellCommandRunnerMock.RunCommandAsync($"docker container remove {containerId}", default)
+                .Returns(Result.Fail<(string std, string err)>(errorMessage));
 
             // Act
             var service = CreateDockerService();
@@ -102,7 +102,7 @@ namespace Whale.Tests.Services
 
         private DockerContainerService CreateDockerService()
         {
-            return new DockerContainerService(shellCommandRunnerMock.Object);
+            return new DockerContainerService(shellCommandRunnerMock);
         }
     }
 }
