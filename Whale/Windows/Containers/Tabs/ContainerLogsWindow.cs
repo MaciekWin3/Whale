@@ -35,9 +35,15 @@ namespace Whale.Windows.Containers.Tabs
                 DesiredCursorVisibility = CursorVisibility.Vertical,
                 ReadOnly = true,
             };
+            var x = new MenuItem("_Exit", "", () => Application.RequestStop());
+
             int idx = textField.Lines;
             textField.ScrollTo(idx - textField.Bounds.Height - 1);
             Add(textField);
+            var y = textField.ContextMenu;
+
+
+            textField.ContextMenu.MenuBar.Menus.Append(new MenuBarItem("_File", new MenuItem[] { x }));
 
             Application.MainLoop.Invoke(async () =>
             {
