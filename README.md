@@ -19,7 +19,7 @@ The Whale application aims to simplify Docker container management through an in
 To install whale you need to have the following dependencies installed on your system:
 
 - [Docker](https://docs.docker.com/get-docker/)
-- [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0)
+- [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0)
 - Modern Terminal - For Windows: [Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701?activetab=pivot:overviewtab)
 
 Once you have the dependencies installed, you can download Whale using this command:
